@@ -1,15 +1,15 @@
 package archivos;
 import java.io.File;
+import java.util.StringTokenizer;
 public class ExploradorRecursivoArchivos {
-	//private String ruta;
-	private String[] extension; 
-	public ExploradorRecursivoArchivos(String ruta, String[] extension) {
-		//this.ruta = ruta;
-		this.extension = extension;
-		File directorio = new File(ruta);
-		if(directorio.isDirectory()){
-			for(int i=0;i<extension.length;i++)
-				extension[i] = extension[i].toLowerCase();
+	private String[] extensiones; 
+	public ExploradorRecursivoArchivos(String extensiones) {
+		StringTokenizer tokens = new StringTokenizer(extensiones, "-");
+		int cont = 0;
+		this.extensiones = new String[tokens.countTokens()+1];
+		while(tokens.hasMoreTokens()){
+			this.extensiones[cont] = tokens.nextToken();
+			cont++;
 		}
 	}
 	public void explorar(String ruta){
@@ -22,8 +22,8 @@ public class ExploradorRecursivoArchivos {
 					explorar(archivo.getPath());
 			}
 			else{
-				for(int j=0;j<extension.length;j++)
-					if(listado[i].toLowerCase().endsWith(extension[j]))
+				for(int j=0;j<extensiones.length-1;j++)
+					if(listado[i].toLowerCase().endsWith(extensiones[j]))
 						System.out.println(listado[i]);
 			}
 		}
