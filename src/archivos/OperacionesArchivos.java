@@ -1,10 +1,29 @@
 package archivos;
 
+/**
+ * Esta clase nos permite realizar operaciones básicas con archivos
+ * 
+ */
 public class OperacionesArchivos {
-	public void copiarArchivo(String ori, String dst){}
-	public void moverArchivo(String ori, String dst){}
-	public void obtenerMetadataImagen(String objetivo){}
-	public void obtenerMetadataAudio(String objetivo){}
-	public void obtenerMetadataVideo(String objetivo){}
-	public void eliminarArchivo(String objetivo){}
+	/**
+	 * Copiar un archivo de una carpeta a otra
+	 * @param ori
+	 * @param dst
+	 */
+	public void copiarArchivo(String ori, String dst) {
+	}
+
+	/**
+	 * Mover un archivo de una carpeta a otra
+	 * @param ori
+	 * @param dst
+	 */
+	public void moverArchivo(String ori, String dst) {
+	}
+	/**
+	 * Eliminar un archivo
+	 * @param objetivo
+	 */
+	public void eliminarArchivo(String objetivo) {
+	}
 }

@@ -15,31 +15,35 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
 import main.Constantes;
+import main.Ventana;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class CargarImagenes extends JPanel implements ActionListener, Reproductor {
 	private static final long serialVersionUID = 1L;
+	// Barra de herramientas y sus botones
 	private JToolBar barraHerramientas;
 	private JButton btnSiguiente, btnAnterior;
 	private JToggleButton btnReproducir, btnFull;
+	// Esto nos permite manipular el Fullscreen
 	private GraphicsDevice grafica = GraphicsEnvironment
 			.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 	private boolean estaFull = false;
-	private JFrame padre;
+	// Referencia al Padre
+	private Ventana padre;
 	private PanelImagen imagen;
 	private String[] rutas;
 	private int imagenActual = 0;
 
 	private Timer temporizador;
 
-	public CargarImagenes(JFrame padre, String[] rutas) {
+	public CargarImagenes(Ventana padre, String[] rutas) {
 		setRutas(rutas);
 		construirGUI(padre);
 	}
 
-	public CargarImagenes(JFrame padre) {
+	public CargarImagenes(Ventana padre) {
 		setRutas();
 		construirGUI(padre);
 	}
@@ -56,7 +60,7 @@ public class CargarImagenes extends JPanel implements ActionListener, Reproducto
 	}
 
 
-	public void construirGUI(JFrame padre) {
+	public void construirGUI(Ventana padre) {
 		this.setLayout(new BorderLayout());
 
 		btnSiguiente = new JButton(new ImageIcon(Constantes.IMG_SIGUIENTE_30));

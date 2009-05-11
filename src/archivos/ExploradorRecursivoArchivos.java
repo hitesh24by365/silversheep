@@ -13,78 +13,150 @@ import almacenamiento.Biblioteca;
 import almacenamiento.AlmacenarInfoBibliotecaRefinado;
 import almacenamiento.TransaccionesSQLite;
 
+/**
+ * Esta clase proporciona los métodos para recorrer un árbol de directorios
+ * recursivamente, y extrae los archivos específicos de acuerdo a la extensión
+ * 
+ */
 public class ExploradorRecursivoArchivos {
+	// Arreglo de extensiones a buscar
 	private String[] extensiones;
+	// Objeto biblioteca para almacenar los datos
 	private Biblioteca biblio;
+	// Objeto para almacenar los datos en una base de datos
 	private TransaccionesSQLite sqlite;
+	// Clase que representa un archivo general
 	private Archivo medio;
+	// Clase que representa un archivo de audio
 	private Audio archivoAudio;
+	// Clase que representa un archivo de video
 	private Video archivoVideo;
+	// Clase que representa un archivo de imagen
 	private Imagen archivoImagen;
+	// Clase que dirige la creacion de archivos
 	private DirectorMedios directorMedios;
+	// Objeto para partir las cadenas de texto que contienen extensiones
+	StringTokenizer tokens;
 
 	public ExploradorRecursivoArchivos(String extensiones) {
 		// iniciar interfaz de transacciones usando
 		// el patron de disenio Bridge
 		sqlite = new TransaccionesSQLite();
+		// Iniciar la biblioteca de tal maner que use la implementación de
+		// SQLite
 		biblio = new AlmacenarInfoBibliotecaRefinado(sqlite);
-		StringTokenizer tokens = new StringTokenizer(extensiones, "-");
+		// Obtener las extensiones
+		tokens = new StringTokenizer(extensiones, "-");
 		int cont = 0;
 		this.extensiones = new String[tokens.countTokens() + 1];
 		while (tokens.hasMoreTokens()) {
 			this.extensiones[cont] = tokens.nextToken();
 			cont++;
 		}
+		// Iniciar el director de medios
 		directorMedios = new DirectorMedios();
+		// Iniciar los objetos de archivo específicos
 		archivoAudio = new Audio();
 		archivoVideo = new Video();
 		archivoImagen = new Imagen();
 	}
 
+	/**
+	 * Este método inicia la exploración recursiva de directorios
+	 * 
+	 * @param ruta
+	 */
 	public void iniciarExploracion(String ruta) {
 		File directorio = new File(ruta);
 		if (directorio.isDirectory() && directorio.exists())
 			explorar(ruta);
 	}
 
+	/**
+	 * Exploración de archivos recursivamente
+	 * 
+	 * @param ruta
+	 */
 	public void explorar(String ruta) {
+		// Directorio base
 		File directorio = new File(ruta);
+		// Listado de archivos que contiene
 		String[] listado = directorio.list();
+		// Recorrer cada archivo encontrado
 		for (int i = 0; i < listado.length; i++) {
 			File archivo = new File(ruta + "/" + listado[i]);
+			// Si el archivo es otro directorio, vuelva a recorrerlo
 			if (archivo.isDirectory()) {
 				if (archivo.canRead())
 					explorar(archivo.getPath());
-			} else {
+			} else { // si es un archivo, verificar si tiene la extension
+				// deseada
 				for (int j = 0; j < extensiones.length - 1; j++)
 					if (listado[i].toLowerCase().endsWith(extensiones[j])) {
-						//audio?
-						if (esDeTipo(Constantes.EXTENSIONES_AUDIO,listado[i])){
-							if(biblio.noEsta((ruta.endsWith("/")?ruta:ruta+"/") + listado[i], Constantes.BD_ARCHIVO)){
-								directorMedios.setArchivoMultimedia(archivoAudio);
-								directorMedios.buildArchivo((ruta.endsWith("/")?ruta:ruta+"/") + listado[i]);
+						// Si es un archivo de audio, intentar recuperar
+						// información
+						if (esDeTipo(Constantes.EXTENSIONES_AUDIO, listado[i]))
+							// Verificar que el archivo no se encuentre
+							// registrado
+							if (biblio.noEsta((ruta.endsWith("/") ? ruta : ruta
+									+ "/")
+									+ listado[i], Constantes.BD_ARCHIVO)) {
+								// Escoger el tipo de archivo que se desea
+								// construir
+								directorMedios
+										.setArchivoMultimedia(archivoAudio);
+								// Construir el archivo
+								directorMedios
+										.buildArchivo((ruta.endsWith("/") ? ruta
+												: ruta + "/")
+												+ listado[i]);
+								// Obtener objeto con los datos del archivo
 								medio = directorMedios.getArchivo();
+								// Enviar archivo al objeto que lo guardará
+								// persistentemente
 								biblio.aniadirArchivo(medio);
-							}
-							else if(Constantes.DEBUG)
-								System.out.println("NO hago nada porque ya estas: " +
-										ruta + listado[i]);
-						}
-						//imagen?
-						else if (esDeTipo(Constantes.EXTENSIONES_IMAGEN,listado[i]))
-							directorMedios.setArchivoMultimedia(archivoVideo);
-						//video?
-						else if (esDeTipo(Constantes.EXTENSIONES_VIDEO,listado[i]))
-							directorMedios.setArchivoMultimedia(archivoImagen);
+							} else if (Constantes.DEBUG)// Si el archivo ya esta
+								System.out
+										.println("NO hago nada porque ya estas: "
+												+ ruta + listado[i]);
+							// imagen?
+							else if (esDeTipo(Constantes.EXTENSIONES_IMAGEN,
+									listado[i]))
+								// TODO
+								if (biblio.noEsta((ruta.endsWith("/") ? ruta
+										: ruta + "/")
+										+ listado[i], Constantes.BD_ARCHIVO)) {
+									directorMedios
+											.setArchivoMultimedia(archivoImagen);
+									directorMedios.buildArchivo((ruta
+											.endsWith("/") ? ruta : ruta + "/")
+											+ listado[i]);
+									medio = directorMedios.getArchivo();
+									biblio.aniadirArchivo(medio);
+								}
+								// video?
+								else if (esDeTipo(Constantes.EXTENSIONES_VIDEO,
+										listado[i]))
+									directorMedios
+											.setArchivoMultimedia(archivoVideo);
 					}
 			}
 		}
 	}
 
+	/**
+	 * Verificar de si un archivo es de un tipo en especial. Esto se logra
+	 * comparando su extensión con la lista de extensiones de la variable
+	 * Constantes.EXTENSIONES_***
+	 * 
+	 * @param extensiones
+	 * @param archivo
+	 * @return
+	 */
 	private boolean esDeTipo(String extensiones, String archivo) {
-		StringTokenizer tokens = new StringTokenizer(extensiones, "-");
-		while(tokens.hasMoreTokens()){
-			if(archivo.endsWith(tokens.nextToken()))
+		tokens = new StringTokenizer(extensiones, "-");
+		while (tokens.hasMoreTokens()) {
+			if (archivo.endsWith(tokens.nextToken()))
 				return true;
 		}
 		return false;

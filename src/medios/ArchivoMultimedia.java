@@ -1,5 +1,10 @@
 package medios;
 
+/**
+ * Archivo que abstrae la construcción de diferentes tipos de medios
+ * @author gentoo
+ *
+ */
 public abstract class ArchivoMultimedia {
 	protected Archivo archivo;
 
@@ -9,6 +14,10 @@ public abstract class ArchivoMultimedia {
 		iniciarCargaMetadatos();
 	}
 
+	/**
+	 * Devuelve el archivo creado
+	 * @return
+	 */
 	public Archivo getArchivo() {
 		return archivo;
 	}

@@ -1,5 +1,9 @@
 package medios;
 
+/**
+ * Clase que dirige el orden en que se construyen los datos de cada uno de los archivos
+ *
+ */
 public class DirectorMedios {
 	private ArchivoMultimedia archivoMultimedia;
 
@@ -10,7 +14,11 @@ public class DirectorMedios {
 	public Archivo getArchivo() {
 		return archivoMultimedia.getArchivo();
 	}
-	
+
+	/**
+	 * Construir archivo
+	 * @param rutaArchivo
+	 */
 	public void buildArchivo(String rutaArchivo){
 		archivoMultimedia.crearArchivo(rutaArchivo);
 		archivoMultimedia.buildTamanioKB();

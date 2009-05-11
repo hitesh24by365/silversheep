@@ -1,11 +1,7 @@
 package main;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.GroupLayout;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -14,20 +10,31 @@ import javax.swing.SwingConstants;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
 
+/**
+ * Panel de bienvenida a SilverSheep
+ * @author gentoo
+ *
+ */
 public class PanelIntroduccion extends JPanel implements ActionListener{
+	private static final long serialVersionUID = -5584530084045706794L;
+	// Declarar botones
 	private JButton btnAudio, btnImagen, btnVideo;
-	private Box cajaHorizontal = Box.createHorizontalBox();
+	// Declarar panel botones
 	private JPanel panelBotones;
+	// Referencia a la ventana principal
 	private Ventana ventanaPrincipal;
+	/**
+	 * Constructor que recibe referencia a la ventana padre
+	 * @param padre
+	 */
 	public PanelIntroduccion(Ventana padre){
+		//Asignar layout
 		setLayout(new BorderLayout());
 		
 		ventanaPrincipal =  padre;
 		
+		//Iniciar botones
 		btnAudio = new JButton("Cargar gestor de música",new ImageIcon(Constantes.IMG_AUDIO));
 		btnAudio.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnAudio.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -52,6 +59,7 @@ public class PanelIntroduccion extends JPanel implements ActionListener{
 		btnVideo.setBorderPainted(false);
 		btnVideo.addActionListener(this);
 		
+		// Iniciar panel para los botones
 		panelBotones = new JPanel();
 		panelBotones.setLayout(new BoxLayout(panelBotones,BoxLayout.LINE_AXIS));
         panelBotones.add(Box.createHorizontalGlue());
@@ -66,10 +74,13 @@ public class PanelIntroduccion extends JPanel implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		if(evt.getSource() == btnImagen){
+			//Si se presionó el boton imagen, aniadir panel imagen
 			ventanaPrincipal.aniadirReproductor(Constantes.TAB_IMAGEN);
 		}else if(evt.getSource() == btnAudio){
+			//Si se presionó el boton audio, aniadir panel audio
 			ventanaPrincipal.aniadirReproductor(Constantes.TAB_AUDIO);
 		}else if(evt.getSource() == btnVideo){
+			//Si se presionó el boton videe, aniadir panel video
 			ventanaPrincipal.aniadirReproductor(Constantes.TAB_VIDEO);
 		}
 	}

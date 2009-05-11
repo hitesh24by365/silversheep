@@ -2,9 +2,17 @@ package almacenamiento;
 
 import main.Etiqueta;
 import medios.Archivo;
-import medios.ArchivoMultimedia;
 
+/**
+ * La clase AlmacenarInfoBibliotecaRefinado ejecuta los metodos 
+ * de la clase Biblioteca para un tipo de Implementacion de almacenamiento
+ * específico. De tal manera es posible abstraer la manera en que
+ * se almacenan los datos de la biblioteca
+ * 
+ * Esta clase fue construida basandose en el patrón de diseño Bridge
+ */
 public class AlmacenarInfoBibliotecaRefinado implements Biblioteca {
+	//objeto que implementa los metodos de almacenamiento
 	private ImplementadorMetodosAlmacenamiento implementador;
 	public AlmacenarInfoBibliotecaRefinado(ImplementadorMetodosAlmacenamiento imp) {
 		this.implementador = imp;

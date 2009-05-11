@@ -10,61 +10,76 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import reproductor.CargarImagenes;
 import reproductor.FabricaAudio;
 import reproductor.FabricaImagenes;
 import reproductor.FabricaReproductores;
 import reproductor.FabricaVideo;
-import archivos.ExploradorRecursivoArchivos;
 import archivos.DialogoEscaneador;
 
 public class Ventana extends JFrame implements ActionListener {
 	private static final long serialVersionUID = -712789070387375137L;
+	// La barra de menu y sus items
 	private JMenuBar barraMenu;
 	private JMenu menuArchivo, menuAyuda, menuHerramientas;
 	private JMenuItem itmAcercaDe, itmSalir, itmEscanear;
+	// El contenedor de componentes de la GUI
 	private Container contenedor;
-	private DialogoEscaneador dialogoEscanear;
+	// Panel que contiene los componentes del intro
 	private PanelIntroduccion intro;
-	private GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    private GraphicsDevice[] gs = ge.getScreenDevices();
-    private DisplayMode dm = gs[0].getDisplayMode();
-    private JTabbedPane pestaniasReproductores;
-    private FabricaReproductores fabricaReproductores;
-    
+	// Permiten posicionar la ventana en la mitad ;)
+	private GraphicsEnvironment ge = GraphicsEnvironment
+			.getLocalGraphicsEnvironment();
+	private GraphicsDevice[] gs = ge.getScreenDevices();
+	private DisplayMode dm = gs[0].getDisplayMode();
+	// Pestanias de reproducciones
+	private JTabbedPane pestaniasReproductores;
+	// Fabrica de reproductores
+	private FabricaReproductores fabricaReproductores;
+
+	/**
+	 * Constructor de la ventana
+	 */
 	public Ventana() {
 		super("SilverSheep - Reproductor de medios");
 		contenedor = getContentPane();
-		contenedor.setLayout(new BorderLayout(60,16));
+		contenedor.setLayout(new BorderLayout());
 
+		// Iniciar los elementos del menu
 		iniciarBarraMenu();
-		
+
+		// Iniciar panel de introducción
 		intro = new PanelIntroduccion(this);
 		pestaniasReproductores = new JTabbedPane();
-		aniadirElementoPestania("Intro",(JPanel)intro);
+		aniadirElementoPestania("Intro", (JPanel) intro);
 		contenedor.add(pestaniasReproductores);
 
+		// Mostrar ventana
 		setSize(800, 600);
-		setLocation((dm.getWidth()/2)-(getWidth()/2), (dm.getHeight()/2)-(getHeight()/2));
+		setLocation((dm.getWidth() / 2) - (getWidth() / 2),
+				(dm.getHeight() / 2) - (getHeight() / 2));
 		setVisible(true);
 	}
 
 	private void aniadirElementoPestania(String titulo, JPanel panel) {
-		// TODO 
+		// TODO aniadir imagen
 		pestaniasReproductores.addTab(titulo, new ImageIcon(), panel);
-		pestaniasReproductores.setTabComponentAt(pestaniasReproductores.getTabCount()-1, new Pestania(pestaniasReproductores));
-		pestaniasReproductores.setSelectedIndex(pestaniasReproductores.getTabCount()-1);
+		pestaniasReproductores.setTabComponentAt(pestaniasReproductores
+				.getTabCount() - 1, new Pestania(pestaniasReproductores));
+		pestaniasReproductores.setSelectedIndex(pestaniasReproductores
+				.getTabCount() - 1);
 	}
 
+	/**
+	 * Iniciar componentes de la barra de menu
+	 */
 	public void iniciarBarraMenu() {
-		//menu archivo
+		// Iniciar items de menu
 		menuArchivo = new JMenu("Archivo");
 		menuArchivo.setMnemonic('A');
 
@@ -74,7 +89,7 @@ public class Ventana extends JFrame implements ActionListener {
 
 		menuArchivo.add(itmSalir);
 
-		//menu archivo
+		// menu archivo
 		menuHerramientas = new JMenu("Herramientas");
 		menuHerramientas.setMnemonic('H');
 
@@ -84,7 +99,7 @@ public class Ventana extends JFrame implements ActionListener {
 
 		menuHerramientas.add(itmEscanear);
 
-		//menu ayuda
+		// menu ayuda
 		menuAyuda = new JMenu("Ayuda");
 		menuAyuda.setMnemonic('y');
 
@@ -93,42 +108,52 @@ public class Ventana extends JFrame implements ActionListener {
 		itmAcercaDe.addActionListener(this);
 
 		menuAyuda.add(itmAcercaDe);
-		
-		//barra de menu
+
+		// barra de menu
 		barraMenu = new JMenuBar();
 		barraMenu.add(menuArchivo);
 		barraMenu.add(menuHerramientas);
 		barraMenu.add(menuAyuda);
 		setJMenuBar(barraMenu);
 	}
-	
-	private void abrirDialogoEscaneador(){
-		new DialogoEscaneador(this, "Busca lo que quieras");
+
+	/**
+	 * Abrir dialogo que escanea directorios
+	 */
+	private void abrirDialogoEscaneador() {
+		new DialogoEscaneador(this);
 	}
-	
-	private void abrirDialogoAcercaDe(){
+
+	/**
+	 * Abrir el diálogo del los créditos y licencia, re-gomelo ¿no?
+	 */
+	private void abrirDialogoAcercaDe() {
 		new DialogoAcercaDe(this);
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == itmSalir) {
 			System.exit(0);
 		} else if (e.getSource() == itmAcercaDe) {
 			abrirDialogoAcercaDe();
-		}
-		else if (e.getSource() == itmEscanear){
+		} else if (e.getSource() == itmEscanear) {
 			abrirDialogoEscaneador();
 		}
 	}
-	
-	public void aniadirReproductor(String tipo){
-		if(tipo.equals(Constantes.TAB_IMAGEN))
+
+	/**
+	 * Aniadir reproductores/pestañas 
+	 * @param tipo
+	 */
+	public void aniadirReproductor(String tipo) {
+		if (tipo.equals(Constantes.TAB_IMAGEN))
 			fabricaReproductores = new FabricaImagenes();
-		else if(tipo.equals(Constantes.TAB_AUDIO))
+		else if (tipo.equals(Constantes.TAB_AUDIO))
 			fabricaReproductores = new FabricaAudio();
-		else if(tipo.equals(Constantes.TAB_VIDEO))
+		else if (tipo.equals(Constantes.TAB_VIDEO))
 			fabricaReproductores = new FabricaVideo();
-		aniadirElementoPestania(tipo,fabricaReproductores.crearReproductor(this));
+		aniadirElementoPestania(tipo, fabricaReproductores
+				.crearReproductor(this));
 	}
 }

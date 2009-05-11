@@ -1,5 +1,6 @@
 package reproductor;
 
+import main.Ventana;
 import medios.ArchivoMultimedia;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -7,7 +8,7 @@ import javax.swing.JPanel;
 public class FabricaAudio implements FabricaReproductores {
 
 	@Override
-	public JPanel crearReproductor(JFrame padre) {
+	public JPanel crearReproductor(Ventana padre) {
 		return new CargarAudio(padre);
 	}
 

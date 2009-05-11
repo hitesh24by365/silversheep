@@ -3,6 +3,7 @@ package reproductor;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import main.Ventana;
 import medios.ArchivoMultimedia;
 
 public class FabricaImagenes implements FabricaReproductores {
@@ -20,7 +21,7 @@ public class FabricaImagenes implements FabricaReproductores {
 	}
 
 	@Override
-	public JPanel crearReproductor(JFrame padre) {
+	public JPanel crearReproductor(Ventana padre) {
 		return new CargarImagenes(padre);
 	}
 

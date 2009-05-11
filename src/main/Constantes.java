@@ -1,5 +1,10 @@
 package main;
 
+/**
+ * Esta clase contiene las variables que son constantes o que deben ser globales
+ * mientras el sistema esté en funcionamiento
+ * 
+ */
 public class Constantes {
 	// imagenes 50x50
 	public static final String IMG_REPRODUCIR_50 = "img/50x50/reproducir.png";
@@ -28,7 +33,8 @@ public class Constantes {
 	public static final String EXTENSIONES_AUDIO = "mp3-wav-";
 	public static final String EXTENSIONES_VIDEO = "mpg-mpeg-avi-wmv-";
 	public static final String EXTENSIONES_IMAGEN = "jpg-gif-png-";
-	public static final int NUMERO_EXTENSIONES_SOPORTADAS = EXTENSIONES_AUDIO.length()
+	public static final int NUMERO_EXTENSIONES_SOPORTADAS = EXTENSIONES_AUDIO
+			.length()
 			+ EXTENSIONES_VIDEO.length() + EXTENSIONES_IMAGEN.length();
 	// tipos de datos en la BD
 	public static final String BD_ALBUM = "album";
@@ -37,8 +43,11 @@ public class Constantes {
 	// otras cosas
 	public static boolean DEBUG = false;
 	public static final String VERSION = "0.1";
-	//titulos pestanias
+	// titulos pestanias
 	public static final String TAB_IMAGEN = "Imágenes";
 	public static final String TAB_AUDIO = "Música";
 	public static final String TAB_VIDEO = "Videos";
+	// Variables para la conexión a la base de datos SQLite
+	public static final String BD_RUTA_CONTROLADOR_JDBC = "org.sqlite.JDBC";
+	public static final String DB_NOMBRE_BASE_DATOS = "jdbc:sqlite:silversheep.db";
 }

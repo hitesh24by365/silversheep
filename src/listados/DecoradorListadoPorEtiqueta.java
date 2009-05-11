@@ -1,7 +1,10 @@
 package listados;
 
 import javax.swing.JPanel;
-
+/**
+ * Esta clase extiende {@link DecoradorListado} y aniade el atributo Etiqueta
+ *
+ */
 public class DecoradorListadoPorEtiqueta extends DecoradorListado {
 
 	public DecoradorListadoPorEtiqueta(Listado listado) {
