@@ -1,0 +1,12 @@
+package reproductor;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import medios.ArchivoMultimedia;
+
+public interface FabricaReproductores {
+	public JPanel crearReproductor(JFrame padre);
+	public Reproductor crearReproductor(String[] archivos);
+	public Reproductor crearReproductor(ArchivoMultimedia[] archivos);
+}
