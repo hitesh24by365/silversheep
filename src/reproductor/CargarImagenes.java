@@ -39,14 +39,6 @@ public class CargarImagenes extends JPanel implements ActionListener, Reproducto
 		construirGUI(padre);
 	}
 
-	public String[] getRutas() {
-		return rutas;
-	}
-
-	public void setRutas(String[] rutas) {
-		this.rutas = rutas;
-	}
-
 	public CargarImagenes(JFrame padre) {
 		setRutas();
 		construirGUI(padre);
@@ -55,6 +47,14 @@ public class CargarImagenes extends JPanel implements ActionListener, Reproducto
 	private void setRutas() {
 		rutas = new String[0];
 	}
+	public String[] getRutas() {
+		return rutas;
+	}
+
+	public void setRutas(String[] rutas) {
+		this.rutas = rutas;
+	}
+
 
 	public void construirGUI(JFrame padre) {
 		this.setLayout(new BorderLayout());

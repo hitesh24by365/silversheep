@@ -66,9 +66,11 @@ public class PanelIntroduccion extends JPanel implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		if(evt.getSource() == btnImagen){
-			System.out.println("bla");
-			ventanaPrincipal.aniadirReproductor("Imagenes");
+			ventanaPrincipal.aniadirReproductor(Constantes.TAB_IMAGEN);
+		}else if(evt.getSource() == btnAudio){
+			ventanaPrincipal.aniadirReproductor(Constantes.TAB_AUDIO);
+		}else if(evt.getSource() == btnVideo){
+			ventanaPrincipal.aniadirReproductor(Constantes.TAB_VIDEO);
 		}
-		
 	}
 }

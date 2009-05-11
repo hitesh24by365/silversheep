@@ -8,16 +8,20 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import reproductor.CargarImagenes;
+import reproductor.FabricaAudio;
 import reproductor.FabricaImagenes;
 import reproductor.FabricaReproductores;
+import reproductor.FabricaVideo;
 import archivos.ExploradorRecursivoArchivos;
 import archivos.DialogoEscaneador;
 
@@ -42,18 +46,21 @@ public class Ventana extends JFrame implements ActionListener {
 
 		iniciarBarraMenu();
 		
-		pestaniasReproductores = new JTabbedPane();
-		//pestaniasReproductores.add("algo", new JLabel("cosas"));
-		
-		fabricaReproductores = new FabricaImagenes();
-		pestaniasReproductores.add("imagenes",fabricaReproductores.crearReproductor(this));
-		
 		intro = new PanelIntroduccion(this);
+		pestaniasReproductores = new JTabbedPane();
+		aniadirElementoPestania("Intro",(JPanel)intro);
 		contenedor.add(pestaniasReproductores);
 
 		setSize(800, 600);
 		setLocation((dm.getWidth()/2)-(getWidth()/2), (dm.getHeight()/2)-(getHeight()/2));
 		setVisible(true);
+	}
+
+	private void aniadirElementoPestania(String titulo, JPanel panel) {
+		// TODO 
+		pestaniasReproductores.addTab(titulo, new ImageIcon(), panel);
+		pestaniasReproductores.setTabComponentAt(pestaniasReproductores.getTabCount()-1, new Pestania(pestaniasReproductores));
+		pestaniasReproductores.setSelectedIndex(pestaniasReproductores.getTabCount()-1);
 	}
 
 	public void iniciarBarraMenu() {
@@ -116,11 +123,12 @@ public class Ventana extends JFrame implements ActionListener {
 	}
 	
 	public void aniadirReproductor(String tipo){
-		fabricaReproductores = new FabricaImagenes();
-		//pestaniasReproductores.add(tipo,fabricaReproductores.crearReproductor(this));
-		pestaniasReproductores.add("algo", new JLabel("cosas"));
-		contenedor.remove(intro);
-		//getContentPane().add(intro);
-		contenedor.add(fabricaReproductores.crearReproductor(this));
+		if(tipo.equals(Constantes.TAB_IMAGEN))
+			fabricaReproductores = new FabricaImagenes();
+		else if(tipo.equals(Constantes.TAB_AUDIO))
+			fabricaReproductores = new FabricaAudio();
+		else if(tipo.equals(Constantes.TAB_VIDEO))
+			fabricaReproductores = new FabricaVideo();
+		aniadirElementoPestania(tipo,fabricaReproductores.crearReproductor(this));
 	}
 }

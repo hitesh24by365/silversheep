@@ -37,4 +37,8 @@ public class Constantes {
 	// otras cosas
 	public static boolean DEBUG = false;
 	public static final String VERSION = "0.1";
+	//titulos pestanias
+	public static final String TAB_IMAGEN = "Imágenes";
+	public static final String TAB_AUDIO = "Música";
+	public static final String TAB_VIDEO = "Videos";
 }
