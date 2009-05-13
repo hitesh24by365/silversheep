@@ -122,7 +122,7 @@ public class ExploradorRecursivoArchivos {
 							// imagen?
 							else if (esDeTipo(Constantes.EXTENSIONES_IMAGEN,
 									listado[i]))
-								// TODO
+								// TODO capturar datos de la imagen
 								if (biblio.noEsta((ruta.endsWith("/") ? ruta
 										: ruta + "/")
 										+ listado[i], Constantes.BD_ARCHIVO)) {

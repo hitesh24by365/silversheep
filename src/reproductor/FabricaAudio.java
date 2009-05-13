@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 public class FabricaAudio implements FabricaReproductores {
 
 	@Override
-	public JPanel crearReproductor(Ventana padre) {
+	public Reproductor crearReproductor(Ventana padre) {
 		return new CargarAudio(padre);
 	}
 

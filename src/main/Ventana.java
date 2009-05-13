@@ -20,6 +20,7 @@ import reproductor.FabricaAudio;
 import reproductor.FabricaImagenes;
 import reproductor.FabricaReproductores;
 import reproductor.FabricaVideo;
+import reproductor.Reproductor;
 import archivos.DialogoEscaneador;
 
 public class Ventana extends JFrame implements ActionListener {
@@ -56,7 +57,11 @@ public class Ventana extends JFrame implements ActionListener {
 		// Iniciar panel de introducción
 		intro = new PanelIntroduccion(this);
 		pestaniasReproductores = new JTabbedPane();
-		aniadirElementoPestania("Intro", (JPanel) intro);
+		pestaniasReproductores.addTab("Bienvenido", new ImageIcon(
+				"img/notas.png"), intro);
+		pestaniasReproductores.setTabComponentAt(pestaniasReproductores
+				.getTabCount() - 1, new Pestania(pestaniasReproductores,
+				Constantes.IMG_OVEJA_16, true));
 		contenedor.add(pestaniasReproductores);
 
 		// Mostrar ventana
@@ -66,11 +71,14 @@ public class Ventana extends JFrame implements ActionListener {
 		setVisible(true);
 	}
 
-	private void aniadirElementoPestania(String titulo, JPanel panel) {
+	private void aniadirReproductorPestania(String titulo, Reproductor rep,
+			String icono) {
 		// TODO aniadir imagen
-		pestaniasReproductores.addTab(titulo, new ImageIcon(), panel);
+		pestaniasReproductores.addTab(titulo, new ImageIcon(icono),
+				(JPanel) rep);
 		pestaniasReproductores.setTabComponentAt(pestaniasReproductores
-				.getTabCount() - 1, new Pestania(pestaniasReproductores));
+				.getTabCount() - 1, new Pestania(pestaniasReproductores, rep,
+				icono, true));
 		pestaniasReproductores.setSelectedIndex(pestaniasReproductores
 				.getTabCount() - 1);
 	}
@@ -143,17 +151,23 @@ public class Ventana extends JFrame implements ActionListener {
 	}
 
 	/**
-	 * Aniadir reproductores/pestañas 
+	 * Aniadir reproductores/pestañas
+	 * 
 	 * @param tipo
 	 */
 	public void aniadirReproductor(String tipo) {
-		if (tipo.equals(Constantes.TAB_IMAGEN))
+		String icono = "";
+		if (tipo.equals(Constantes.TAB_IMAGEN)) {
 			fabricaReproductores = new FabricaImagenes();
-		else if (tipo.equals(Constantes.TAB_AUDIO))
+			icono = Constantes.IMG_IMAGEN_16;
+		} else if (tipo.equals(Constantes.TAB_AUDIO)) {
 			fabricaReproductores = new FabricaAudio();
-		else if (tipo.equals(Constantes.TAB_VIDEO))
+			icono = Constantes.IMG_SONIDO_16;
+		} else if (tipo.equals(Constantes.TAB_VIDEO)) {
 			fabricaReproductores = new FabricaVideo();
-		aniadirElementoPestania(tipo, fabricaReproductores
-				.crearReproductor(this));
+			icono = Constantes.IMG_VIDEO_16;
+		}
+		aniadirReproductorPestania(tipo, fabricaReproductores
+				.crearReproductor(this), icono);
 	}
 }

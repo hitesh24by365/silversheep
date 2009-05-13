@@ -49,7 +49,15 @@ public class CargarImagenes extends JPanel implements ActionListener, Reproducto
 	}
 
 	private void setRutas() {
-		rutas = new String[0];
+		rutas = new String[6];
+		rutas[0] = "ejemplo/chiva.jpg";
+		rutas[1] = "ejemplo/black-sheep.png";
+		rutas[2] = "ejemplo/baby-sheep.jpg";
+		rutas[3] = "ejemplo/sheep-family.jpg";
+		rutas[4] = "ejemplo/sheep-sleep.jpg";
+		rutas[5] = "ejemplo/sheep-suspicious.jpg";
+
+		//rutas = new String[0];
 	}
 	public String[] getRutas() {
 		return rutas;

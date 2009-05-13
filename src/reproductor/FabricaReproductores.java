@@ -7,7 +7,7 @@ import main.Ventana;
 import medios.ArchivoMultimedia;
 
 public interface FabricaReproductores {
-	public JPanel crearReproductor(Ventana padre);
+	public Reproductor crearReproductor(Ventana padre);
 	public Reproductor crearReproductor(String[] archivos);
 	public Reproductor crearReproductor(ArchivoMultimedia[] archivos);
 }

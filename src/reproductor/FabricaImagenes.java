@@ -21,7 +21,7 @@ public class FabricaImagenes implements FabricaReproductores {
 	}
 
 	@Override
-	public JPanel crearReproductor(Ventana padre) {
+	public Reproductor crearReproductor(Ventana padre) {
 		return new CargarImagenes(padre);
 	}
 
