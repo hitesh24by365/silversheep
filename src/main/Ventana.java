@@ -73,7 +73,6 @@ public class Ventana extends JFrame implements ActionListener {
 
 	private void aniadirReproductorPestania(String titulo, Reproductor rep,
 			String icono) {
-		// TODO aniadir imagen
 		pestaniasReproductores.addTab(titulo, new ImageIcon(icono),
 				(JPanel) rep);
 		pestaniasReproductores.setTabComponentAt(pestaniasReproductores

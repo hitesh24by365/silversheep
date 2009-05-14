@@ -9,23 +9,24 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
 import main.Constantes;
+import main.Observador;
 import main.Ventana;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class CargarImagenes extends JPanel implements ActionListener, Reproductor {
+public class CargarImagenes extends JPanel implements ActionListener,
+		Reproductor {
 	private static final long serialVersionUID = 1L;
 	// Barra de herramientas y sus botones
 	private JToolBar barraHerramientas;
-	private JButton btnSiguiente, btnAnterior;
-	private JToggleButton btnReproducir, btnFull;
+	private JButton btnSiguiente, btnAnterior, btnReproducir;
+	private JToggleButton btnFull;
 	// Esto nos permite manipular el Fullscreen
 	private GraphicsDevice grafica = GraphicsEnvironment
 			.getLocalGraphicsEnvironment().getDefaultScreenDevice();
@@ -37,7 +38,9 @@ public class CargarImagenes extends JPanel implements ActionListener, Reproducto
 	private int imagenActual = 0;
 
 	private Timer temporizador;
-
+	private Observador observador;
+	//se esta reproduciendo algo?
+	private boolean estadoReproduccion;
 	public CargarImagenes(Ventana padre, String[] rutas) {
 		setRutas(rutas);
 		construirGUI(padre);
@@ -57,8 +60,9 @@ public class CargarImagenes extends JPanel implements ActionListener, Reproducto
 		rutas[4] = "ejemplo/sheep-sleep.jpg";
 		rutas[5] = "ejemplo/sheep-suspicious.jpg";
 
-		//rutas = new String[0];
+		// rutas = new String[0];
 	}
+
 	public String[] getRutas() {
 		return rutas;
 	}
@@ -67,24 +71,26 @@ public class CargarImagenes extends JPanel implements ActionListener, Reproducto
 		this.rutas = rutas;
 	}
 
-
 	public void construirGUI(Ventana padre) {
 		this.setLayout(new BorderLayout());
 
-		btnSiguiente = new JButton(new ImageIcon(Constantes.IMG_SIGUIENTE_30));
+		btnSiguiente = new JButton(new ImageIcon(this.getClass().getResource(
+				Constantes.IMG_SIGUIENTE_30)));
 		btnSiguiente.addActionListener(this);
 		btnSiguiente.setToolTipText("Siguiente Imagen");
 
-		btnAnterior = new JButton(new ImageIcon(Constantes.IMG_ANTERIOR_30));
+		btnAnterior = new JButton(new ImageIcon(this.getClass().getResource(
+				Constantes.IMG_ANTERIOR_30)));
 		btnAnterior.addActionListener(this);
 		btnAnterior.setToolTipText("Anterior imagen");
 
-		btnReproducir = new JToggleButton(new ImageIcon(
-				Constantes.IMG_REPRODUCIR_30));
+		btnReproducir = new JButton(new ImageIcon(this.getClass()
+				.getResource(Constantes.IMG_REPRODUCIR_30)));
 		btnReproducir.addActionListener(this);
 		btnReproducir.setToolTipText("Reproducir");
 
-		btnFull = new JToggleButton(new ImageIcon(Constantes.IMG_FULLSCREEN_30));
+		btnFull = new JToggleButton(new ImageIcon(this.getClass().getResource(
+				Constantes.IMG_FULLSCREEN_30)));
 		btnFull.addActionListener(this);
 		btnFull.setToolTipText("Pantalla completa");
 
@@ -104,15 +110,15 @@ public class CargarImagenes extends JPanel implements ActionListener, Reproducto
 
 	class CambiarImagen extends TimerTask {
 		public void run() {
-			if(btnReproducir.isSelected() && rutas.length - 1 != imagenActual){
+			if (estadoReproduccion && rutas.length - 1 != imagenActual)
 				siguiente();
-				temporizador.schedule(new CambiarImagen(), 3*1000);
-			}
-			else{
-				try{
-				temporizador.wait();
-				}catch(Exception e){}
-				btnReproducir.setSelected(false);
+			else {
+				try {
+					temporizador.wait();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				estadoReproduccion = true;
 				reproducirMedio();
 			}
 		}
@@ -153,26 +159,42 @@ public class CargarImagenes extends JPanel implements ActionListener, Reproducto
 		}
 	}
 
+	/**
+	 * Reproducir un slide de imágenes
+	 */
 	public void reproducirMedio() {
-		if (btnReproducir.isSelected())
-		{
-			btnReproducir.setIcon(new ImageIcon(Constantes.IMG_PAUSAR_30));
-			if(rutas.length - 1 == imagenActual){
+		estadoReproduccion = !estadoReproduccion;
+		cambiarEstadoBotonReproduccion();
+	}
+
+	public void cambiarEstadoBotonReproduccion(){
+		if (estadoReproduccion) {
+			btnReproducir.setIcon(new ImageIcon(this.getClass().getResource(
+					Constantes.IMG_PAUSAR_30)));
+			if (rutas.length - 1 == imagenActual) {
 				imagenActual = 0;
 				imagen.cambiarImagen(rutas[imagenActual]);
 				cambiarEstadoBotones();
 			}
-			temporizador.schedule(new CambiarImagen(), 3*1000);
+			temporizador.schedule(new CambiarImagen(), 3 * 1000);
+		} else{
+			btnReproducir.setIcon(new ImageIcon(this.getClass().getResource(
+					Constantes.IMG_REPRODUCIR_30)));
 		}
-		else
-			btnReproducir.setIcon(new ImageIcon(
-					Constantes.IMG_REPRODUCIR_30));
+		if(observador != null)
+			observador.cambioReproducción(estadoReproduccion);
 	}
-
 	public void siguiente() {
 		++imagenActual;
 		imagen.cambiarImagen(rutas[imagenActual]);
 		cambiarEstadoBotones();
+		if (estadoReproduccion && rutas.length - 1 != imagenActual)
+			temporizador.schedule(new CambiarImagen(), 3 * 1000);
+		else
+		{
+			estadoReproduccion = false;
+			cambiarEstadoBotonReproduccion();
+		}
 	}
 
 	public void anterior() {
@@ -191,7 +213,10 @@ public class CargarImagenes extends JPanel implements ActionListener, Reproducto
 			btnAnterior.setEnabled(false);
 		else
 			btnAnterior.setEnabled(true);
-
+		if (observador != null) {
+			observador.cambioSiguiente(btnSiguiente.isEnabled());
+			observador.cambioAnterior(btnAnterior.isEnabled());
+		}
 	}
 
 	// crear barra de herramientas
@@ -202,5 +227,10 @@ public class CargarImagenes extends JPanel implements ActionListener, Reproducto
 		barraHerramientas.add(btnSiguiente);
 		barraHerramientas.add(btnFull);
 		return barraHerramientas;
+	}
+
+	@Override
+	public void registrarObservador(Observador obs) {
+		this.observador = obs;
 	}
 }

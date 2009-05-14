@@ -35,7 +35,7 @@ public class PanelIntroduccion extends JPanel implements ActionListener{
 		ventanaPrincipal =  padre;
 		
 		//Iniciar botones
-		btnAudio = new JButton("Cargar gestor de música",new ImageIcon(Constantes.IMG_AUDIO));
+		btnAudio = new JButton("Cargar gestor de música",new ImageIcon(this.getClass().getResource(Constantes.IMG_AUDIO)));
 		btnAudio.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnAudio.setVerticalTextPosition(SwingConstants.BOTTOM);
 		btnAudio.setToolTipText("Abrir gestor de música");
@@ -43,7 +43,7 @@ public class PanelIntroduccion extends JPanel implements ActionListener{
 		btnAudio.setContentAreaFilled(false);
 		btnAudio.addActionListener(this);
 
-		btnImagen = new JButton("Cargar gestor de imágenes",new ImageIcon(Constantes.IMG_IMAGEN));
+		btnImagen = new JButton("Cargar gestor de imágenes",new ImageIcon(this.getClass().getResource(Constantes.IMG_IMAGEN)));
 		btnImagen.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnImagen.setVerticalTextPosition(SwingConstants.BOTTOM);
 		btnImagen.setToolTipText("Abrir gestor de imágenes");
@@ -51,7 +51,7 @@ public class PanelIntroduccion extends JPanel implements ActionListener{
 		btnImagen.setContentAreaFilled(false);
 		btnImagen.addActionListener(this);
 
-		btnVideo = new JButton("Cargar gestor de videos", new ImageIcon(Constantes.IMG_VIDEO));
+		btnVideo = new JButton("Cargar gestor de videos", new ImageIcon(this.getClass().getResource(Constantes.IMG_VIDEO)));
 		btnVideo.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnVideo.setVerticalTextPosition(SwingConstants.BOTTOM);
 		btnVideo.setToolTipText("Abrir gestor de video");

@@ -8,6 +8,8 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -28,11 +30,11 @@ public class DialogoAcercaDe extends JDialog implements ActionListener {
 	// Botón para cerrar cuadro de diálogo
 	private JButton btnCerrar;
 	private JLabel lblLogo;
-	//Pestañas de contenido
+	// Pestañas de contenido
 	private JTabbedPane panelPestanias;
-	//Areas para mostrar la información
+	// Areas para mostrar la información
 	private JTextArea info, creditos;
-	//Objetos para situar el dialogo en la mitad de la ventana
+	// Objetos para situar el dialogo en la mitad de la ventana
 	private GraphicsEnvironment ge = GraphicsEnvironment
 			.getLocalGraphicsEnvironment();
 	private GraphicsDevice[] gs = ge.getScreenDevices();
@@ -40,11 +42,12 @@ public class DialogoAcercaDe extends JDialog implements ActionListener {
 
 	/**
 	 * El constructor recibe una referencia a la ventana que lo invoco
+	 * 
 	 * @param padre
 	 */
 	public DialogoAcercaDe(Frame padre) {
 		super(padre, "Acerca de SilverSheep...");
-		//Iniciar los objetos de la GUI
+		// Iniciar los objetos de la GUI
 		iniciarComponentes();
 	}
 
@@ -53,17 +56,16 @@ public class DialogoAcercaDe extends JDialog implements ActionListener {
 	 */
 	private void iniciarComponentes() {
 
-		//iniciar el panel de pestañas
+		// iniciar el panel de pestañas
 		panelPestanias = new JTabbedPane();
 
-		//Iniciar label del logo
-		lblLogo = new JLabel(new ImageIcon(Constantes.IMG_LOGO));
+		lblLogo = new JLabel(new ImageIcon(this.getClass().getResource(Constantes.IMG_LOGO)));
 		lblLogo.setText("SilverSheep " + Constantes.VERSION);
 		lblLogo.setHorizontalTextPosition(SwingConstants.CENTER);
 		lblLogo.setVerticalTextPosition(SwingConstants.BOTTOM);
 		lblLogo.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 25));
 
-		//Iniciar areas de texto
+		// Iniciar areas de texto
 		info = new JTextArea();
 		info.setLineWrap(true);
 		info.setEditable(false);
@@ -95,7 +97,7 @@ public class DialogoAcercaDe extends JDialog implements ActionListener {
 						+ "Se uso el conector JSqlite blabla\n"
 						+ "Se uso el conector JSqlite blabla\n" + "");
 
-		//Aniadir objetos
+		// Aniadir objetos
 		panelPestanias.addTab("Info", new JScrollPane(info));
 		panelPestanias.addTab("Creditos", new JScrollPane(creditos));
 
@@ -110,7 +112,7 @@ public class DialogoAcercaDe extends JDialog implements ActionListener {
 		add(panelPestanias, BorderLayout.CENTER);
 		add(btnCerrar, BorderLayout.SOUTH);
 
-		//Mostrar diálogo
+		// Mostrar diálogo
 		setSize(274, 500);
 		setLocation((dm.getWidth() / 2) - (getWidth() / 2),
 				(dm.getHeight() / 2) - (getHeight() / 2));

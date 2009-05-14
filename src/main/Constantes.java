@@ -7,44 +7,44 @@ package main;
  */
 public class Constantes {
 	// imagenes 50x50
-	public static final String IMG_REPRODUCIR_50 = "img/50x50/reproducir.png";
-	public static final String IMG_PAUSAR_50 = "img/50x50/pausar.png";
-	public static final String IMG_SIGUIENTE_50 = "img/50x50/siguiente.png";
-	public static final String IMG_ANTERIOR_50 = "img/50x50/anterior.png";
-	public static final String IMG_DETENER_50 = "img/50x50/parar.png";
-	public static final String IMG_CERRAR_50 = "img/50x50/cerrar.png";
-	public static final String IMG_SALIR_50 = "img/50x50/salir.png";
-	public static final String IMG_FULLSCREEN_50 = "img/50x50/fullscreen.png";
+	public static final String IMG_REPRODUCIR_50 = "../img/50x50/reproducir.png";
+	public static final String IMG_PAUSAR_50 = "../img/50x50/pausar.png";
+	public static final String IMG_SIGUIENTE_50 = "../img/50x50/siguiente.png";
+	public static final String IMG_ANTERIOR_50 = "../img/50x50/anterior.png";
+	public static final String IMG_DETENER_50 = "../img/50x50/parar.png";
+	public static final String IMG_CERRAR_50 = "../img/50x50/cerrar.png";
+	public static final String IMG_SALIR_50 = "../img/50x50/salir.png";
+	public static final String IMG_FULLSCREEN_50 = "../img/50x50/fullscreen.png";
 	// imagenes 30x30
-	public static final String IMG_REPRODUCIR_30 = "img/30x30/reproducir.png";
-	public static final String IMG_PAUSAR_30 = "img/30x30/pausar.png";
-	public static final String IMG_SIGUIENTE_30 = "img/30x30/siguiente.png";
-	public static final String IMG_ANTERIOR_30 = "img/30x30/anterior.png";
-	public static final String IMG_DETENER_30 = "img/30x30/parar.png";
-	public static final String IMG_CERRAR_30 = "img/30x30/cerrar.png";
-	public static final String IMG_SALIR_30 = "img/30x30/salir.png";
-	public static final String IMG_FULLSCREEN_30 = "img/30x30/fullscreen.png";
+	public static final String IMG_REPRODUCIR_30 = "../img/30x30/reproducir.png";
+	public static final String IMG_PAUSAR_30 = "../img/30x30/pausar.png";
+	public static final String IMG_SIGUIENTE_30 = "../img/30x30/siguiente.png";
+	public static final String IMG_ANTERIOR_30 = "../img/30x30/anterior.png";
+	public static final String IMG_DETENER_30 = "../img/30x30/parar.png";
+	public static final String IMG_CERRAR_30 = "../img/30x30/cerrar.png";
+	public static final String IMG_SALIR_30 = "../img/30x30/salir.png";
+	public static final String IMG_FULLSCREEN_30 = "../img/30x30/fullscreen.png";
 	// imagenes 16x16
 	// TODO redimensionar las imágenes presionadas
-	public static final String IMG_REPRODUCIR_16 = "img/16x16/reproducir.png";
-	public static final String IMG_PAUSAR_16 = "img/16x16/pausar.png";
-	public static final String IMG_SIGUIENTE_16 = "img/16x16/siguiente.png";
-	public static final String IMG_ANTERIOR_16 = "img/16x16/anterior.png";
-	public static final String IMG_CERRAR_16 = "img/16x16/cerrar.png";
-	public static final String IMG_REPRODUCIR_PRESS_16 = "img/16x16/reproducir_pressed.png";
-	public static final String IMG_PAUSAR_PRESS_16 = "img/16x16/pausar_pressed.png";
-	public static final String IMG_SIGUIENTE_PRESS_16 = "img/16x16/siguiente_pressed.png";
-	public static final String IMG_ANTERIOR_PRESS_16 = "img/16x16/anterior_pressed.png";
-	public static final String IMG_CERRAR_PRESS_16 = "img/16x16/cerrar_pressed.png";
-	public static final String IMG_SONIDO_16 = "img/16x16/sonido.png";
-	public static final String IMG_IMAGEN_16 = "img/16x16/imagen.png";
-	public static final String IMG_VIDEO_16 = "img/16x16/video.png";
-	public static final String IMG_OVEJA_16 = "img/16x16/sheep.png";
+	public static final String IMG_REPRODUCIR_16 = "../img/16x16/reproducir.png";
+	public static final String IMG_PAUSAR_16 = "../img/16x16/pausar.png";
+	public static final String IMG_SIGUIENTE_16 = "../img/16x16/siguiente.png";
+	public static final String IMG_ANTERIOR_16 = "../img/16x16/anterior.png";
+	public static final String IMG_CERRAR_16 = "../img/16x16/cerrar.png";
+	public static final String IMG_REPRODUCIR_PRESS_16 = "../img/16x16/reproducir_pressed.png";
+	public static final String IMG_PAUSAR_PRESS_16 = "../img/16x16/pausar_pressed.png";
+	public static final String IMG_SIGUIENTE_PRESS_16 = "../img/16x16/siguiente_pressed.png";
+	public static final String IMG_ANTERIOR_PRESS_16 = "../img/16x16/anterior_pressed.png";
+	public static final String IMG_CERRAR_PRESS_16 = "../img/16x16/cerrar_pressed.png";
+	public static final String IMG_SONIDO_16 = "../img/16x16/sonido.png";
+	public static final String IMG_IMAGEN_16 = "../img/16x16/imagen.png";
+	public static final String IMG_VIDEO_16 = "../img/16x16/video.png";
+	public static final String IMG_OVEJA_16 = "../img/16x16/sheep.png";
 	// otras imagenes
-	public static final String IMG_AUDIO = "img/misc/audio.png";
-	public static final String IMG_IMAGEN = "img/misc/imagen.png";
-	public static final String IMG_VIDEO = "img/misc/video.png";
-	public static final String IMG_LOGO = "img/misc/logo.jpg";
+	public static final String IMG_AUDIO = "../img/misc/audio.png";
+	public static final String IMG_IMAGEN = "../img/misc/imagen.png";
+	public static final String IMG_VIDEO = "../img/misc/video.png";
+	public static final String IMG_LOGO = "../img/misc/logo.jpg";
 	// formatos soportados
 	public static final String EXTENSIONES_AUDIO = "mp3-wav-";
 	public static final String EXTENSIONES_VIDEO = "mpg-mpeg-avi-wmv-";
