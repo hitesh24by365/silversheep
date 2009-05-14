@@ -1,8 +1,5 @@
 package reproductor;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
 import main.Ventana;
 import medios.ArchivoMultimedia;
 

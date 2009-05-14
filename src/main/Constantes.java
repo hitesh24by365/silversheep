@@ -6,15 +6,6 @@ package main;
  * 
  */
 public class Constantes {
-	// imagenes 50x50
-	public static final String IMG_REPRODUCIR_50 = "../img/50x50/reproducir.png";
-	public static final String IMG_PAUSAR_50 = "../img/50x50/pausar.png";
-	public static final String IMG_SIGUIENTE_50 = "../img/50x50/siguiente.png";
-	public static final String IMG_ANTERIOR_50 = "../img/50x50/anterior.png";
-	public static final String IMG_DETENER_50 = "../img/50x50/parar.png";
-	public static final String IMG_CERRAR_50 = "../img/50x50/cerrar.png";
-	public static final String IMG_SALIR_50 = "../img/50x50/salir.png";
-	public static final String IMG_FULLSCREEN_50 = "../img/50x50/fullscreen.png";
 	// imagenes 30x30
 	public static final String IMG_REPRODUCIR_30 = "../img/30x30/reproducir.png";
 	public static final String IMG_PAUSAR_30 = "../img/30x30/pausar.png";

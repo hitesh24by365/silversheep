@@ -2,8 +2,6 @@ package reproductor;
 
 import main.Ventana;
 import medios.ArchivoMultimedia;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 public class FabricaAudio implements FabricaReproductores {
 

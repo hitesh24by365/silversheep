@@ -2,8 +2,7 @@ package reproductor;
 
 import main.Ventana;
 import medios.ArchivoMultimedia;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+
 
 public class FabricaVideo implements FabricaReproductores {
 
@@ -23,5 +22,4 @@ public class FabricaVideo implements FabricaReproductores {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }
