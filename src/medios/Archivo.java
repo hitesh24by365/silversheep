@@ -2,8 +2,7 @@ package medios;
 
 import java.util.Formatter;
 import java.util.GregorianCalendar;
-
-import main.Etiqueta;
+import medios.Etiqueta;
 
 /**
  * La clase archivo proporciona todos los atributos más los getters y setters

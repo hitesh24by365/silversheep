@@ -1,10 +1,10 @@
 package reproductor;
 
-import main.Observador;
+import main.ObservadorReproduccionPestania;
 
 public interface Reproductor{
 	public void reproducirMedio();
 	public void anterior();
 	public void siguiente();
-	public void registrarObservador(Observador obs);
+	public void registrarObservador(ObservadorReproduccionPestania obs);
 }

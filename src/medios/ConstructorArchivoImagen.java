@@ -1,6 +1,6 @@
 package medios;
 
-public class Imagen extends ArchivoMultimedia {
+public class ConstructorArchivoImagen extends ConstructorArchivoMultimedia {
 
 	@Override
 	public void buildAlbumDisco() {

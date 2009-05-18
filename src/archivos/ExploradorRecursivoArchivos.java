@@ -5,10 +5,10 @@ import java.util.StringTokenizer;
 
 import main.Constantes;
 import medios.Archivo;
-import medios.Audio;
+import medios.ConstructorArchivoAudio;
 import medios.DirectorMedios;
-import medios.Imagen;
-import medios.Video;
+import medios.ConstructorArchivoImagen;
+import medios.ConstructorArchivoVideo;
 import almacenamiento.Biblioteca;
 import almacenamiento.AlmacenarInfoBibliotecaRefinado;
 import almacenamiento.TransaccionesSQLite;
@@ -18,7 +18,7 @@ import almacenamiento.TransaccionesSQLite;
  * recursivamente, y extrae los archivos específicos de acuerdo a la extensión
  * 
  */
-public class ExploradorRecursivoArchivos {
+public class ExploradorRecursivoArchivos implements Constantes {
 	// Arreglo de extensiones a buscar
 	private String[] extensiones;
 	// Objeto biblioteca para almacenar los datos
@@ -28,15 +28,15 @@ public class ExploradorRecursivoArchivos {
 	// Clase que representa un archivo general
 	private Archivo medio;
 	// Clase que representa un archivo de audio
-	private Audio archivoAudio;
+	private ConstructorArchivoAudio archivoAudio;
 	// Clase que representa un archivo de video
-	private Video archivoVideo;
+	private ConstructorArchivoVideo archivoVideo;
 	// Clase que representa un archivo de imagen
-	private Imagen archivoImagen;
+	private ConstructorArchivoImagen archivoImagen;
 	// Clase que dirige la creacion de archivos
 	private DirectorMedios directorMedios;
 	// Objeto para partir las cadenas de texto que contienen extensiones
-	StringTokenizer tokens;
+	private StringTokenizer tokens;
 
 	public ExploradorRecursivoArchivos(String extensiones) {
 		// iniciar interfaz de transacciones usando
@@ -56,9 +56,9 @@ public class ExploradorRecursivoArchivos {
 		// Iniciar el director de medios
 		directorMedios = new DirectorMedios();
 		// Iniciar los objetos de archivo específicos
-		archivoAudio = new Audio();
-		archivoVideo = new Video();
-		archivoImagen = new Imagen();
+		archivoAudio = new ConstructorArchivoAudio();
+		archivoVideo = new ConstructorArchivoVideo();
+		archivoImagen = new ConstructorArchivoImagen();
 	}
 
 	/**
@@ -95,12 +95,12 @@ public class ExploradorRecursivoArchivos {
 					if (listado[i].toLowerCase().endsWith(extensiones[j])) {
 						// Si es un archivo de audio, intentar recuperar
 						// información
-						if (esDeTipo(Constantes.EXTENSIONES_AUDIO, listado[i]))
+						if (esDeTipo(EXTENSIONES_AUDIO, listado[i]))
 							// Verificar que el archivo no se encuentre
 							// registrado
 							if (biblio.noEsta((ruta.endsWith("/") ? ruta : ruta
 									+ "/")
-									+ listado[i], Constantes.BD_ARCHIVO)) {
+									+ listado[i], BD_ARCHIVO)) {
 								// Escoger el tipo de archivo que se desea
 								// construir
 								directorMedios
@@ -115,17 +115,17 @@ public class ExploradorRecursivoArchivos {
 								// Enviar archivo al objeto que lo guardará
 								// persistentemente
 								biblio.aniadirArchivo(medio);
-							} else if (Constantes.DEBUG)// Si el archivo ya esta
+							} else if (DEBUG)// Si el archivo ya esta
 								System.out
 										.println("NO hago nada porque ya estas: "
 												+ ruta + listado[i]);
 							// imagen?
-							else if (esDeTipo(Constantes.EXTENSIONES_IMAGEN,
+							else if (esDeTipo(EXTENSIONES_IMAGEN,
 									listado[i]))
 								// TODO capturar datos de la imagen
 								if (biblio.noEsta((ruta.endsWith("/") ? ruta
 										: ruta + "/")
-										+ listado[i], Constantes.BD_ARCHIVO)) {
+										+ listado[i], BD_ARCHIVO)) {
 									directorMedios
 											.setArchivoMultimedia(archivoImagen);
 									directorMedios.buildArchivo((ruta
@@ -135,7 +135,7 @@ public class ExploradorRecursivoArchivos {
 									biblio.aniadirArchivo(medio);
 								}
 								// video?
-								else if (esDeTipo(Constantes.EXTENSIONES_VIDEO,
+								else if (esDeTipo(EXTENSIONES_VIDEO,
 										listado[i]))
 									directorMedios
 											.setArchivoMultimedia(archivoVideo);
@@ -147,7 +147,7 @@ public class ExploradorRecursivoArchivos {
 	/**
 	 * Verificar de si un archivo es de un tipo en especial. Esto se logra
 	 * comparando su extensión con la lista de extensiones de la variable
-	 * Constantes.EXTENSIONES_***
+	 * EXTENSIONES_***
 	 * 
 	 * @param extensiones
 	 * @param archivo

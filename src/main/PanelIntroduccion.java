@@ -16,7 +16,7 @@ import java.awt.BorderLayout;
  * @author gentoo
  *
  */
-public class PanelIntroduccion extends JPanel implements ActionListener{
+public class PanelIntroduccion extends JPanel implements ActionListener, Constantes{
 	private static final long serialVersionUID = -5584530084045706794L;
 	// Declarar botones
 	private JButton btnAudio, btnImagen, btnVideo;
@@ -35,7 +35,7 @@ public class PanelIntroduccion extends JPanel implements ActionListener{
 		ventanaPrincipal =  padre;
 		
 		//Iniciar botones
-		btnAudio = new JButton("Cargar gestor de música",new ImageIcon(this.getClass().getResource(Constantes.IMG_AUDIO)));
+		btnAudio = new JButton("Cargar gestor de música",new ImageIcon(this.getClass().getResource(IMG_AUDIO)));
 		btnAudio.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnAudio.setVerticalTextPosition(SwingConstants.BOTTOM);
 		btnAudio.setToolTipText("Abrir gestor de música");
@@ -43,7 +43,7 @@ public class PanelIntroduccion extends JPanel implements ActionListener{
 		btnAudio.setContentAreaFilled(false);
 		btnAudio.addActionListener(this);
 
-		btnImagen = new JButton("Cargar gestor de imágenes",new ImageIcon(this.getClass().getResource(Constantes.IMG_IMAGEN)));
+		btnImagen = new JButton("Cargar gestor de imágenes",new ImageIcon(this.getClass().getResource(IMG_IMAGEN)));
 		btnImagen.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnImagen.setVerticalTextPosition(SwingConstants.BOTTOM);
 		btnImagen.setToolTipText("Abrir gestor de imágenes");
@@ -51,7 +51,7 @@ public class PanelIntroduccion extends JPanel implements ActionListener{
 		btnImagen.setContentAreaFilled(false);
 		btnImagen.addActionListener(this);
 
-		btnVideo = new JButton("Cargar gestor de videos", new ImageIcon(this.getClass().getResource(Constantes.IMG_VIDEO)));
+		btnVideo = new JButton("Cargar gestor de videos", new ImageIcon(this.getClass().getResource(IMG_VIDEO)));
 		btnVideo.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnVideo.setVerticalTextPosition(SwingConstants.BOTTOM);
 		btnVideo.setToolTipText("Abrir gestor de video");
@@ -75,13 +75,13 @@ public class PanelIntroduccion extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent evt) {
 		if(evt.getSource() == btnImagen){
 			//Si se presionó el boton imagen, aniadir panel imagen
-			ventanaPrincipal.aniadirReproductor(Constantes.TAB_IMAGEN);
+			ventanaPrincipal.aniadirReproductor(TAB_IMAGEN);
 		}else if(evt.getSource() == btnAudio){
 			//Si se presionó el boton audio, aniadir panel audio
-			ventanaPrincipal.aniadirReproductor(Constantes.TAB_AUDIO);
+			ventanaPrincipal.aniadirReproductor(TAB_AUDIO);
 		}else if(evt.getSource() == btnVideo){
 			//Si se presionó el boton videe, aniadir panel video
-			ventanaPrincipal.aniadirReproductor(Constantes.TAB_VIDEO);
+			ventanaPrincipal.aniadirReproductor(TAB_VIDEO);
 		}
 	}
 }

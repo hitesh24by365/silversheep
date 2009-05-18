@@ -5,7 +5,7 @@ package medios;
  * @author gentoo
  *
  */
-public abstract class ArchivoMultimedia {
+public abstract class ConstructorArchivoMultimedia {
 	protected Archivo archivo;
 
 	public void crearArchivo(String rutaArchivo) {

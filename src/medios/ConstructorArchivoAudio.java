@@ -16,7 +16,7 @@ import org.tritonus.share.sampled.file.TAudioFileFormat;
  * diferentes tipos de archivos de audio
  * 
  */
-public class Audio extends ArchivoMultimedia {
+public class ConstructorArchivoAudio extends ConstructorArchivoMultimedia implements Constantes {
 	// Objeto para obtener el formato del archivo
 	private AudioFileFormat formatoArchivoAudio = null;
 	// Referencia directa al archivo
@@ -26,7 +26,6 @@ public class Audio extends ArchivoMultimedia {
 	private Map propiedades;
 	// Datos temporales del archivo
 	private String strTemporal = "";
-	private int intTemporal = 0;
 
 	// TODO probar con archivos OGG
 	@Override
@@ -51,7 +50,7 @@ public class Audio extends ArchivoMultimedia {
 
 	@Override
 	public void buildLongitud() {
-		intTemporal = ((Long) propiedades.get("duration")).intValue();
+		int intTemporal = ((Long) propiedades.get("duration")).intValue();
 		archivo.setLongitud(strTemporal == null ? 0 : intTemporal);
 	}
 
@@ -68,6 +67,7 @@ public class Audio extends ArchivoMultimedia {
 	 * Inicia el proceso de cargar de metadatos. Obtiene el tamaño del archivo y
 	 * los tags IDE MP3
 	 */
+	@Override
 	public void iniciarCargaMetadatos() {
 		// Obtener datos
 		try {
@@ -83,7 +83,7 @@ public class Audio extends ArchivoMultimedia {
 			System.err.println("Error mientras se procesaba el archivo "
 					+ archivo.getNombreArchivo());
 			archivo.setSoportado(false);
-			if (Constantes.DEBUG)
+			if (DEBUG)
 				e.printStackTrace();
 		} finally {
 			archivo.setFechaAdicion(new GregorianCalendar());

@@ -24,7 +24,7 @@ import main.Constantes;
  * configurar las opciones y ejecutar el explorador de archivos.
  * 
  */
-public class DialogoEscaneador extends JDialog implements ActionListener {
+public class DialogoEscaneador extends JDialog implements ActionListener, Constantes {
 	private static final long serialVersionUID = -8545589672343226457L;
 	// Objeto que contiene la lista de las rutas
 	private JList listaRutas;
@@ -42,10 +42,10 @@ public class DialogoEscaneador extends JDialog implements ActionListener {
 	private String[] rutas;
 	// Estos objetos los uso para determinar el ancho de la pantalla de tal
 	// manera que podamos posicionar el dialogo en la mitad
-	private GraphicsEnvironment ge = GraphicsEnvironment
+	private GraphicsEnvironment entornoGrafico = GraphicsEnvironment
 			.getLocalGraphicsEnvironment();
-	private GraphicsDevice[] gs = ge.getScreenDevices();
-	private DisplayMode dm = gs[0].getDisplayMode();
+	private GraphicsDevice[] dispositivoGrafico = entornoGrafico.getScreenDevices();
+	private DisplayMode modoPantalla = dispositivoGrafico[0].getDisplayMode();
 
 	/**
 	 * Constructor. Debe recibir la referencia al Frame que lo invocó y un
@@ -75,8 +75,8 @@ public class DialogoEscaneador extends JDialog implements ActionListener {
 
 		// Asignar tamanio y posicionar
 		setSize(250, 300);
-		setLocation((dm.getWidth() / 2) - (getWidth() / 2),
-				(dm.getHeight() / 2) - (getHeight() / 2));
+		setLocation((modoPantalla.getWidth() / 2) - (getWidth() / 2),
+				(modoPantalla.getHeight() / 2) - (getHeight() / 2));
 		setVisible(true);
 	}
 
@@ -130,11 +130,11 @@ public class DialogoEscaneador extends JDialog implements ActionListener {
 			extensiones = "";
 			// verificar cual checkbox está seleccionado
 			if (chkMusica.isSelected())
-				extensiones += Constantes.EXTENSIONES_AUDIO;
+				extensiones += EXTENSIONES_AUDIO;
 			if (chkImagen.isSelected())
-				extensiones += Constantes.EXTENSIONES_IMAGEN;
+				extensiones += EXTENSIONES_IMAGEN;
 			if (chkVideo.isSelected())
-				extensiones += Constantes.EXTENSIONES_VIDEO;
+				extensiones += EXTENSIONES_VIDEO;
 			// Iniciar el explorador
 			explorador = new ExploradorRecursivoArchivos(extensiones);
 			// Explorar cada una de las carpetas

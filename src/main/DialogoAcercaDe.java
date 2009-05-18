@@ -23,7 +23,7 @@ import javax.swing.SwingConstants;
  * la version, los autores, la licienca, créditos, etc.
  * 
  */
-public class DialogoAcercaDe extends JDialog implements ActionListener {
+public class DialogoAcercaDe extends JDialog implements ActionListener, Constantes {
 	private static final long serialVersionUID = 1984723608505634922L;
 	// Botón para cerrar cuadro de diálogo
 	private JButton btnCerrar;
@@ -33,10 +33,10 @@ public class DialogoAcercaDe extends JDialog implements ActionListener {
 	// Areas para mostrar la información
 	private JTextArea info, creditos;
 	// Objetos para situar el dialogo en la mitad de la ventana
-	private GraphicsEnvironment ge = GraphicsEnvironment
+	private GraphicsEnvironment entornoGrafico = GraphicsEnvironment
 			.getLocalGraphicsEnvironment();
-	private GraphicsDevice[] gs = ge.getScreenDevices();
-	private DisplayMode dm = gs[0].getDisplayMode();
+	private GraphicsDevice[] dispositivoGrafico = entornoGrafico.getScreenDevices();
+	private DisplayMode modoPantalla = dispositivoGrafico[0].getDisplayMode();
 
 	/**
 	 * El constructor recibe una referencia a la ventana que lo invoco
@@ -57,8 +57,8 @@ public class DialogoAcercaDe extends JDialog implements ActionListener {
 		// iniciar el panel de pestañas
 		panelPestanias = new JTabbedPane();
 
-		lblLogo = new JLabel(new ImageIcon(this.getClass().getResource(Constantes.IMG_LOGO)));
-		lblLogo.setText("SilverSheep " + Constantes.VERSION);
+		lblLogo = new JLabel(new ImageIcon(this.getClass().getResource(IMG_LOGO)));
+		lblLogo.setText("SilverSheep " + VERSION);
 		lblLogo.setHorizontalTextPosition(SwingConstants.CENTER);
 		lblLogo.setVerticalTextPosition(SwingConstants.BOTTOM);
 		lblLogo.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 25));
@@ -112,8 +112,8 @@ public class DialogoAcercaDe extends JDialog implements ActionListener {
 
 		// Mostrar diálogo
 		setSize(274, 500);
-		setLocation((dm.getWidth() / 2) - (getWidth() / 2),
-				(dm.getHeight() / 2) - (getHeight() / 2));
+		setLocation((modoPantalla.getWidth() / 2) - (getWidth() / 2),
+				(modoPantalla.getHeight() / 2) - (getHeight() / 2));
 		setVisible(true);
 	}
 

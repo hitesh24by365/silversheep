@@ -3,7 +3,7 @@ package reproductor;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import main.Observador;
+import main.ObservadorReproduccionPestania;
 
 public class CargarAudio extends JPanel implements Reproductor {
 
@@ -11,7 +11,7 @@ public class CargarAudio extends JPanel implements Reproductor {
 	 * 
 	 */
 	private static final long serialVersionUID = 293180966986541248L;
-	private Observador observador;
+	private ObservadorReproduccionPestania observador;
 
 	public CargarAudio(JFrame padre) {
 		// TODO Auto-generated constructor stub
@@ -36,7 +36,7 @@ public class CargarAudio extends JPanel implements Reproductor {
 	}
 
 	@Override
-	public void registrarObservador(Observador obs) {
+	public void registrarObservador(ObservadorReproduccionPestania obs) {
 		this.observador = obs;
 		
 	}

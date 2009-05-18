@@ -2,7 +2,7 @@ package listados;
 
 import javax.swing.JPanel;
 
-import main.Album;
+import medios.Album;
 
 /**
  * Esta clase extiende {@link DecoradorListado} y aniade el atributo Album

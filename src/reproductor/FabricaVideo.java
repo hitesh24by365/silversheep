@@ -1,7 +1,7 @@
 package reproductor;
 
 import main.Ventana;
-import medios.ArchivoMultimedia;
+import medios.ConstructorArchivoMultimedia;
 
 
 public class FabricaVideo implements FabricaReproductores {
@@ -18,7 +18,7 @@ public class FabricaVideo implements FabricaReproductores {
 	}
 
 	@Override
-	public Reproductor crearReproductor(ArchivoMultimedia[] archivos) {
+	public Reproductor crearReproductor(ConstructorArchivoMultimedia[] archivos) {
 		// TODO Auto-generated method stub
 		return null;
 	}

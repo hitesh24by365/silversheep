@@ -1,7 +1,7 @@
 package almacenamiento;
 
-import main.Etiqueta;
 import medios.Archivo;
+import medios.Etiqueta;
 
 /**
  * Esta interfaz implementa todos los métodos de la interfaz

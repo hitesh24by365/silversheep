@@ -3,13 +3,13 @@ package reproductor;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import main.Observador;
+import main.ObservadorReproduccionPestania;
 
 
 public class CargarVideos extends JPanel implements Reproductor{
 
 	private static final long serialVersionUID = 3406839885057199917L;
-	private Observador observador;
+	private ObservadorReproduccionPestania observador;
 
 
 	public CargarVideos(JFrame padre) {
@@ -35,7 +35,7 @@ public class CargarVideos extends JPanel implements Reproductor{
 	}
 
 	@Override
-	public void registrarObservador(Observador obs) {
+	public void registrarObservador(ObservadorReproduccionPestania obs) {
 		this.observador = obs;
 		
 	}

@@ -1,7 +1,7 @@
 package almacenamiento;
 
-import main.Etiqueta;
 import medios.Archivo;
+import medios.Etiqueta;
 
 /**
  * La clase AlmacenarInfoBibliotecaRefinado ejecuta los metodos 

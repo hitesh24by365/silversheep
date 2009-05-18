@@ -14,14 +14,14 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
 import main.Constantes;
-import main.Observador;
+import main.ObservadorReproduccionPestania;
 import main.Ventana;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class CargarImagenes extends JPanel implements ActionListener,
-		Reproductor {
+		Reproductor, Constantes {
 	private static final long serialVersionUID = 1L;
 	// Barra de herramientas y sus botones
 	private JToolBar barraHerramientas;
@@ -33,12 +33,12 @@ public class CargarImagenes extends JPanel implements ActionListener,
 	private boolean estaFull = false;
 	// Referencia al Padre
 	private Ventana padre;
-	private PanelImagen imagen;
+	private PanelImagen panelImagen;
 	private String[] rutas;
 	private int imagenActual = 0;
 
 	private Timer temporizador;
-	private Observador observador;
+	private ObservadorReproduccionPestania observador;
 	//se esta reproduciendo algo?
 	private boolean estadoReproduccion;
 	public CargarImagenes(Ventana padre, String[] rutas) {
@@ -75,22 +75,22 @@ public class CargarImagenes extends JPanel implements ActionListener,
 		this.setLayout(new BorderLayout());
 
 		btnSiguiente = new JButton(new ImageIcon(this.getClass().getResource(
-				Constantes.IMG_SIGUIENTE_30)));
+				IMG_SIGUIENTE_30)));
 		btnSiguiente.addActionListener(this);
 		btnSiguiente.setToolTipText("Siguiente Imagen");
 
 		btnAnterior = new JButton(new ImageIcon(this.getClass().getResource(
-				Constantes.IMG_ANTERIOR_30)));
+				IMG_ANTERIOR_30)));
 		btnAnterior.addActionListener(this);
 		btnAnterior.setToolTipText("Anterior imagen");
 
 		btnReproducir = new JButton(new ImageIcon(this.getClass()
-				.getResource(Constantes.IMG_REPRODUCIR_30)));
+				.getResource(IMG_REPRODUCIR_30)));
 		btnReproducir.addActionListener(this);
 		btnReproducir.setToolTipText("Reproducir");
 
 		btnFull = new JToggleButton(new ImageIcon(this.getClass().getResource(
-				Constantes.IMG_FULLSCREEN_30)));
+				IMG_FULLSCREEN_30)));
 		btnFull.addActionListener(this);
 		btnFull.setToolTipText("Pantalla completa");
 
@@ -99,11 +99,11 @@ public class CargarImagenes extends JPanel implements ActionListener,
 		this.padre = padre;
 
 		if (hayImagenes())
-			imagen = new PanelImagen(obtenerPrimeraImagen());
+			panelImagen = new PanelImagen(obtenerPrimeraImagen());
 		else
-			imagen = new PanelImagen();
+			panelImagen = new PanelImagen();
 		cambiarEstadoBotones();
-		add(imagen, BorderLayout.CENTER);
+		add(panelImagen, BorderLayout.CENTER);
 
 		temporizador = new Timer();
 	}
@@ -170,23 +170,23 @@ public class CargarImagenes extends JPanel implements ActionListener,
 	public void cambiarEstadoBotonReproduccion(){
 		if (estadoReproduccion) {
 			btnReproducir.setIcon(new ImageIcon(this.getClass().getResource(
-					Constantes.IMG_PAUSAR_30)));
+					IMG_PAUSAR_30)));
 			if (rutas.length - 1 == imagenActual) {
 				imagenActual = 0;
-				imagen.cambiarImagen(rutas[imagenActual]);
+				panelImagen.cambiarImagen(rutas[imagenActual]);
 				cambiarEstadoBotones();
 			}
 			temporizador.schedule(new CambiarImagen(), 3 * 1000);
 		} else{
 			btnReproducir.setIcon(new ImageIcon(this.getClass().getResource(
-					Constantes.IMG_REPRODUCIR_30)));
+					IMG_REPRODUCIR_30)));
 		}
 		if(observador != null)
-			observador.cambioReproducción(estadoReproduccion);
+			observador.cambioReproduccion(estadoReproduccion);
 	}
 	public void siguiente() {
 		++imagenActual;
-		imagen.cambiarImagen(rutas[imagenActual]);
+		panelImagen.cambiarImagen(rutas[imagenActual]);
 		cambiarEstadoBotones();
 		if (estadoReproduccion && rutas.length - 1 != imagenActual)
 			temporizador.schedule(new CambiarImagen(), 3 * 1000);
@@ -199,7 +199,7 @@ public class CargarImagenes extends JPanel implements ActionListener,
 
 	public void anterior() {
 		--imagenActual;
-		imagen.cambiarImagen(rutas[imagenActual]);
+		panelImagen.cambiarImagen(rutas[imagenActual]);
 		cambiarEstadoBotones();
 	}
 
@@ -230,7 +230,7 @@ public class CargarImagenes extends JPanel implements ActionListener,
 	}
 
 	@Override
-	public void registrarObservador(Observador obs) {
+	public void registrarObservador(ObservadorReproduccionPestania obs) {
 		this.observador = obs;
 	}
 }

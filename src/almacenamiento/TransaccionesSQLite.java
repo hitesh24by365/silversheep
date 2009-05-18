@@ -1,8 +1,8 @@
 package almacenamiento;
 
 import main.Constantes;
-import main.Etiqueta;
 import medios.Archivo;
+import medios.Etiqueta;
 
 import java.sql.*;
 /**
@@ -11,11 +11,11 @@ import java.sql.*;
  * almacenar los datos de la biblioteca en una base de datos SQLite
  * 
  */
-public class TransaccionesSQLite implements ImplementadorMetodosAlmacenamiento {
+public class TransaccionesSQLite implements ImplementadorMetodosAlmacenamiento, Constantes {
 	// Ruta del controlador JDBC
-	private final String ControladorJDBC = Constantes.BD_RUTA_CONTROLADOR_JDBC;
+	private final String CONTROLADOR_JDBC = BD_RUTA_CONTROLADOR_JDBC;
 	// Nombre de la base de datos a usar
-	private final String nombreBD = Constantes.DB_NOMBRE_BASE_DATOS;
+	private final String NOMBRE_BD = DB_NOMBRE_BASE_DATOS;
 	// Esta variable se usará para crear las consultas de cualquier instrucción
 	// SQL del programa
 	private String consultaTemp;
@@ -34,16 +34,16 @@ public class TransaccionesSQLite implements ImplementadorMetodosAlmacenamiento {
 	public TransaccionesSQLite() {
 		try {
 			// Crear el conector e iniciar objetos de conexión
-			Class.forName(ControladorJDBC);
-			conexion = DriverManager.getConnection(nombreBD);
+			Class.forName(CONTROLADOR_JDBC);
+			conexion = DriverManager.getConnection(NOMBRE_BD);
 			instruccion = conexion.createStatement();
 			resultados = null;
 		} catch (ClassNotFoundException e) {
-			if (Constantes.DEBUG)
+			if (DEBUG)
 				e.printStackTrace();
 		} catch (SQLException e) {
 			System.err.println("Error SQL: " + consultaTemp);
-			if (Constantes.DEBUG)
+			if (DEBUG)
 				e.printStackTrace();
 		}
 	}
@@ -59,7 +59,7 @@ public class TransaccionesSQLite implements ImplementadorMetodosAlmacenamiento {
 			resultados = instruccion.executeQuery(consulta);
 		} catch (SQLException e) {
 			System.err.println("Error SQL: " + consulta);
-			if (Constantes.DEBUG)
+			if (DEBUG)
 				e.printStackTrace();
 		}
 		return resultados;
@@ -67,12 +67,12 @@ public class TransaccionesSQLite implements ImplementadorMetodosAlmacenamiento {
 
 	@Override
 	public void aniadirAlbum(String nombre, String descripcion) {
-		if (noEsta(nombre, Constantes.BD_ALBUM)) {
+		if (noEsta(nombre, BD_ALBUM)) {
 			try {
 				instruccion.executeQuery("INSERT INTO XXXX VALUES()");
 			} catch (SQLException e) {
 				System.err.println("Error SQL: " + consultaTemp);
-				if (Constantes.DEBUG)
+				if (DEBUG)
 					e.printStackTrace();
 			}
 		}
@@ -112,7 +112,7 @@ public class TransaccionesSQLite implements ImplementadorMetodosAlmacenamiento {
 
 	@Override
 	public void aniadirArchivo(Archivo archivo) {
-		if (noEsta(archivo.getNombreArchivo(), Constantes.BD_ARCHIVO)) {
+		if (noEsta(archivo.getNombreArchivo(), BD_ARCHIVO)) {
 			try {
 				// Construir la consulta para insertar un nuevo archivo
 				consultaTemp = "INSERT INTO archivo (nombre,"
@@ -144,7 +144,7 @@ public class TransaccionesSQLite implements ImplementadorMetodosAlmacenamiento {
 				instruccion.execute(consultaTemp);
 			} catch (SQLException e) {
 				System.err.println("Error SQL: " + consultaTemp);
-				if (Constantes.DEBUG)
+				if (DEBUG)
 					e.printStackTrace();
 			}
 		}
@@ -161,12 +161,12 @@ public class TransaccionesSQLite implements ImplementadorMetodosAlmacenamiento {
 		String consulta = "";
 		// verificar si algun tipo en especial ya se encuentra almacenado en la
 		// base de datos
-		if (tipo.equals(Constantes.BD_ALBUM))
+		if (tipo.equals(BD_ALBUM))
 			consulta = "SELECT BLA BLE";
-		else if (tipo.equals(Constantes.BD_ARCHIVO))
+		else if (tipo.equals(BD_ARCHIVO))
 			consulta = "SELECT nombre FROM archivo WHERE nombre='" + nombre
 					+ "'";
-		else if (tipo.equals(Constantes.BD_ETIQUETA))
+		else if (tipo.equals(BD_ETIQUETA))
 			consulta = "SELECT HAY etiq";
 		try {
 			resultados = instruccion.executeQuery(consulta);
@@ -176,7 +176,7 @@ public class TransaccionesSQLite implements ImplementadorMetodosAlmacenamiento {
 				return false;
 		} catch (SQLException e) {
 			System.err.println("Error SQL: " + consulta);
-			if (Constantes.DEBUG)
+			if (DEBUG)
 				e.printStackTrace();
 		}
 		return true;

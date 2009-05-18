@@ -1,4 +1,4 @@
-package main;
+package medios;
 
 public class Album {
 

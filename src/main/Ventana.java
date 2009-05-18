@@ -23,7 +23,7 @@ import reproductor.FabricaVideo;
 import reproductor.Reproductor;
 import archivos.DialogoEscaneador;
 
-public class Ventana extends JFrame implements ActionListener {
+public class Ventana extends JFrame implements ActionListener, Constantes {
 	private static final long serialVersionUID = -712789070387375137L;
 	// La barra de menu y sus items
 	private JMenuBar barraMenu;
@@ -34,10 +34,10 @@ public class Ventana extends JFrame implements ActionListener {
 	// Panel que contiene los componentes del intro
 	private PanelIntroduccion intro;
 	// Permiten posicionar la ventana en la mitad ;)
-	private GraphicsEnvironment ge = GraphicsEnvironment
+	private GraphicsEnvironment entornoGrafico = GraphicsEnvironment
 			.getLocalGraphicsEnvironment();
-	private GraphicsDevice[] gs = ge.getScreenDevices();
-	private DisplayMode dm = gs[0].getDisplayMode();
+	private GraphicsDevice[] dispositivoGrafico = entornoGrafico.getScreenDevices();
+	private DisplayMode modoPantalla = dispositivoGrafico[0].getDisplayMode();
 	// Pestanias de reproducciones
 	private JTabbedPane pestaniasReproductores;
 	// Fabrica de reproductores
@@ -61,13 +61,13 @@ public class Ventana extends JFrame implements ActionListener {
 				"img/notas.png"), intro);
 		pestaniasReproductores.setTabComponentAt(pestaniasReproductores
 				.getTabCount() - 1, new Pestania(pestaniasReproductores,
-				Constantes.IMG_OVEJA_16, true));
+				IMG_OVEJA_16, true));
 		contenedor.add(pestaniasReproductores);
 
 		// Mostrar ventana
 		setSize(800, 600);
-		setLocation((dm.getWidth() / 2) - (getWidth() / 2),
-				(dm.getHeight() / 2) - (getHeight() / 2));
+		setLocation((modoPantalla.getWidth() / 2) - (getWidth() / 2),
+				(modoPantalla.getHeight() / 2) - (getHeight() / 2));
 		setVisible(true);
 	}
 
@@ -85,7 +85,7 @@ public class Ventana extends JFrame implements ActionListener {
 	/**
 	 * Iniciar componentes de la barra de menu
 	 */
-	public void iniciarBarraMenu() {
+	private void iniciarBarraMenu() {
 		// Iniciar items de menu
 		menuArchivo = new JMenu("Archivo");
 		menuArchivo.setMnemonic('A');
@@ -156,15 +156,15 @@ public class Ventana extends JFrame implements ActionListener {
 	 */
 	public void aniadirReproductor(String tipo) {
 		String icono = "";
-		if (tipo.equals(Constantes.TAB_IMAGEN)) {
+		if (tipo.equals(TAB_IMAGEN)) {
 			fabricaReproductores = new FabricaImagenes();
-			icono = Constantes.IMG_IMAGEN_16;
-		} else if (tipo.equals(Constantes.TAB_AUDIO)) {
+			icono = IMG_IMAGEN_16;
+		} else if (tipo.equals(TAB_AUDIO)) {
 			fabricaReproductores = new FabricaAudio();
-			icono = Constantes.IMG_SONIDO_16;
-		} else if (tipo.equals(Constantes.TAB_VIDEO)) {
+			icono = IMG_SONIDO_16;
+		} else if (tipo.equals(TAB_VIDEO)) {
 			fabricaReproductores = new FabricaVideo();
-			icono = Constantes.IMG_VIDEO_16;
+			icono = IMG_VIDEO_16;
 		}
 		aniadirReproductorPestania(tipo, fabricaReproductores
 				.crearReproductor(this), icono);

@@ -5,7 +5,7 @@ package main;
  * mientras el sistema esté en funcionamiento
  * 
  */
-public class Constantes {
+public interface Constantes {
 	// imagenes 30x30
 	public static final String IMG_REPRODUCIR_30 = "../img/30x30/reproducir.png";
 	public static final String IMG_PAUSAR_30 = "../img/30x30/pausar.png";
@@ -16,7 +16,6 @@ public class Constantes {
 	public static final String IMG_SALIR_30 = "../img/30x30/salir.png";
 	public static final String IMG_FULLSCREEN_30 = "../img/30x30/fullscreen.png";
 	// imagenes 16x16
-	// TODO redimensionar las imágenes presionadas
 	public static final String IMG_REPRODUCIR_16 = "../img/16x16/reproducir.png";
 	public static final String IMG_PAUSAR_16 = "../img/16x16/pausar.png";
 	public static final String IMG_SIGUIENTE_16 = "../img/16x16/siguiente.png";

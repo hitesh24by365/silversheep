@@ -5,14 +5,14 @@ package medios;
  *
  */
 public class DirectorMedios {
-	private ArchivoMultimedia archivoMultimedia;
+	private ConstructorArchivoMultimedia constructorArchivoMultimedia;
 
-	public void setArchivoMultimedia(ArchivoMultimedia archivoMultimedia) {
-		this.archivoMultimedia = archivoMultimedia;
+	public void setArchivoMultimedia(ConstructorArchivoMultimedia constructorArchivoMultimedia) {
+		this.constructorArchivoMultimedia = constructorArchivoMultimedia;
 	}
 
 	public Archivo getArchivo() {
-		return archivoMultimedia.getArchivo();
+		return constructorArchivoMultimedia.getArchivo();
 	}
 
 	/**
@@ -20,18 +20,18 @@ public class DirectorMedios {
 	 * @param rutaArchivo
 	 */
 	public void buildArchivo(String rutaArchivo){
-		archivoMultimedia.crearArchivo(rutaArchivo);
-		archivoMultimedia.buildTamanioKB();
-		archivoMultimedia.buildNombreArchivo();
-		archivoMultimedia.buildRuta();
-		archivoMultimedia.buildExtension();
-		archivoMultimedia.buildEtiquetas();
-		archivoMultimedia.buildFechaAdicion();
-		archivoMultimedia.buildDimensiones();
-		archivoMultimedia.buildLongitud();
-		archivoMultimedia.buildCodec();
-		archivoMultimedia.buildArtista();
-		archivoMultimedia.buildAlbumDisco();
-		archivoMultimedia.buildGenero();
+		constructorArchivoMultimedia.crearArchivo(rutaArchivo);
+		constructorArchivoMultimedia.buildTamanioKB();
+		constructorArchivoMultimedia.buildNombreArchivo();
+		constructorArchivoMultimedia.buildRuta();
+		constructorArchivoMultimedia.buildExtension();
+		constructorArchivoMultimedia.buildEtiquetas();
+		constructorArchivoMultimedia.buildFechaAdicion();
+		constructorArchivoMultimedia.buildDimensiones();
+		constructorArchivoMultimedia.buildLongitud();
+		constructorArchivoMultimedia.buildCodec();
+		constructorArchivoMultimedia.buildArtista();
+		constructorArchivoMultimedia.buildAlbumDisco();
+		constructorArchivoMultimedia.buildGenero();
 	}
 }
