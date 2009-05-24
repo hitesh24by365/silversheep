@@ -86,7 +86,7 @@ public class DialogoAcercaDe extends JDialog implements ActionListener, Constant
 						+ "Ferney Toledo <bla@bla.com>\n"
 						+ "Marcela Guiza <bla@bla.com>\n"
 						+ "Luis Arango <bla@bla.com>\n"
-						+ "Cristian Castiblanco <bla@bla.com>\n\n"
+						+ "Cristian Castiblanco <cristian@elhacker.net>\n\n"
 						+ "Iconos e imagenes:"
 						+ "Iconos Comix <bla@bla.com> by bbbbbb\n"
 						+ "El logo de SilverSheep fue diseniado por Ferney Toledo <blabla>\n\n"
