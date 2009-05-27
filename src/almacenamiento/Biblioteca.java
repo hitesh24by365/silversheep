@@ -4,10 +4,9 @@ import medios.Archivo;
 import medios.Etiqueta;
 
 /**
- * La interfaz Biblioteca abstrae todos los métodos que debería
- * proporcionar cualquier componente que guarde datos de los
- * medios de manera persistente. Es parte del patrón de diseño 
- * Bridge usado para la persistencia de los datos. 
+ * La interfaz Biblioteca abstrae todos los métodos que debería proporcionar
+ * cualquier componente que guarde datos de los medios de manera persistente. Es
+ * parte del patrón de diseño Bridge usado para la persistencia de los datos.
  * 
  */
 public interface Biblioteca {
@@ -82,11 +81,44 @@ public interface Biblioteca {
 	public void quitarArchivoAlbum(int id);
 
 	/**
-	 * Método que nos permite determinar si cierto componente de la 
-	 * biblioteca ya se encuentra registrado o no.
+	 * Método que nos permite determinar si cierto componente de la biblioteca
+	 * ya se encuentra registrado o no.
+	 * 
 	 * @param nombre
 	 * @param tipo
 	 * @return
 	 */
 	public boolean noEsta(String nombre, String tipo);
+
+	/**
+	 * Método que nos permite almacenar un par opción-valor
+	 * 
+	 * @param nombre
+	 * @param valor
+	 */
+	public void aniadirOpcion(String nombre, String valor);
+
+	/**
+	 * Método que nos permite quitar un par opción-valor
+	 * 
+	 * @param nombre
+	 * @param valor
+	 */
+	public void quitarOpcion(String nombre, String valor);
+
+	/**
+	 * Método que nos permite quitar un par opción-valor
+	 * 
+	 * @param nombre
+	 */
+	public void quitarOpcionesPorNombre(String nombre);
+
+	/**
+	 * Este metodo devueleve un arreglo con las opciones que tengan el nombre
+	 * proporcionado
+	 * 
+	 * @param nombre
+	 * @return
+	 */
+	public String[] opcionesPorNombre(String nombre);
 }

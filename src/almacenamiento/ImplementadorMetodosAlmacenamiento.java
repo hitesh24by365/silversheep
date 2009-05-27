@@ -4,11 +4,10 @@ import medios.Archivo;
 import medios.Etiqueta;
 
 /**
- * Esta interfaz implementa todos los métodos de la interfaz
- * {@link Biblioteca}, y es instanciada por todos aquellos
- * componentes que realicen la persistencia de los datos
- * de la biblioteca de medios
- *
+ * Esta interfaz implementa todos los métodos de la interfaz {@link Biblioteca},
+ * y es instanciada por todos aquellos componentes que realicen la persistencia
+ * de los datos de la biblioteca de medios
+ * 
  */
 public interface ImplementadorMetodosAlmacenamiento {
 	/**
@@ -82,11 +81,32 @@ public interface ImplementadorMetodosAlmacenamiento {
 	public void quitarArchivoAlbum(int id);
 
 	/**
-	 * Método que nos permite determinar si cierto componente de la 
-	 * biblioteca ya se encuentra registrado o no.
+	 * Método que nos permite determinar si cierto componente de la biblioteca
+	 * ya se encuentra registrado o no.
+	 * 
 	 * @param nombre
 	 * @param tipo
 	 * @return
 	 */
 	public boolean noEsta(String nombre, String tipo);
+
+	/**
+	 * Método que nos permite almacenar un par opción-valor
+	 * 
+	 * @param nombre
+	 * @param valor
+	 */
+	public void quitarOpcion(String nombre, String valor);
+
+	/**
+	 * Método que nos permite quitar un par opción-valor
+	 * 
+	 * @param nombre
+	 * @param valor
+	 */
+	public void aniadirOpcion(String nombre, String valor);
+
+	public void quitarOpcionesPorNombre(String nombre);
+
+	public String[] opcionesPorNombre(String nombre);
 }

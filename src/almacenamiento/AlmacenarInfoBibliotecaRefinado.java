@@ -66,4 +66,21 @@ public class AlmacenarInfoBibliotecaRefinado implements Biblioteca {
 	public boolean noEsta(String nombre, String tipo) {
 		return implementador.noEsta(nombre, tipo);
 	}
+	@Override
+	public void aniadirOpcion(String nombre, String valor) {
+		implementador.aniadirOpcion(nombre, valor);
+	}
+	@Override
+	public void quitarOpcion(String nombre, String valor) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void quitarOpcionesPorNombre(String nombre) {
+		implementador.quitarOpcionesPorNombre(nombre);
+	}
+	@Override
+	public String[] opcionesPorNombre(String nombre) {
+		return implementador.opcionesPorNombre(nombre);
+	}
 }

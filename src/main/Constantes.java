@@ -30,6 +30,9 @@ public interface Constantes {
 	public static final String IMG_IMAGEN_16 = "../img/16x16/imagen.png";
 	public static final String IMG_VIDEO_16 = "../img/16x16/video.png";
 	public static final String IMG_OVEJA_16 = "../img/16x16/sheep.png";
+	public static final String IMG_ANIADIR_RUTA_16 = "../img/16x16/aniadir.png";
+	public static final String IMG_REMOVER_RUTA_16 = "../img/16x16/remover.png";
+	public static final String IMG_REFRESCAR_16 = "../img/16x16/refrescar.png";
 	// otras imagenes
 	public static final String IMG_AUDIO = "../img/misc/audio.png";
 	public static final String IMG_IMAGEN = "../img/misc/imagen.png";
