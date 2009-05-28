@@ -123,7 +123,7 @@ public class DialogoEscaneador extends JDialog implements ActionListener,
 
 		btnAniadirRuta = new JButton(new ImageIcon(this.getClass().getResource(
 				IMG_ANIADIR_RUTA_16)));
-		btnAniadirRuta.setToolTipText("Añadir una nueva ruta");
+		btnAniadirRuta.setToolTipText("A\u00f1adir una nueva ruta");
 		btnAniadirRuta.addActionListener(this);
 
 		btnRemoverRuta = new JButton(new ImageIcon(this.getClass().getResource(
@@ -223,7 +223,10 @@ public class DialogoEscaneador extends JDialog implements ActionListener,
 			return;
 		rutas.add(selectorRuta.getSelectedFile().toString());
 		listaRutas.setListData(rutas);
-		btnEscanear.setEnabled(true);
+		if (!chkMusica.isSelected() && !chkImagen.isSelected()
+				&& !chkVideo.isSelected())
+			btnEscanear.setEnabled(false);
+		else btnEscanear.setEnabled(true);
 	}
 	/**
 	 * Este metodo carga las preferencias de la GUI

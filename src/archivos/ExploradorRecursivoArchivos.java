@@ -73,7 +73,7 @@ public class ExploradorRecursivoArchivos implements Constantes {
 	}
 
 	/**
-	 * Exploración de archivos recursivamente
+	 * Exploracion de archivos recursivamente
 	 * 
 	 * @param ruta
 	 */
@@ -95,7 +95,7 @@ public class ExploradorRecursivoArchivos implements Constantes {
 					if (listado[i].toLowerCase().endsWith(extensiones[j])) {
 						// Si es un archivo de audio, intentar recuperar
 						// información
-						if (esDeTipo(EXTENSIONES_AUDIO, listado[i]))
+						if (esDeTipo(EXTENSIONES_AUDIO, listado[i])) {
 							// Verificar que el archivo no se encuentre
 							// registrado
 							if (biblio.noEsta((ruta.endsWith("/") ? ruta : ruta
@@ -119,26 +119,25 @@ public class ExploradorRecursivoArchivos implements Constantes {
 								System.out
 										.println("NO hago nada porque ya estas: "
 												+ ruta + listado[i]);
-							// imagen?
-							else if (esDeTipo(EXTENSIONES_IMAGEN,
-									listado[i]))
-								// TODO capturar datos de la imagen
-								if (biblio.noEsta((ruta.endsWith("/") ? ruta
-										: ruta + "/")
-										+ listado[i], BD_ARCHIVO)) {
-									directorMedios
-											.setArchivoMultimedia(archivoImagen);
-									directorMedios.buildArchivo((ruta
-											.endsWith("/") ? ruta : ruta + "/")
-											+ listado[i]);
-									medio = directorMedios.getArchivo();
-									biblio.aniadirArchivo(medio);
-								}
-								// video?
-								else if (esDeTipo(EXTENSIONES_VIDEO,
-										listado[i]))
-									directorMedios
-											.setArchivoMultimedia(archivoVideo);
+						}// imagen?
+						if (esDeTipo(EXTENSIONES_IMAGEN, listado[i])) {
+							// TODO capturar datos de la imagen
+							if (biblio.noEsta((ruta.endsWith("/") ? ruta : ruta
+									+ "/")
+									+ listado[i], BD_ARCHIVO)) {
+								directorMedios
+										.setArchivoMultimedia(archivoImagen);
+								directorMedios
+										.buildArchivo((ruta.endsWith("/") ? ruta
+												: ruta + "/").replace('\\', '/')
+												+ listado[i]);
+								medio = directorMedios.getArchivo();
+								biblio.aniadirArchivo(medio);
+							} else if (DEBUG)// Si el archivo ya esta
+								System.out
+										.println("NO hago nada porque ya estas: "
+												+ ruta + listado[i]);
+						}
 					}
 			}
 		}
