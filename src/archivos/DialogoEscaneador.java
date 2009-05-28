@@ -238,6 +238,13 @@ public class DialogoEscaneador extends JDialog implements ActionListener,
 			if(opciones[i].equals("video"))
 				chkVideo.setSelected(true);
 		}
+		opciones = biblio.opcionesPorNombre("ruta-exploracion");
+		for(int i=0; i<opciones.length; i++)
+			rutas.add(opciones[i]);
+		listaRutas.setListData(opciones);
+		if (!chkMusica.isSelected() && !chkImagen.isSelected()
+				&& !chkVideo.isSelected())
+			btnEscanear.setEnabled(false);
 	}
 	/**
 	 * Este metodo guarda las preferencias de la GUI en la base de datos
