@@ -19,23 +19,25 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
 /**
- * Muestra un cuadro de diálogo que contiene la información del proyecto, como
- * la version, los autores, la licienca, créditos, etc.
+ * Muestra un cuadro de dialogo que contiene la informacion del proyecto, como
+ * la version, los autores, la licienca, creditos, etc.
  * 
  */
-public class DialogoAcercaDe extends JDialog implements ActionListener, Constantes {
+public class DialogoAcercaDe extends JDialog implements ActionListener,
+		Constantes {
 	private static final long serialVersionUID = 1984723608505634922L;
-	// Botón para cerrar cuadro de diálogo
+	// Boton para cerrar cuadro de dialogo
 	private JButton btnCerrar;
 	private JLabel lblLogo;
-	// Pestañas de contenido
+	// Pestanias de contenido
 	private JTabbedPane panelPestanias;
 	// Areas para mostrar la información
 	private JTextArea info, creditos;
 	// Objetos para situar el dialogo en la mitad de la ventana
 	private GraphicsEnvironment entornoGrafico = GraphicsEnvironment
 			.getLocalGraphicsEnvironment();
-	private GraphicsDevice[] dispositivoGrafico = entornoGrafico.getScreenDevices();
+	private GraphicsDevice[] dispositivoGrafico = entornoGrafico
+			.getScreenDevices();
 	private DisplayMode modoPantalla = dispositivoGrafico[0].getDisplayMode();
 
 	/**
@@ -57,7 +59,8 @@ public class DialogoAcercaDe extends JDialog implements ActionListener, Constant
 		// iniciar el panel de pestañas
 		panelPestanias = new JTabbedPane();
 
-		lblLogo = new JLabel(new ImageIcon(this.getClass().getResource(IMG_LOGO)));
+		lblLogo = new JLabel(new ImageIcon(this.getClass()
+				.getResource(IMG_LOGO)));
 		lblLogo.setText("SilverSheep " + VERSION);
 		lblLogo.setHorizontalTextPosition(SwingConstants.CENTER);
 		lblLogo.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -68,15 +71,12 @@ public class DialogoAcercaDe extends JDialog implements ActionListener, Constant
 		info.setLineWrap(true);
 		info.setEditable(false);
 		info
-				.setText("Copyleft 2009 Ningun derecho reservado. SilverSheep es software "
+				.setText("Copyleft 2009 Ning\u00fan derecho reservado. SilverSheep es software "
 						+ "libre; usted es libre de copiar, modificar y redistribuir este programa "
-						+ "bajo los terminos de la licencia GNU/GPL version 3.0 "
-						+ "o superior. SilverSheep se distribuye sin ningun tipo de garantia.\n\n"
-						+ "La licencia sera mantenida durante el desarrollo y, "
-						+ "ojala, despues de el, a menos que alguno de los colaboradores "
-						+ "exprese su inconformidad con la misma.\n\nMaterial no creado por mi, "
-						+ "como el logo o los iconos, estan bajo la licencia que los autores "
-						+ "hayan decidido para los mismos");
+						+ "bajo los t\u00e9rminos de la licencia GNU/GPL versi\u00f3n 3.0 "
+						+ "o superior. SilverSheep se distribuye sin ning\u00fan tipo de garant\u00eda.\n\n"
+						+ "\n\nMaterial no creado por mi, como el logo o los iconos, estan bajo la licencia que los autores "
+						+ "hayan decidido para los mismos.");
 
 		creditos = new JTextArea();
 		creditos.setLineWrap(true);
@@ -87,17 +87,17 @@ public class DialogoAcercaDe extends JDialog implements ActionListener, Constant
 						+ "Marcela Guiza <bla@bla.com>\n"
 						+ "Luis Arango <bla@bla.com>\n"
 						+ "Cristian Castiblanco <cristian@elhacker.net>\n\n"
-						+ "Iconos e imagenes:"
+						+ "Iconos e im\u00e1genes:"
 						+ "Iconos Comix <bla@bla.com> by bbbbbb\n"
 						+ "El logo de SilverSheep fue diseniado por Ferney Toledo <blabla>\n\n"
-						+ "Librerias externas:\n"
-						+ "Se uso el api de MPR bla de Javazoom\n"
+						+ "Librer\u00edas externas:\n"
+						+ "Se uso el API de MPR bla de Javazoom\n"
 						+ "Se uso el conector JSqlite blabla\n"
 						+ "Se uso el conector JSqlite blabla\n" + "");
 
 		// Aniadir objetos
 		panelPestanias.addTab("Info", new JScrollPane(info));
-		panelPestanias.addTab("Creditos", new JScrollPane(creditos));
+		panelPestanias.addTab("Cr\u00e9ditos", new JScrollPane(creditos));
 
 		btnCerrar = new JButton("Cerrar");
 		btnCerrar.setMnemonic('C');
@@ -110,7 +110,7 @@ public class DialogoAcercaDe extends JDialog implements ActionListener, Constant
 		add(panelPestanias, BorderLayout.CENTER);
 		add(btnCerrar, BorderLayout.SOUTH);
 
-		// Mostrar diálogo
+		// Mostrar dialogo
 		setSize(274, 500);
 		setLocation((modoPantalla.getWidth() / 2) - (getWidth() / 2),
 				(modoPantalla.getHeight() / 2) - (getHeight() / 2));

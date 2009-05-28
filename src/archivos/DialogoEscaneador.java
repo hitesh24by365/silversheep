@@ -148,14 +148,14 @@ public class DialogoEscaneador extends JDialog implements ActionListener,
 	 * Iniciar el panel donde están los checkbox
 	 */
 	private void inicarPanelOpciones() {
-		chkMusica = new JCheckBox("Música", true);
+		chkMusica = new JCheckBox("M\u00fasica", true);
 		chkMusica.setToolTipText("Buscar archivos de audio");
 		chkMusica.setSelected(false);
 		chkMusica.setMnemonic('M');
 		chkMusica.addActionListener(this);
 
-		chkImagen = new JCheckBox("Imágenes", true);
-		chkImagen.setToolTipText("Buscar imágenes y fotos");
+		chkImagen = new JCheckBox("Im\u00e1genes", true);
+		chkImagen.setToolTipText("Buscar im\u00e1genes y fotos");
 		chkImagen.setSelected(false);
 		chkImagen.setMnemonic('I');
 		chkImagen.addActionListener(this);
@@ -167,7 +167,7 @@ public class DialogoEscaneador extends JDialog implements ActionListener,
 		chkVideo.addActionListener(this);
 
 		pnlOpciones = new JPanel(new GridLayout(4, 1));
-		pnlOpciones.add(new JLabel("¿Qué tipo de archivos desea buscar?"));
+		pnlOpciones.add(new JLabel("\u00bfQu\u00e9 tipo de archivos desea buscar?"));
 		pnlOpciones.add(chkMusica);
 		pnlOpciones.add(chkImagen);
 		pnlOpciones.add(chkVideo);
@@ -178,7 +178,7 @@ public class DialogoEscaneador extends JDialog implements ActionListener,
 		if (e.getSource() == btnEscanear) {
 			// reiniciar extensiones
 			extensiones = "";
-			// verificar cual checkbox está seleccionado
+			// verificar cual checkbox esta seleccionado
 			if (chkMusica.isSelected())
 				extensiones += EXTENSIONES_AUDIO;
 			if (chkImagen.isSelected())
@@ -194,7 +194,7 @@ public class DialogoEscaneador extends JDialog implements ActionListener,
 			this.dispose();
 		} else if (e.getSource() == chkMusica || e.getSource() == chkImagen
 				|| e.getSource() == chkVideo) {
-			// No permitir que se pueda presionar el botón a menos que haya al
+			// No permitir que se pueda presionar el boton a menos que haya al
 			// menos un checkbox seleccionado
 			if (!chkMusica.isSelected() && !chkImagen.isSelected()
 					&& !chkVideo.isSelected())
