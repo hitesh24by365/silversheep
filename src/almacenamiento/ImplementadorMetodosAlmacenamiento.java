@@ -1,5 +1,7 @@
 package almacenamiento;
 
+import java.util.Vector;
+
 import medios.Archivo;
 import medios.Etiqueta;
 
@@ -109,4 +111,6 @@ public interface ImplementadorMetodosAlmacenamiento {
 	public void quitarOpcionesPorNombre(String nombre);
 
 	public String[] opcionesPorNombre(String nombre);
+
+	public Vector getTodosArchivos(String tipo);
 }

@@ -1,5 +1,7 @@
 package almacenamiento;
 
+import java.util.Vector;
+
 import medios.Archivo;
 import medios.Etiqueta;
 
@@ -82,5 +84,9 @@ public class AlmacenarInfoBibliotecaRefinado implements Biblioteca {
 	@Override
 	public String[] opcionesPorNombre(String nombre) {
 		return implementador.opcionesPorNombre(nombre);
+	}
+	@Override
+	public Vector getTodosArchivos(String tipo) {
+		return implementador.getTodosArchivos(tipo);
 	}
 }

@@ -48,7 +48,6 @@ public class Pestania extends JPanel implements ObservadorReproduccionPestania, 
 	public Pestania(final JTabbedPane panelPestanias,
 			final Reproductor reproductor, String icono, boolean controles) {
 		this(panelPestanias, icono, false);
-
 		this.reproductor = reproductor;
 		this.reproductor.registrarObservador(this);
 

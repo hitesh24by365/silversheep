@@ -1,13 +1,15 @@
 package reproductor;
 
 import main.Ventana;
+import medios.Archivo;
 import medios.ConstructorArchivoMultimedia;
 
 public class FabricaAudio implements FabricaReproductores {
 
 	@Override
-	public Reproductor crearReproductor(Ventana padre) {
-		return new CargarAudio(padre);
+	public Reproductor crearReproductor(ConstructorArchivoMultimedia[] archivos) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -17,9 +19,8 @@ public class FabricaAudio implements FabricaReproductores {
 	}
 
 	@Override
-	public Reproductor crearReproductor(ConstructorArchivoMultimedia[] archivos) {
-		// TODO Auto-generated method stub
-		return null;
+	public Reproductor crearReproductor(Ventana padre) {
+		return new CargarAudio(padre);
 	}
 
 }

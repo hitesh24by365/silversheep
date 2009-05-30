@@ -64,4 +64,5 @@ public interface Constantes {
 	public static final String ACC_BTN_PESTANIA_REPRODUCIR = "REPRODUCIR";
 	public static final String ACC_BTN_PESTANIA_SIGUIENTE = "SIGUIENTE";
 	public static final String ACC_BTN_PESTANIA_ANTERIOR = "ANTERIOR";
+	public static final String COMILLAS_DOBLES = "COmiLLas_DOblES";
 }

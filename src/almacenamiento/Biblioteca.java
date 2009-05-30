@@ -1,5 +1,7 @@
 package almacenamiento;
 
+import java.util.Vector;
+
 import medios.Archivo;
 import medios.Etiqueta;
 
@@ -32,6 +34,8 @@ public interface Biblioteca {
 	 * @param descripcion
 	 */
 	public void aniadirAlbum(String nombre, String descripcion);
+	
+	public Vector getTodosArchivos(String tipo);
 
 	/**
 	 * Método para añadir un nuevo álbum a la biblioteca, usando el nombre la

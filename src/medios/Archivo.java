@@ -1,7 +1,11 @@
 package medios;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Formatter;
 import java.util.GregorianCalendar;
+import java.util.StringTokenizer;
+
 import medios.Etiqueta;
 
 /**
@@ -27,6 +31,39 @@ public class Archivo {
 	// este objeto nos permite determinar la fecha actual
 	private GregorianCalendar fechaAdicion;
 
+	public Archivo(){
+		
+	}
+	public Archivo(ResultSet resultados) {
+		try {
+			Integer temp = (Integer)resultados.getObject(1); 
+			setId(temp==null ? 0 : temp.intValue());
+			setNombreArchivo((String)resultados.getObject(2));
+			//TODO poner correctamente la fecha
+			setFechaAdicion(null);
+			temp = (Integer)resultados.getObject(4);
+			setTamanioKB(temp==null ? 0 : temp.intValue());
+			temp = (Integer)resultados.getObject(5);
+			setAlto(temp==null ? 0 : temp.intValue());
+			temp = (Integer)resultados.getObject(6);
+			setAncho(temp==null ? 0 : temp.intValue());
+			temp = (Integer)resultados.getObject(7);
+			setLongitud(temp==null ? 0 : temp.intValue());
+			setCodec((String)resultados.getObject(8));
+			//TODO artista desconocido
+			setArtista((String)resultados.getObject(9));
+			setGenero((String)resultados.getObject(10));
+			setAlbumDisco((String)resultados.getObject(11));
+			//TODO realmente verificar si es correctamente
+			setSoportado(true);
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * Devuelve el género de la canción
 	 * @return
@@ -242,6 +279,15 @@ public class Archivo {
 	public String getFechaAdicionSQL() {
 		return new Formatter().format("%1$tY-%1$tm-%1$td", fechaAdicion)
 				.toString();
+	}
+
+	public boolean esTipo(String tipo) {
+		StringTokenizer tokens = new StringTokenizer(tipo, "-");
+		while(tokens.hasMoreTokens()){
+			if(getNombreArchivo().toLowerCase().endsWith("."+tokens.nextToken().toLowerCase()))
+				return true;
+		}
+		return false;
 	}
 
 }

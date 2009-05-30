@@ -65,7 +65,7 @@ public class Ventana extends JFrame implements ActionListener, Constantes {
 		contenedor.add(pestaniasReproductores);
 
 		// Mostrar ventana
-		setSize(800, 600);
+		setSize(900, 700);
 		setLocation((modoPantalla.getWidth() / 2) - (getWidth() / 2),
 				(modoPantalla.getHeight() / 2) - (getHeight() / 2));
 		setVisible(true);
@@ -73,6 +73,7 @@ public class Ventana extends JFrame implements ActionListener, Constantes {
 
 	private void aniadirReproductorPestania(String titulo, Reproductor rep,
 			String icono) {
+
 		pestaniasReproductores.addTab(titulo, new ImageIcon(icono),
 				(JPanel) rep);
 		pestaniasReproductores.setTabComponentAt(pestaniasReproductores

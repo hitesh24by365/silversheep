@@ -5,6 +5,10 @@ import medios.Archivo;
 import medios.Etiqueta;
 
 import java.sql.*;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import com.sun.org.apache.xml.internal.serializer.utils.StringToIntTable;
 
 /**
  * La clase {@link TransaccionesSQLite} implementa la interfaz
@@ -120,7 +124,7 @@ public class TransaccionesSQLite implements ImplementadorMetodosAlmacenamiento,
 				// Construir la consulta para insertar un nuevo archivo
 				consultaTemp = "INSERT INTO archivo (nombre,"
 						+ "fechaAdicion, tamanioKB,"
-						+ "longitud, codec, genero, albumDisco ,esSoportado)"
+						+ "longitud, codec, artista, genero, albumDisco ,esSoportado)"
 						+ " VALUES(\""
 						+ archivo.getNombreArchivo()
 						+ "\","
@@ -137,10 +141,13 @@ public class TransaccionesSQLite implements ImplementadorMetodosAlmacenamiento,
 						+ archivo.getCodec()
 						+ "\","
 						+ "\""
+						+ archivo.getArtista()
+						+ "\","
+						+ "\""
 						+ archivo.getGenero()
 						+ "\","
 						+ "\""
-						+ archivo.getAlbumDisco()
+						+ archivo.getAlbumDisco().replaceAll("\"", COMILLAS_DOBLES)
 						+ "\","
 						+ "\""
 						+ (archivo.esSoportado() ? "" : "no") + "\");";
@@ -241,5 +248,27 @@ public class TransaccionesSQLite implements ImplementadorMetodosAlmacenamiento,
 				e.printStackTrace();
 		}
 		return datos;
+	}
+
+	@Override
+	public Vector<Archivo> getTodosArchivos(String tipo) {
+		String consulta = "SELECT * FROM archivo ORDER BY artista ASC;";
+		Vector<Archivo> archivos = new Vector<Archivo>();
+		Archivo temp = null;
+		int contador = 0;
+		try {
+			resultados = instruccion.executeQuery(consulta);
+			while(resultados.next()){
+				temp = new Archivo(resultados);
+				if(temp.esTipo(tipo))
+					archivos.add(temp);
+				contador++;
+			}
+		} catch (SQLException e) {
+			System.err.println("Error SQL: " + consulta);
+			if (DEBUG)
+				e.printStackTrace();
+		}
+		return archivos;
 	}
 }
