@@ -43,5 +43,4 @@ public class ConstructorArchivoVideo extends ConstructorArchivoMultimedia {
 		// TODO Auto-generated method stub
 		
 	}
-
 }

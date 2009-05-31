@@ -46,6 +46,8 @@ public class CargarAudio extends JPanel implements Reproductor, Constantes {
 		panelSeparador = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		panelSeparador.setLeftComponent(arbolColeccion);
 		panelSeparador.setRightComponent(listaReproduccion);
+		
+		arbolColeccion.setListaRepro(listaReproduccion);
 
 		panelSeparador.setDividerLocation(200);
 

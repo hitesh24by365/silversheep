@@ -1,11 +1,13 @@
 package medios;
 
+import java.util.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Formatter;
 import java.util.GregorianCalendar;
 import java.util.StringTokenizer;
 
+import main.Constantes;
 import medios.Etiqueta;
 
 /**
@@ -14,7 +16,7 @@ import medios.Etiqueta;
  * Builder, usado para abstraer los diferentes tipos de archivos de medio.
  * 
  */
-public class Archivo {
+public class Archivo implements Constantes{
 	// define el ID en la base de datos, el alto y ancho si es imagen o video, y
 	// la longitud si es video o audio
 	private int id, alto, ancho, longitud;
@@ -30,6 +32,8 @@ public class Archivo {
 	private Etiqueta[] etiquetas;
 	// este objeto nos permite determinar la fecha actual
 	private GregorianCalendar fechaAdicion;
+	//este es el contador de reproducciones
+	private int contador;
 
 	public Archivo(){
 		
@@ -39,8 +43,10 @@ public class Archivo {
 			Integer temp = (Integer)resultados.getObject(1); 
 			setId(temp==null ? 0 : temp.intValue());
 			setNombreArchivo((String)resultados.getObject(2));
-			//TODO poner correctamente la fecha
-			setFechaAdicion(null);
+			String formatoFecha = (String)resultados.getObject(3);
+			String[] a = formatoFecha.split("-");;
+			setFechaAdicion(new GregorianCalendar(Integer.valueOf(a[0]).intValue(), Integer
+					.valueOf(a[1]).intValue() - 1, Integer.valueOf(a[2]).intValue()));
 			temp = (Integer)resultados.getObject(4);
 			setTamanioKB(temp==null ? 0 : temp.intValue());
 			temp = (Integer)resultados.getObject(5);
@@ -50,18 +56,21 @@ public class Archivo {
 			temp = (Integer)resultados.getObject(7);
 			setLongitud(temp==null ? 0 : temp.intValue());
 			setCodec((String)resultados.getObject(8));
-			//TODO artista desconocido
 			setArtista((String)resultados.getObject(9));
 			setGenero((String)resultados.getObject(10));
 			setAlbumDisco((String)resultados.getObject(11));
-			//TODO realmente verificar si es correctamente
+			//es soportado es el indice 12
 			setSoportado(true);
+			temp = (Integer)resultados.getObject(13);
+			setContador(temp==null ? 0 : temp.intValue());
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Error al convertir número desde la base de datos.");
+			if(DEBUG)
+				e.printStackTrace();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Error con la base de datos.");
+			if(DEBUG)
+				e.printStackTrace();
 		}
 	}
 	/**
@@ -288,6 +297,16 @@ public class Archivo {
 				return true;
 		}
 		return false;
+	}
+	public void setContador(int contador) {
+		this.contador = contador;
+	}
+	public int getContador() {
+		return contador;
+	}
+	public String getNombreCortoArchivo() {
+		String nombre = getNombreArchivo().replace('\\', '/');
+		return nombre.substring(nombre.lastIndexOf('/')+1);
 	}
 
 }

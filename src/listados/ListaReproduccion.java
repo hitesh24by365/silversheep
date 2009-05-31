@@ -3,6 +3,7 @@ package listados;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.Vector;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -17,6 +18,9 @@ import main.Constantes;
 public class ListaReproduccion extends JPanel implements Constantes {
 	private static final long serialVersionUID = -8338766233305367920L;
 	private JTable listado;
+	private Object[] satan = { "Satan my master", "Dimmu Borgir", "In sorte diaboli",
+			"6:66", "Death Metal", "/home/hell/music", "satan-my-master.mp3", new Integer(5)};
+	private Vector<Object[]> datos;
 
 	public ListaReproduccion() {
 		super(new GridLayout(1, 0));
@@ -24,8 +28,10 @@ public class ListaReproduccion extends JPanel implements Constantes {
 	}
 
 	private void crearListado() {
-
-		listado = new JTable((TableModel) new MiModeloTabla());
+		datos = new Vector<Object[]>();
+		datos.add(satan);
+		
+		listado = new JTable((TableModel) new MiModeloTabla(datos));
 		listado.setPreferredScrollableViewportSize(new Dimension(500, 70));
 		listado.setFillsViewportHeight(true);
 		listado.setAutoCreateRowSorter(true);
@@ -44,15 +50,17 @@ public class ListaReproduccion extends JPanel implements Constantes {
 				"\u00c1lbum", "Longitud", "G\u00e9nero", "Ubicaci\u00f3n",
 				"Nombre archivo", "Contador" };
 		private boolean[] columnasActivas = new boolean[nombreColumnas.length];
-		private Object[][] datos = { { "Satan my master", "Dimmu Borgir", "In sorte diaboli",
-				"6:66", "Death Metal", "/home/hell/music", "satan-my-master.mp3", new Integer(5)} };
+		private Vector<Object[]> datos;
+		public MiModeloTabla(Vector<Object[]> datos) {
+			this.datos = datos;
+		}
 
 		public int getColumnCount() {
 			return nombreColumnas.length;
 		}
 
 		public int getRowCount() {
-			return datos.length;
+			return datos.size();
 		}
 
 		public String getColumnName(int col) {
@@ -60,7 +68,8 @@ public class ListaReproduccion extends JPanel implements Constantes {
 		}
 
 		public Object getValueAt(int fila, int col) {
-			return datos[fila][col];
+			Object[] satan = datos.get(fila);
+			return satan[col];
 		}
 
 		/*
@@ -93,7 +102,8 @@ public class ListaReproduccion extends JPanel implements Constantes {
 						+ valor.getClass() + ")");
 			}
 
-			datos[fila][col] = valor;
+			fireTableRowsInserted(0, 0);
+			datos.get(fila)[col] = valor;
 			fireTableCellUpdated(fila, col);
 
 			if (DEBUG) {
@@ -109,11 +119,14 @@ public class ListaReproduccion extends JPanel implements Constantes {
 			for (int i = 0; i < numRows; i++) {
 				System.out.print("    row " + i + ":");
 				for (int j = 0; j < numCols; j++) {
-					System.out.print("  " + datos[i][j]);
+					System.out.print("  " + datos.get(i)[j]);
 				}
 				System.out.println();
 			}
 			System.out.println("--------------------------");
+		}
+		public void cosas(){
+			
 		}
 	}
 	private void initColumnSizes(JTable table) {
@@ -122,7 +135,7 @@ public class ListaReproduccion extends JPanel implements Constantes {
         Component comp = null;
         int headerWidth = 0;
         int cellWidth = 0;
-        Object[] longValues = model.datos[0];
+        Object[] longValues = model.datos.get(0);
         TableCellRenderer headerRenderer =
             table.getTableHeader().getDefaultRenderer();
 
@@ -150,4 +163,12 @@ public class ListaReproduccion extends JPanel implements Constantes {
             column.setPreferredWidth(Math.max(headerWidth, cellWidth));
         }
     }
+	public void cambiarValor(Object obj, int filas, int cols){
+		listado.setValueAt(obj, 0, 0);
+		Object[] satan = { "Satan mo master", "Dimmu Borgir", "In sorte diaboli",
+				"6:66", "Death Metal", "/home/hell/music", "satan-my-master.mp3", new Integer(5)};
+		datos.add(satan);
+		//listado.cos
+		//listado.
+	}
 }

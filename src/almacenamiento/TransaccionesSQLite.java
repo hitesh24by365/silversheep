@@ -124,7 +124,7 @@ public class TransaccionesSQLite implements ImplementadorMetodosAlmacenamiento,
 				// Construir la consulta para insertar un nuevo archivo
 				consultaTemp = "INSERT INTO archivo (nombre,"
 						+ "fechaAdicion, tamanioKB,"
-						+ "longitud, codec, artista, genero, albumDisco ,esSoportado)"
+						+ "longitud, codec, artista, genero, albumDisco ,esSoportado, contador)"
 						+ " VALUES(\""
 						+ archivo.getNombreArchivo()
 						+ "\","
@@ -150,7 +150,7 @@ public class TransaccionesSQLite implements ImplementadorMetodosAlmacenamiento,
 						+ archivo.getAlbumDisco().replaceAll("\"", COMILLAS_DOBLES)
 						+ "\","
 						+ "\""
-						+ (archivo.esSoportado() ? "" : "no") + "\");";
+						+ (archivo.esSoportado() ? "" : "no") + "\", 0);";
 				instruccion.execute(consultaTemp);
 			} catch (SQLException e) {
 				System.err.println("Error SQL: " + consultaTemp);

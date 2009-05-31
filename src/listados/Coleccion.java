@@ -20,11 +20,15 @@ import java.net.URL;
 import java.util.Vector;
 import java.awt.GridLayout;
 import java.awt.Component;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-public class Coleccion extends JPanel implements TreeSelectionListener, Constantes {
+public class Coleccion extends JPanel implements TreeSelectionListener, Constantes, MouseListener {
 	private static final long serialVersionUID = -8359984107448140209L;
 	private JTree tree;
 	private Vector<Archivo> archivos;
+	private ListaReproduccion listaRepro;
+	private DefaultMutableTreeNode ultimoNodoSeleccionado;
 
 	public Coleccion(Vector<Archivo> archivos) {
 		super(new GridLayout(1, 0));
@@ -38,12 +42,9 @@ public class Coleccion extends JPanel implements TreeSelectionListener, Constant
 
 	/** Required by TreeSelectionListener interface. */
 	public void valueChanged(TreeSelectionEvent e) {
-		DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) tree
+		//System.out.println("algo pasa");
+		ultimoNodoSeleccionado = (DefaultMutableTreeNode) tree
 				.getLastSelectedPathComponent();
-
-		if (nodo == null)
-			return;
-
 		/*Object informacionArchivo = nodo.getUserObject();
 		if (nodo.isLeaf()) {
 			InformacionArchivo archivo = (InformacionArchivo) informacionArchivo;
@@ -98,7 +99,7 @@ public class Coleccion extends JPanel implements TreeSelectionListener, Constant
 				artista.add(album);
 			}
 			//aniadir cancion
-			strCancion = archivos.get(i).getNombreArchivo();
+			strCancion = archivos.get(i).getNombreCortoArchivo();
 			strCancion = strCancion.equals("") ? "Desconocido" : strCancion;
 			cancion = new DefaultMutableTreeNode(strCancion);
 			album.add(cancion);
@@ -153,6 +154,7 @@ public class Coleccion extends JPanel implements TreeSelectionListener, Constant
 
 		// Escuchar cambios en la seleccion
 		tree.addTreeSelectionListener(this);
+		tree.addMouseListener(this);
 
 		// Creal el scroll para el 
 		JScrollPane treeView = new JScrollPane(tree);
@@ -189,5 +191,44 @@ public class Coleccion extends JPanel implements TreeSelectionListener, Constant
 			//InformacionArchivo nodeInfo = (InformacionArchivo) (nodo.getUserObject());
 			return true;
 		}
+	}
+
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		if(e.getClickCount()==2 && ultimoNodoSeleccionado.isLeaf())
+			listaRepro.cambiarValor(ultimoNodoSeleccionado.toString(), 0, 0);
+	}
+
+	public void setListaRepro(ListaReproduccion listaRepro) {
+		this.listaRepro = listaRepro;
+	}
+
+	public ListaReproduccion getListaRepro() {
+		return listaRepro;
 	}
 }
