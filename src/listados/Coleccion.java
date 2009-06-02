@@ -1,4 +1,5 @@
 package listados;
+
 //TODO crear una estructura de arbol para esto desde cero y en otra clase.
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -14,6 +15,9 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.ToolTipManager;
 import javax.swing.ImageIcon;
@@ -26,23 +30,36 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class Coleccion extends JPanel implements TreeSelectionListener, Constantes, MouseListener, KeyListener, TreeModelListener {
+public class Coleccion extends JPanel implements TreeSelectionListener,
+		Constantes, MouseListener, KeyListener, TreeModelListener, ActionListener {
 	private static final long serialVersionUID = -8359984107448140209L;
-	private JTree tree, tree2;
+	private JTree arbolPrincipal, arbolInvertido;
 	private Vector<Archivo> archivos;
 	private ListaReproduccion listaRepro;
 	private DefaultMutableTreeNode ultimoNodoSeleccionado;
+	private JPanel pnlBusqueda;
+	private JButton btnExpandir, btnBorrarBusqueda;
 	private JTextField txtBuscar;
+	private boolean expandido = false;
 	private DefaultMutableTreeNode raizArbol, raizNegativa;
 	private DefaultTreeModel modeloArbol, modeloArbolNegativo;
 
+	/**
+	 * Constructor de la clase Coleccion... recibe un vector con los archivos
+	 * que mostrará en el arbol
+	 * 
+	 * @param archivos
+	 */
 	public Coleccion(Vector<Archivo> archivos) {
 		super(new GridLayout(1, 0));
 		this.archivos = archivos;
@@ -53,48 +70,85 @@ public class Coleccion extends JPanel implements TreeSelectionListener, Constant
 		});
 	}
 
-	/** Required by TreeSelectionListener interface. */
-	public void valueChanged(TreeSelectionEvent e) {
-		//System.out.println("algo pasa");
-		
-		ultimoNodoSeleccionado = (DefaultMutableTreeNode) tree.
-				getLastSelectedPathComponent();
-		/*Object informacionArchivo = nodo.getUserObject();
-		if (nodo.isLeaf()) {
-			InformacionArchivo archivo = (InformacionArchivo) informacionArchivo;
-			if (DEBUG) {
-				System.out.print(archivo.urlArchivo + ":  \n    ");
-			}
-		} else {
-		}
-		if (DEBUG) {
-			System.out.println(informacionArchivo.toString());
-		}*/
+	/**
+	 * Crea los nodos de la interfaz gráfica
+	 */
+	private void crearInterfazGrafica() {
+		setLayout(new BorderLayout());
+		// Asigna la raiz del arbol
+		raizArbol = new DefaultMutableTreeNode("M\u00fasica");
+		// crear los nodos del arbol
+		crearNodos(raizArbol);
+		// crear el modelo del arbol
+		modeloArbol = new DefaultTreeModel(raizArbol);
+		modeloArbol.addTreeModelListener(this);
+		// iniciar arbol principal
+		arbolPrincipal = new JTree(modeloArbol);
+		arbolPrincipal.getSelectionModel().setSelectionMode(
+				TreeSelectionModel.SINGLE_TREE_SELECTION);
+		arbolPrincipal.setShowsRootHandles(true);
+		arbolPrincipal.setRootVisible(false);
+
+		// Habilitar tooltips
+		ToolTipManager.sharedInstance().registerComponent(arbolPrincipal);
+
+		// Asignar iconos
+		ImageIcon icono = crearIcono(IMG_SONIDO_16);
+		if (icono != null)
+			arbolPrincipal.setCellRenderer(new MiRenderizador(icono));
+		else
+			System.err.println("No se encuentra el icono " + IMG_SONIDO_16);
+
+		// Escuchar cambios en la seleccion
+		arbolPrincipal.addTreeSelectionListener(this);
+		arbolPrincipal.addMouseListener(this);
+
+		//iniciar objetos de busqueda
+		crearPanelBusqueda();
+
+		add(pnlBusqueda, BorderLayout.NORTH);
+		add(new JScrollPane(arbolPrincipal));
+
+		/**
+		 * En esta seccion se crea el arbol negativo
+		 */
+		// iniciar raiz y modelo
+		raizNegativa = new DefaultMutableTreeNode("Residuos");
+		modeloArbolNegativo = new DefaultTreeModel(raizNegativa);
+		modeloArbolNegativo.addTreeModelListener(this);
+		// iniciar arbol
+		arbolInvertido = new JTree(modeloArbolNegativo);
 	}
-	private void crearNodos(DefaultMutableTreeNode top) {
+
+	/**
+	 * Crea los nodos del arbol basado en el vector de archivos
+	 * 
+	 * @param raiz
+	 */
+	private void crearNodos(DefaultMutableTreeNode raiz) {
 		DefaultMutableTreeNode artista = null;
 		DefaultMutableTreeNode album = null;
 		DefaultMutableTreeNode cancion = null;
-		//creacion de artistas
+		// creacion de artistas
 		String strArtista, strAlbum;
-		//TODO no funciona bien puesto que en cada iteración se está creando 
-		//un nuevo nodo padre, que no es el mismo que utilizan los archivos que deberían ir dentro.
-		for(int i=0; i<archivos.size(); i++){
-			//aniadir artista
+		for (int i = 0; i < archivos.size(); i++) {
+			// aniadir artista
 			strArtista = archivos.get(i).getArtista();
 			strArtista = strArtista.equals("") ? "Desconocido" : strArtista;
-			//preguntar por uno existente
-			artista = obtenerNodo(top, strArtista);
-			if(artista == null){
+			// preguntar por uno existente
+			artista = obtenerNodo(raiz, strArtista);
+			if (artista == null) {
+				// si no hay, crearlo
 				artista = new DefaultMutableTreeNode(strArtista);
-				top.add(artista);
+				raiz.add(artista);
 			}
-			//aniadir album
+			// aniadir album
 			strAlbum = archivos.get(i).getAlbumDisco();
 			strAlbum = strAlbum.equals("") ? "Desconocido" : strAlbum;
-			//preguntar por album existente
+			// preguntar por album existente
 			album = obtenerNodo(artista, strAlbum);
-			if(album == null){
+			if (album == null) {
+				// si no hay, crearlo
 				album = new DefaultMutableTreeNode(strAlbum);
 				artista.add(album);
 			}
@@ -102,17 +156,59 @@ public class Coleccion extends JPanel implements TreeSelectionListener, Constant
 			album.add(cancion);
 		}
 	}
+	/**
+	 * Este metodo inicia los objetos del panel busqueda
+	 */
+	private void crearPanelBusqueda(){
+		// Caja de busqueda
+		txtBuscar = new JTextField();
+		txtBuscar.addKeyListener(this);
+		
+		//boton de borrar busqueda
+		btnBorrarBusqueda = new JButton(new ImageIcon(this.getClass().getResource(IMG_LIMPIAR_16)));
+		btnBorrarBusqueda.setToolTipText("Borrar campo de b\u00fasqueda");
+		btnBorrarBusqueda.setPreferredSize(new Dimension(20,20));
+		btnBorrarBusqueda.addActionListener(this);
+		
+		//boton de expandir
+		btnExpandir = new JButton(new ImageIcon(this.getClass().getResource(IMG_EXPANDIR_16)));
+		btnExpandir.setToolTipText("Expandir arbol");
+		btnExpandir.setPreferredSize(new Dimension(20,20));
+		btnExpandir.addActionListener(this);
+		
+		//iniciar panel
+		pnlBusqueda = new JPanel();
+		pnlBusqueda.setLayout(new BoxLayout(pnlBusqueda, BoxLayout.LINE_AXIS));
+		pnlBusqueda.add(Box.createHorizontalGlue());
+		pnlBusqueda.setPreferredSize(new Dimension(100,25));
+		
+		pnlBusqueda.add(txtBuscar);
+		pnlBusqueda.add(btnBorrarBusqueda);
+		pnlBusqueda.add(btnExpandir);
+	}
 
-	private DefaultMutableTreeNode obtenerNodo(DefaultMutableTreeNode top,
+	/**
+	 * Busca un nodo por nombre, y lo devuelve
+	 * 
+	 * @param raiz
+	 * @param texto
+	 * @return
+	 */
+	private DefaultMutableTreeNode obtenerNodo(DefaultMutableTreeNode raiz,
 			String texto) {
-		int hijos = top.getChildCount();
-		for(int i = 0; i<hijos; i++)
-			if(top.getChildAt(i).toString().toLowerCase().equals(texto.toLowerCase()))
-				return (DefaultMutableTreeNode)top.getChildAt(i);
+		for (int i = 0; i < raiz.getChildCount(); i++)
+			if (raiz.getChildAt(i).toString().toLowerCase().equals(
+					texto.toLowerCase()))
+				return (DefaultMutableTreeNode) raiz.getChildAt(i);
 		return null;
 	}
 
-	/** Returns an ImageIcon, or null if the path was invalid. */
+	/**
+	 * Devuelve una imagen o null si no existe
+	 * 
+	 * @param ruta
+	 * @return
+	 */
 	protected static ImageIcon crearIcono(String ruta) {
 		URL urlImagen = Coleccion.class.getResource(ruta);
 		if (urlImagen != null) {
@@ -123,64 +219,10 @@ public class Coleccion extends JPanel implements TreeSelectionListener, Constant
 		}
 	}
 
-	private void crearInterfazGrafica() {
-		setLayout(new BorderLayout());
-		raizArbol = new DefaultMutableTreeNode("M\u00fasica");
-		crearNodos(raizArbol);//?si se crea aca?
-		modeloArbol = new DefaultTreeModel(raizArbol);
-		modeloArbol.addTreeModelListener(this);
-		tree = new JTree(modeloArbol);
-		tree.getSelectionModel().setSelectionMode(
-				TreeSelectionModel.SINGLE_TREE_SELECTION);
-		tree.setShowsRootHandles(true);
-
-		// Habilitar tooltips
-		ToolTipManager.sharedInstance().registerComponent(tree);
-
-		// Asignar iconos
-		ImageIcon icono = crearIcono(IMG_SONIDO_16);
-		if (icono != null) {
-			tree.setCellRenderer(new MiRenderizador(icono));
-		} else {
-			System.err.println("Tutorial icon missing; using default.");
-		}
-
-		// Escuchar cambios en la seleccion
-		tree.addTreeSelectionListener(this);
-		tree.addMouseListener(this);
-
-		// Creal el scroll para el 
-		JScrollPane treeView = new JScrollPane(tree);
-		
-		//Caja de busqueda
-		txtBuscar = new JTextField();
-		txtBuscar.addKeyListener(this);
-		
-		add(txtBuscar, BorderLayout.NORTH);
-		add(treeView);
-		
-		/////////////////////////////////////////////////////////////////////////
-		
-		raizNegativa = new DefaultMutableTreeNode("Residuos");
-		modeloArbolNegativo = new DefaultTreeModel(raizNegativa);
-		modeloArbolNegativo.addTreeModelListener(this);
-		tree2 = new JTree(modeloArbolNegativo);
-		tree2.getSelectionModel().setSelectionMode(
-				TreeSelectionModel.SINGLE_TREE_SELECTION);
-		tree2.setShowsRootHandles(true);
-
-		// Habilitar tooltips
-		ToolTipManager.sharedInstance().registerComponent(tree2);
-
-		// Escuchar cambios en la seleccion
-		//tree2.addTreeSelectionListener(this);
-
-		// Creal el scroll para el 
-		//JScrollPane treeView2 = new JScrollPane(tree2);
-		
-		//add(treeView2, BorderLayout.EAST);
-	}
-
+	/**
+	 * Clase que renderiza la forma en que se muestran los nodos.
+	 * 
+	 */
 	private class MiRenderizador extends DefaultTreeCellRenderer {
 		private static final long serialVersionUID = 2718364362535743782L;
 		private Icon iconoNodo;
@@ -189,15 +231,15 @@ public class Coleccion extends JPanel implements TreeSelectionListener, Constant
 			iconoNodo = icono;
 		}
 
-		public Component getTreeCellRendererComponent(JTree arbol, Object valor,
-				boolean sel, boolean expandido, boolean hijo, int fila,
-				boolean tieneFoco) {
+		public Component getTreeCellRendererComponent(JTree arbol,
+				Object valor, boolean sel, boolean expandido, boolean hijo,
+				int fila, boolean tieneFoco) {
 
 			super.getTreeCellRendererComponent(arbol, valor, sel, expandido,
 					hijo, fila, tieneFoco);
 			if (hijo && esCancion(valor)) {
 				setIcon(iconoNodo);
-				setToolTipText("Es una canción");
+				setToolTipText("TODO: cambiar esta shit");
 			} else {
 				setToolTipText(null);
 			}
@@ -206,183 +248,141 @@ public class Coleccion extends JPanel implements TreeSelectionListener, Constant
 		}
 
 		protected boolean esCancion(Object valor) {
-			//DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) valor;
-			//InformacionArchivo nodeInfo = (InformacionArchivo) (nodo.getUserObject());
 			return true;
 		}
 	}
 
-
+	/**
+	 * Implementacion de los metodos que manejan los eventos del mouse
+	 */
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if(e.getClickCount()==2 && ultimoNodoSeleccionado.isLeaf())
-			System.out.println("Artista "+((Archivo)ultimoNodoSeleccionado.getUserObject()).getArtista());//listaRepro.aniadirMedio(ultimoNodoSeleccionado.toString(), 0, 0);
+		if (e.getClickCount() == 2)
+			System.out.println("Doble clic en arbol");
 	}
 
-	public void setListaRepro(ListaReproduccion listaRepro) {
-		this.listaRepro = listaRepro;
-	}
-
-	public ListaReproduccion getListaRepro() {
-		return listaRepro;
-	}
-
+	/**
+	 * Implementacion de metodos de escucha de eventos de teclado
+	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if(e.getKeyCode()==8){//si está borrando cosas
-			desfiltrarMedio(txtBuscar.getText());
-		}
-		else if(!txtBuscar.getText().equals(""))//si esta escribiendo
-			filtrarMedio(txtBuscar.getText());
-	}
-
-	private void desfiltrarMedio(String text) {
-		int artista, albumes, canciones;
-		artista = albumes = canciones = 0;
-		DefaultMutableTreeNode ndArt, ndAlb, ndCan;
-		DefaultMutableTreeNode ndArtClon, ndAlbClon, ndCanClon;
-		
-		artista = raizNegativa.getChildCount();
-		for(int i = 0; i<artista; i++){
-			albumes = raizNegativa.getChildAt(i).getChildCount();
-			for(int j = 0; j<albumes; j++){
-				canciones = raizNegativa.getChildAt(i).getChildAt(j).getChildCount();
-				for(int k = 0; k<canciones; k++){
-					ndArt=(DefaultMutableTreeNode)raizNegativa.getChildAt(i);
-					ndAlb=(DefaultMutableTreeNode)ndArt.getChildAt(j);
-					ndCan=(DefaultMutableTreeNode)ndAlb.getChildAt(k);
-					Archivo ar = (Archivo)ndCan.getUserObject();
-					if(ar.getNombreCortoArchivo().toLowerCase().indexOf(text.toLowerCase()) >= 0){
-						///////////////////////////////////////////////////
-						///// movber el nodo a arbol positivo
-						///////////////////////////////////////////////
-						
-						ndArtClon=(DefaultMutableTreeNode)ndArt.clone();
-						ndAlbClon=(DefaultMutableTreeNode)ndAlb.clone();
-						ndCanClon=(DefaultMutableTreeNode)ndCan.clone();
-						
-						ndArtClon = obtenerNodo(raizArbol, ndArtClon.toString());
-						if(ndArtClon == null){
-							ndArtClon = (DefaultMutableTreeNode)ndArt.clone();
-							raizArbol.add(ndArtClon);
-						}
-						
-						ndAlbClon = obtenerNodo(ndArtClon, ndAlbClon.toString());
-						if(ndAlbClon == null){
-							ndAlbClon = (DefaultMutableTreeNode)ndAlb.clone();
-							ndArtClon.add(ndAlbClon);
-						}
-						
-						ndAlbClon.add(ndCanClon);
-						
-						
-						////////////////////////////////////////////////
-						modeloArbolNegativo.removeNodeFromParent(ndCan);
-						canciones--;//acortar el ciclo por que
-						k--;//acabo de eliminar un nodo
-						if(ndAlb.getChildCount()==0){
-							modeloArbolNegativo.removeNodeFromParent(ndAlb);
-							albumes--;
-							j--;
-							if(ndArt.getChildCount()==0){
-								modeloArbolNegativo.removeNodeFromParent(ndArt);
-								artista--;
-								i--;
-							}
-						}
-					}
-				}
-			}
-		}
-		modeloArbol.reload();
-		modeloArbolNegativo.reload();
-		expandAll(tree, true);
+		if (e.getKeyCode() == 8) {// si está borrando cosas
+			filtrarMedio(txtBuscar.getText(), raizNegativa, raizArbol, false);
+		} else
+			// si esta escribiendo
+			filtrarMedio(txtBuscar.getText(), raizArbol, raizNegativa, true);
+		if (txtBuscar.getText().equals(""))
+			modeloArbol.reload();
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
 	}
 
-	private void filtrarMedio(String text) {
+	/**
+	 * Este metodo es requerido por la interfaz {@link TreeSelectionListener}
+	 */
+	public void valueChanged(TreeSelectionEvent e) {
+		ultimoNodoSeleccionado = (DefaultMutableTreeNode) arbolPrincipal
+				.getLastSelectedPathComponent();
+	}
+
+	/**
+	 * Este metodo filtra el contenido del arbol. Su funcionamiento es el
+	 * siguiente: basado en las raices que le pasemos, filtra los datos de un
+	 * archivo de medios y los que no coincidan los copia a otro arbol. La
+	 * manera en que funciona depende de la variable filtrar: si es true mueve
+	 * los nodos que no coinciden al otro arbol, si es false, mueve los nodos
+	 * que coinciden al otro arbol.
+	 * 
+	 * @param texto
+	 * @param raizArbol
+	 * @param raizNegativa
+	 * @param filtrar
+	 */
+	private void filtrarMedio(String texto, DefaultMutableTreeNode raizArbol,
+			DefaultMutableTreeNode raizNegativa, boolean filtrar) {
 		int artista, albumes, canciones;
 		artista = albumes = canciones = 0;
-		DefaultMutableTreeNode ndArt, ndAlb, ndCan;
-		DefaultMutableTreeNode ndArtClon, ndAlbClon, ndCanClon;
-		
+		DefaultMutableTreeNode nodoArtista, nodoAlbum, nodoCancion;
+		DefaultMutableTreeNode nodoArtistaClon, nodoAlbumClon, nodoCancionClon;
+		boolean filtrando = false;
+
 		artista = raizArbol.getChildCount();
-		for(int i = 0; i<artista; i++){
+		for (int i = 0; i < artista; i++) {
 			albumes = raizArbol.getChildAt(i).getChildCount();
-			for(int j = 0; j<albumes; j++){
-				canciones = raizArbol.getChildAt(i).getChildAt(j).getChildCount();
-				for(int k = 0; k<canciones; k++){
-					ndArt=(DefaultMutableTreeNode)raizArbol.getChildAt(i);
-					ndAlb=(DefaultMutableTreeNode)ndArt.getChildAt(j);
-					ndCan=(DefaultMutableTreeNode)ndAlb.getChildAt(k);
-					Archivo ar = (Archivo)ndCan.getUserObject();
-					if(ar.getNombreCortoArchivo().toLowerCase().indexOf(text.toLowerCase()) < 0){
-						///////////////////////////////////////////////////
-						///// movber el nodo a arbol negativo
-						///////////////////////////////////////////////
-						
-						ndArtClon=(DefaultMutableTreeNode)ndArt.clone();
-						ndAlbClon=(DefaultMutableTreeNode)ndAlb.clone();
-						ndCanClon=(DefaultMutableTreeNode)ndCan.clone();
-						
-						ndArtClon = obtenerNodo(raizNegativa, ndArtClon.toString());
-						if(ndArtClon == null){
-							ndArtClon = (DefaultMutableTreeNode)ndArt.clone();
-							raizNegativa.add(ndArtClon);
+			for (int j = 0; j < albumes; j++) {
+				canciones = raizArbol.getChildAt(i).getChildAt(j)
+						.getChildCount();
+				for (int k = 0; k < canciones; k++) {
+					nodoArtista = (DefaultMutableTreeNode) raizArbol.getChildAt(i);
+					nodoAlbum = (DefaultMutableTreeNode) nodoArtista.getChildAt(j);
+					nodoCancion = (DefaultMutableTreeNode) nodoAlbum.getChildAt(k);
+					Archivo ar = (Archivo) nodoCancion.getUserObject();
+					if (filtrar)// si se esta filtrando... busque las que no
+						// tengan coincidencias
+						filtrando = (ar.getNombreCortoArchivo().toLowerCase()
+								.indexOf(texto.toLowerCase()) < 0);
+					if (!filtrar)// si se esta quitando el filtro... busque las
+						// que tengan coincidencias
+						filtrando = (ar.getNombreCortoArchivo().toLowerCase()
+								.indexOf(texto.toLowerCase()) >= 0);
+					if (filtrando) {
+						/**
+						 * Copiar nodos de un arbol a otro
+						 */
+
+						nodoArtistaClon = (DefaultMutableTreeNode) nodoArtista.clone();
+						nodoAlbumClon = (DefaultMutableTreeNode) nodoAlbum.clone();
+						nodoCancionClon = (DefaultMutableTreeNode) nodoCancion.clone();
+
+						nodoArtistaClon = obtenerNodo(raizNegativa, nodoArtistaClon
+								.toString());
+						if (nodoArtistaClon == null) {
+							nodoArtistaClon = (DefaultMutableTreeNode) nodoArtista.clone();
+							raizNegativa.add(nodoArtistaClon);
 						}
-						
-						ndAlbClon = obtenerNodo(ndArtClon, ndAlbClon.toString());
-						if(ndAlbClon == null){
-							ndAlbClon = (DefaultMutableTreeNode)ndAlb.clone();
-							ndArtClon.add(ndAlbClon);
+
+						nodoAlbumClon = obtenerNodo(nodoArtistaClon, nodoAlbumClon.toString());
+						if (nodoAlbumClon == null) {
+							nodoAlbumClon = (DefaultMutableTreeNode) nodoAlbum.clone();
+							nodoArtistaClon.add(nodoAlbumClon);
 						}
-						
-						ndAlbClon.add(ndCanClon);
-						
-						
-						////////////////////////////////////////////////
-						modeloArbol.removeNodeFromParent(ndCan);
-						canciones--;//acortar el ciclo por que
-						k--;//acabo de eliminar un nodo
-						if(ndAlb.getChildCount()==0){
-							modeloArbol.removeNodeFromParent(ndAlb);
+
+						nodoAlbumClon.add(nodoCancionClon);
+
+						/**
+						 * Borrar los nodos copiados
+						 */
+						modeloArbol.removeNodeFromParent(nodoCancion);
+						canciones--;// acortar el ciclo por que
+						k--;// acabo de eliminar un nodo
+						if (nodoAlbum.getChildCount() == 0) {
+							modeloArbol.removeNodeFromParent(nodoAlbum);
 							albumes--;
 							j--;
-							if(ndArt.getChildCount()==0){
-								modeloArbol.removeNodeFromParent(ndArt);
+							if (nodoArtista.getChildCount() == 0) {
+								modeloArbol.removeNodeFromParent(nodoArtista);
 								artista--;
 								i--;
 							}
@@ -391,57 +391,104 @@ public class Coleccion extends JPanel implements TreeSelectionListener, Constant
 				}
 			}
 		}
+		// esto es necesario para actualizar la estructura del arbol
 		modeloArbol.reload();
-		modeloArbolNegativo.reload();
-		expandAll(tree, true);
+		// esto expande todos los nodos del arbol
+		expandirTodo(arbolPrincipal, true);
 	}
-	public void expandAll(JTree tree, boolean expand) {
-        TreeNode root = (TreeNode)tree.getModel().getRoot();
-    
-        // Traverse tree from root
-        expandAll(tree, new TreePath(root), expand);
-    }
-    private void expandAll(JTree tree, TreePath parent, boolean expand) {
-        // Traverse children
-        TreeNode node = (TreeNode)parent.getLastPathComponent();
-        if (node.getChildCount() >= 0) {
-            for (Enumeration e=node.children(); e.hasMoreElements(); ) {
-                TreeNode n = (TreeNode)e.nextElement();
-                TreePath path = parent.pathByAddingChild(n);
-                expandAll(tree, path, expand);
-            }
-        }
-    
-        // Expansion or collapse must be done bottom-up
-        if (expand) {
-            tree.expandPath(parent);
-        } else {
-            tree.collapsePath(parent);
-        }
-    }
 
+	/**
+	 * Este metodo expande o contrae todos los nodos de un arbol. Fue extraida
+	 * de ExampleDepot.com: <a href="http://tinyurl.com/nmtvmd">ver</a>
+	 * 
+	 * @param arbol
+	 * @param expandir
+	 */
+	public void expandirTodo(JTree arbol, boolean expandir) {
+		TreeNode root = (TreeNode) arbol.getModel().getRoot();
 
+		// Traverse tree from root
+		expandirTodo(arbol, new TreePath(root), expandir);
+	}
+
+	/**
+	 * Este metodo expande o contrae todos los nodos de un arbol. Fue extraida
+	 * de ExampleDepot.com: <a href="http://tinyurl.com/nmtvmd">ver</a>
+	 * 
+	 * @param arbol
+	 * @param padre
+	 * @param expandir
+	 */
+	private void expandirTodo(JTree arbol, TreePath padre, boolean expandir) {
+		// Navegar a traves de los hijos
+		TreeNode node = (TreeNode) padre.getLastPathComponent();
+		if (node.getChildCount() >= 0) {
+			for (Enumeration<TreeNode> e = node.children(); e.hasMoreElements();) {
+				TreeNode n = e.nextElement();
+				TreePath path = padre.pathByAddingChild(n);
+				expandirTodo(arbol, path, expandir);
+			}
+		}
+		// expandir o contraer
+		if (expandir)
+			arbol.expandPath(padre);
+		else
+			arbol.collapsePath(padre);
+	}
+
+	/**
+	 * Metodos requeridos por TreeSelectionListener
+	 */
 	@Override
 	public void treeNodesChanged(TreeModelEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void treeNodesInserted(TreeModelEvent e) {
-		//System.out.println("Se inserto cosas de "+e.toString());
-		
 	}
 
 	@Override
 	public void treeNodesRemoved(TreeModelEvent e) {
-		//System.out.println("Se borraron cosas de "+e.toString());
-		
 	}
 
 	@Override
 	public void treeStructureChanged(TreeModelEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
+
+	/**
+	 * Asignar la lista de reproduccion a la cual aniadira los archivos
+	 * 
+	 * @param listaRepro
+	 */
+	public void setListaRepro(ListaReproduccion listaRepro) {
+		this.listaRepro = listaRepro;
+	}
+
+	/**
+	 * Obtener la lista de reproduccion a la cual esta aniadiendo archivos
+	 * 
+	 * @return
+	 */
+	public ListaReproduccion getListaRepro() {
+		return listaRepro;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == btnBorrarBusqueda){
+			txtBuscar.setText("");
+			filtrarMedio(txtBuscar.getText(), raizNegativa, raizArbol, false);
+			modeloArbol.reload();
+		}
+		if(e.getSource() == btnExpandir){
+			expandido = !expandido;
+			if(!expandido)
+				btnExpandir.setIcon(new ImageIcon(this.getClass().getResource(IMG_EXPANDIR_16)));
+			else
+				btnExpandir.setIcon(new ImageIcon(this.getClass().getResource(IMG_COLAPSAR_16)));
+			expandirTodo(arbolPrincipal, expandido);
+			if(!expandido)modeloArbol.reload();
+		}
+	}
+
 }

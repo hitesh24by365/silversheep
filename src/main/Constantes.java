@@ -33,6 +33,10 @@ public interface Constantes {
 	public static final String IMG_ANIADIR_RUTA_16 = "/img/16x16/aniadir.png";
 	public static final String IMG_REMOVER_RUTA_16 = "/img/16x16/remover.png";
 	public static final String IMG_REFRESCAR_16 = "/img/16x16/refrescar.png";
+	public static final String IMG_BUSCAR_16 = "/img/16x16/buscar.png";
+	public static final String IMG_LIMPIAR_16 = "/img/16x16/limpiar.png";
+	public static final String IMG_COLAPSAR_16 = "/img/16x16/colapsar.png";
+	public static final String IMG_EXPANDIR_16 = "/img/16x16/expandir.png";
 	// otras imagenes
 	public static final String IMG_AUDIO = "/img/misc/audio.png";
 	public static final String IMG_IMAGEN = "/img/misc/imagen.png";
