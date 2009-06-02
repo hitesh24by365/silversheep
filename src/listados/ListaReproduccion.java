@@ -101,8 +101,6 @@ public class ListaReproduccion extends JPanel implements Constantes {
 						+ " to " + valor + " (an instance of "
 						+ valor.getClass() + ")");
 			}
-
-			fireTableRowsInserted(0, 0);
 			datos.get(fila)[col] = valor;
 			fireTableCellUpdated(fila, col);
 
@@ -163,12 +161,11 @@ public class ListaReproduccion extends JPanel implements Constantes {
             column.setPreferredWidth(Math.max(headerWidth, cellWidth));
         }
     }
-	public void cambiarValor(Object obj, int filas, int cols){
-		listado.setValueAt(obj, 0, 0);
+	public void aniadirMedio(){
 		Object[] satan = { "Satan mo master", "Dimmu Borgir", "In sorte diaboli",
 				"6:66", "Death Metal", "/home/hell/music", "satan-my-master.mp3", new Integer(5)};
 		datos.add(satan);
-		//listado.cos
-		//listado.
+		//TODO aniadir datos a la tabla.
+		//listado.getRowCount();
 	}
 }

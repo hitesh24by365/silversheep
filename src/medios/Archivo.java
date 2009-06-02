@@ -1,6 +1,5 @@
 package medios;
 
-import java.util.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Formatter;
@@ -308,5 +307,7 @@ public class Archivo implements Constantes{
 		String nombre = getNombreArchivo().replace('\\', '/');
 		return nombre.substring(nombre.lastIndexOf('/')+1);
 	}
-
+	public String toString(){
+		return getNombreCortoArchivo().equals("") ? "Desconocido" : getNombreCortoArchivo();
+	}
 }

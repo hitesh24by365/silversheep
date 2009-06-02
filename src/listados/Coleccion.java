@@ -1,14 +1,20 @@
 package listados;
-
+//TODO crear una estructura de arbol para esto desde cero y en otra clase.
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.JTextField;
 import javax.swing.ToolTipManager;
 import javax.swing.ImageIcon;
 import javax.swing.Icon;
@@ -17,18 +23,25 @@ import main.Constantes;
 import medios.Archivo;
 
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.Vector;
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Component;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class Coleccion extends JPanel implements TreeSelectionListener, Constantes, MouseListener {
+public class Coleccion extends JPanel implements TreeSelectionListener, Constantes, MouseListener, KeyListener, TreeModelListener {
 	private static final long serialVersionUID = -8359984107448140209L;
-	private JTree tree;
+	private JTree tree, tree2;
 	private Vector<Archivo> archivos;
 	private ListaReproduccion listaRepro;
 	private DefaultMutableTreeNode ultimoNodoSeleccionado;
+	private JTextField txtBuscar;
+	private DefaultMutableTreeNode raizArbol, raizNegativa;
+	private DefaultTreeModel modeloArbol, modeloArbolNegativo;
 
 	public Coleccion(Vector<Archivo> archivos) {
 		super(new GridLayout(1, 0));
@@ -43,8 +56,9 @@ public class Coleccion extends JPanel implements TreeSelectionListener, Constant
 	/** Required by TreeSelectionListener interface. */
 	public void valueChanged(TreeSelectionEvent e) {
 		//System.out.println("algo pasa");
-		ultimoNodoSeleccionado = (DefaultMutableTreeNode) tree
-				.getLastSelectedPathComponent();
+		
+		ultimoNodoSeleccionado = (DefaultMutableTreeNode) tree.
+				getLastSelectedPathComponent();
 		/*Object informacionArchivo = nodo.getUserObject();
 		if (nodo.isLeaf()) {
 			InformacionArchivo archivo = (InformacionArchivo) informacionArchivo;
@@ -57,26 +71,12 @@ public class Coleccion extends JPanel implements TreeSelectionListener, Constant
 			System.out.println(informacionArchivo.toString());
 		}*/
 	}
-
-	private class InformacionArchivo {
-		public String nombreArchivo;
-		public String urlArchivo;
-		public InformacionArchivo(String libro, String nombreFichero) {
-			nombreArchivo = libro;
-			urlArchivo = nombreFichero;
-		}
-		public String toString() {
-			return nombreArchivo;
-		}
-	}
-
-
 	private void crearNodos(DefaultMutableTreeNode top) {
 		DefaultMutableTreeNode artista = null;
 		DefaultMutableTreeNode album = null;
 		DefaultMutableTreeNode cancion = null;
 		//creacion de artistas
-		String strArtista, strAlbum, strCancion;
+		String strArtista, strAlbum;
 		//TODO no funciona bien puesto que en cada iteración se está creando 
 		//un nuevo nodo padre, que no es el mismo que utilizan los archivos que deberían ir dentro.
 		for(int i=0; i<archivos.size(); i++){
@@ -98,10 +98,7 @@ public class Coleccion extends JPanel implements TreeSelectionListener, Constant
 				album = new DefaultMutableTreeNode(strAlbum);
 				artista.add(album);
 			}
-			//aniadir cancion
-			strCancion = archivos.get(i).getNombreCortoArchivo();
-			strCancion = strCancion.equals("") ? "Desconocido" : strCancion;
-			cancion = new DefaultMutableTreeNode(strCancion);
+			cancion = new DefaultMutableTreeNode(archivos.get(i));
 			album.add(cancion);
 		}
 	}
@@ -113,14 +110,6 @@ public class Coleccion extends JPanel implements TreeSelectionListener, Constant
 			if(top.getChildAt(i).toString().toLowerCase().equals(texto.toLowerCase()))
 				return (DefaultMutableTreeNode)top.getChildAt(i);
 		return null;
-	}
-
-	private boolean noExisteNodo(DefaultMutableTreeNode top, String artista) {
-		int hijos = top.getChildCount();
-		for(int i = 0; i<hijos; i++)
-			if(top.getChildAt(i).toString().toLowerCase().equals(artista.toLowerCase()))
-				return false;
-		return true;
 	}
 
 	/** Returns an ImageIcon, or null if the path was invalid. */
@@ -135,11 +124,15 @@ public class Coleccion extends JPanel implements TreeSelectionListener, Constant
 	}
 
 	private void crearInterfazGrafica() {
-		DefaultMutableTreeNode top = new DefaultMutableTreeNode("M\u00fasica");
-		crearNodos(top);
-		tree = new JTree(top);
+		setLayout(new BorderLayout());
+		raizArbol = new DefaultMutableTreeNode("M\u00fasica");
+		crearNodos(raizArbol);//?si se crea aca?
+		modeloArbol = new DefaultTreeModel(raizArbol);
+		modeloArbol.addTreeModelListener(this);
+		tree = new JTree(modeloArbol);
 		tree.getSelectionModel().setSelectionMode(
 				TreeSelectionModel.SINGLE_TREE_SELECTION);
+		tree.setShowsRootHandles(true);
 
 		// Habilitar tooltips
 		ToolTipManager.sharedInstance().registerComponent(tree);
@@ -158,8 +151,34 @@ public class Coleccion extends JPanel implements TreeSelectionListener, Constant
 
 		// Creal el scroll para el 
 		JScrollPane treeView = new JScrollPane(tree);
-
+		
+		//Caja de busqueda
+		txtBuscar = new JTextField();
+		txtBuscar.addKeyListener(this);
+		
+		add(txtBuscar, BorderLayout.NORTH);
 		add(treeView);
+		
+		/////////////////////////////////////////////////////////////////////////
+		
+		raizNegativa = new DefaultMutableTreeNode("Residuos");
+		modeloArbolNegativo = new DefaultTreeModel(raizNegativa);
+		modeloArbolNegativo.addTreeModelListener(this);
+		tree2 = new JTree(modeloArbolNegativo);
+		tree2.getSelectionModel().setSelectionMode(
+				TreeSelectionModel.SINGLE_TREE_SELECTION);
+		tree2.setShowsRootHandles(true);
+
+		// Habilitar tooltips
+		ToolTipManager.sharedInstance().registerComponent(tree2);
+
+		// Escuchar cambios en la seleccion
+		//tree2.addTreeSelectionListener(this);
+
+		// Creal el scroll para el 
+		//JScrollPane treeView2 = new JScrollPane(tree2);
+		
+		//add(treeView2, BorderLayout.EAST);
 	}
 
 	private class MiRenderizador extends DefaultTreeCellRenderer {
@@ -221,7 +240,7 @@ public class Coleccion extends JPanel implements TreeSelectionListener, Constant
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		if(e.getClickCount()==2 && ultimoNodoSeleccionado.isLeaf())
-			listaRepro.cambiarValor(ultimoNodoSeleccionado.toString(), 0, 0);
+			System.out.println("Artista "+((Archivo)ultimoNodoSeleccionado.getUserObject()).getArtista());//listaRepro.aniadirMedio(ultimoNodoSeleccionado.toString(), 0, 0);
 	}
 
 	public void setListaRepro(ListaReproduccion listaRepro) {
@@ -230,5 +249,199 @@ public class Coleccion extends JPanel implements TreeSelectionListener, Constant
 
 	public ListaReproduccion getListaRepro() {
 		return listaRepro;
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		if(e.getKeyCode()==8){//si está borrando cosas
+			desfiltrarMedio(txtBuscar.getText());
+		}
+		else if(!txtBuscar.getText().equals(""))//si esta escribiendo
+			filtrarMedio(txtBuscar.getText());
+	}
+
+	private void desfiltrarMedio(String text) {
+		int artista, albumes, canciones;
+		artista = albumes = canciones = 0;
+		DefaultMutableTreeNode ndArt, ndAlb, ndCan;
+		DefaultMutableTreeNode ndArtClon, ndAlbClon, ndCanClon;
+		
+		artista = raizNegativa.getChildCount();
+		for(int i = 0; i<artista; i++){
+			albumes = raizNegativa.getChildAt(i).getChildCount();
+			for(int j = 0; j<albumes; j++){
+				canciones = raizNegativa.getChildAt(i).getChildAt(j).getChildCount();
+				for(int k = 0; k<canciones; k++){
+					ndArt=(DefaultMutableTreeNode)raizNegativa.getChildAt(i);
+					ndAlb=(DefaultMutableTreeNode)ndArt.getChildAt(j);
+					ndCan=(DefaultMutableTreeNode)ndAlb.getChildAt(k);
+					Archivo ar = (Archivo)ndCan.getUserObject();
+					if(ar.getNombreCortoArchivo().toLowerCase().indexOf(text.toLowerCase()) >= 0){
+						///////////////////////////////////////////////////
+						///// movber el nodo a arbol positivo
+						///////////////////////////////////////////////
+						
+						ndArtClon=(DefaultMutableTreeNode)ndArt.clone();
+						ndAlbClon=(DefaultMutableTreeNode)ndAlb.clone();
+						ndCanClon=(DefaultMutableTreeNode)ndCan.clone();
+						
+						ndArtClon = obtenerNodo(raizArbol, ndArtClon.toString());
+						if(ndArtClon == null){
+							ndArtClon = (DefaultMutableTreeNode)ndArt.clone();
+							raizArbol.add(ndArtClon);
+						}
+						
+						ndAlbClon = obtenerNodo(ndArtClon, ndAlbClon.toString());
+						if(ndAlbClon == null){
+							ndAlbClon = (DefaultMutableTreeNode)ndAlb.clone();
+							ndArtClon.add(ndAlbClon);
+						}
+						
+						ndAlbClon.add(ndCanClon);
+						
+						
+						////////////////////////////////////////////////
+						modeloArbolNegativo.removeNodeFromParent(ndCan);
+						canciones--;//acortar el ciclo por que
+						k--;//acabo de eliminar un nodo
+						if(ndAlb.getChildCount()==0){
+							modeloArbolNegativo.removeNodeFromParent(ndAlb);
+							albumes--;
+							j--;
+							if(ndArt.getChildCount()==0){
+								modeloArbolNegativo.removeNodeFromParent(ndArt);
+								artista--;
+								i--;
+							}
+						}
+					}
+				}
+			}
+		}
+		modeloArbol.reload();
+		modeloArbolNegativo.reload();
+		expandAll(tree, true);
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
+
+	private void filtrarMedio(String text) {
+		int artista, albumes, canciones;
+		artista = albumes = canciones = 0;
+		DefaultMutableTreeNode ndArt, ndAlb, ndCan;
+		DefaultMutableTreeNode ndArtClon, ndAlbClon, ndCanClon;
+		
+		artista = raizArbol.getChildCount();
+		for(int i = 0; i<artista; i++){
+			albumes = raizArbol.getChildAt(i).getChildCount();
+			for(int j = 0; j<albumes; j++){
+				canciones = raizArbol.getChildAt(i).getChildAt(j).getChildCount();
+				for(int k = 0; k<canciones; k++){
+					ndArt=(DefaultMutableTreeNode)raizArbol.getChildAt(i);
+					ndAlb=(DefaultMutableTreeNode)ndArt.getChildAt(j);
+					ndCan=(DefaultMutableTreeNode)ndAlb.getChildAt(k);
+					Archivo ar = (Archivo)ndCan.getUserObject();
+					if(ar.getNombreCortoArchivo().toLowerCase().indexOf(text.toLowerCase()) < 0){
+						///////////////////////////////////////////////////
+						///// movber el nodo a arbol negativo
+						///////////////////////////////////////////////
+						
+						ndArtClon=(DefaultMutableTreeNode)ndArt.clone();
+						ndAlbClon=(DefaultMutableTreeNode)ndAlb.clone();
+						ndCanClon=(DefaultMutableTreeNode)ndCan.clone();
+						
+						ndArtClon = obtenerNodo(raizNegativa, ndArtClon.toString());
+						if(ndArtClon == null){
+							ndArtClon = (DefaultMutableTreeNode)ndArt.clone();
+							raizNegativa.add(ndArtClon);
+						}
+						
+						ndAlbClon = obtenerNodo(ndArtClon, ndAlbClon.toString());
+						if(ndAlbClon == null){
+							ndAlbClon = (DefaultMutableTreeNode)ndAlb.clone();
+							ndArtClon.add(ndAlbClon);
+						}
+						
+						ndAlbClon.add(ndCanClon);
+						
+						
+						////////////////////////////////////////////////
+						modeloArbol.removeNodeFromParent(ndCan);
+						canciones--;//acortar el ciclo por que
+						k--;//acabo de eliminar un nodo
+						if(ndAlb.getChildCount()==0){
+							modeloArbol.removeNodeFromParent(ndAlb);
+							albumes--;
+							j--;
+							if(ndArt.getChildCount()==0){
+								modeloArbol.removeNodeFromParent(ndArt);
+								artista--;
+								i--;
+							}
+						}
+					}
+				}
+			}
+		}
+		modeloArbol.reload();
+		modeloArbolNegativo.reload();
+		expandAll(tree, true);
+	}
+	public void expandAll(JTree tree, boolean expand) {
+        TreeNode root = (TreeNode)tree.getModel().getRoot();
+    
+        // Traverse tree from root
+        expandAll(tree, new TreePath(root), expand);
+    }
+    private void expandAll(JTree tree, TreePath parent, boolean expand) {
+        // Traverse children
+        TreeNode node = (TreeNode)parent.getLastPathComponent();
+        if (node.getChildCount() >= 0) {
+            for (Enumeration e=node.children(); e.hasMoreElements(); ) {
+                TreeNode n = (TreeNode)e.nextElement();
+                TreePath path = parent.pathByAddingChild(n);
+                expandAll(tree, path, expand);
+            }
+        }
+    
+        // Expansion or collapse must be done bottom-up
+        if (expand) {
+            tree.expandPath(parent);
+        } else {
+            tree.collapsePath(parent);
+        }
+    }
+
+
+	@Override
+	public void treeNodesChanged(TreeModelEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void treeNodesInserted(TreeModelEvent e) {
+		//System.out.println("Se inserto cosas de "+e.toString());
+		
+	}
+
+	@Override
+	public void treeNodesRemoved(TreeModelEvent e) {
+		//System.out.println("Se borraron cosas de "+e.toString());
+		
+	}
+
+	@Override
+	public void treeStructureChanged(TreeModelEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
