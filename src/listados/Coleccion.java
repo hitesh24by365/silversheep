@@ -7,13 +7,16 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.event.TreeWillExpandListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -41,16 +44,17 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class Coleccion extends JPanel implements TreeSelectionListener,
-		Constantes, MouseListener, KeyListener, TreeModelListener, ActionListener {
+		Constantes, MouseListener, KeyListener, TreeModelListener,
+		ActionListener, TreeWillExpandListener {
 	private static final long serialVersionUID = -8359984107448140209L;
-	private JTree arbolPrincipal, arbolInvertido;
+	private JTree arbolPrincipal;
 	private Vector<Archivo> archivos;
 	private ListaReproduccion listaRepro;
 	private DefaultMutableTreeNode ultimoNodoSeleccionado;
 	private JPanel pnlBusqueda;
 	private JButton btnExpandir, btnBorrarBusqueda;
 	private JTextField txtBuscar;
-	private boolean expandido = false;
+	private boolean expandido = false, dobleClic = false;
 	private DefaultMutableTreeNode raizArbol, raizNegativa;
 	private DefaultTreeModel modeloArbol, modeloArbolNegativo;
 
@@ -81,13 +85,17 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 		crearNodos(raizArbol);
 		// crear el modelo del arbol
 		modeloArbol = new DefaultTreeModel(raizArbol);
-		modeloArbol.addTreeModelListener(this);
 		// iniciar arbol principal
 		arbolPrincipal = new JTree(modeloArbol);
 		arbolPrincipal.getSelectionModel().setSelectionMode(
 				TreeSelectionModel.SINGLE_TREE_SELECTION);
 		arbolPrincipal.setShowsRootHandles(true);
 		arbolPrincipal.setRootVisible(false);
+		// Escuchar cambios en la seleccion
+		arbolPrincipal.addMouseListener(this);
+		arbolPrincipal.addTreeSelectionListener(this);
+		arbolPrincipal.addTreeWillExpandListener(this);
+		modeloArbol.addTreeModelListener(this);
 
 		// Habilitar tooltips
 		ToolTipManager.sharedInstance().registerComponent(arbolPrincipal);
@@ -99,11 +107,8 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 		else
 			System.err.println("No se encuentra el icono " + IMG_SONIDO_16);
 
-		// Escuchar cambios en la seleccion
-		arbolPrincipal.addTreeSelectionListener(this);
-		arbolPrincipal.addMouseListener(this);
 
-		//iniciar objetos de busqueda
+		// iniciar objetos de busqueda
 		crearPanelBusqueda();
 
 		add(pnlBusqueda, BorderLayout.NORTH);
@@ -116,8 +121,6 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 		raizNegativa = new DefaultMutableTreeNode("Residuos");
 		modeloArbolNegativo = new DefaultTreeModel(raizNegativa);
 		modeloArbolNegativo.addTreeModelListener(this);
-		// iniciar arbol
-		arbolInvertido = new JTree(modeloArbolNegativo);
 	}
 
 	/**
@@ -156,32 +159,35 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 			album.add(cancion);
 		}
 	}
+
 	/**
 	 * Este metodo inicia los objetos del panel busqueda
 	 */
-	private void crearPanelBusqueda(){
+	private void crearPanelBusqueda() {
 		// Caja de busqueda
 		txtBuscar = new JTextField();
 		txtBuscar.addKeyListener(this);
-		
-		//boton de borrar busqueda
-		btnBorrarBusqueda = new JButton(new ImageIcon(this.getClass().getResource(IMG_LIMPIAR_16)));
+
+		// boton de borrar busqueda
+		btnBorrarBusqueda = new JButton(new ImageIcon(this.getClass()
+				.getResource(IMG_LIMPIAR_16)));
 		btnBorrarBusqueda.setToolTipText("Borrar campo de b\u00fasqueda");
-		btnBorrarBusqueda.setPreferredSize(new Dimension(20,20));
+		btnBorrarBusqueda.setPreferredSize(new Dimension(20, 20));
 		btnBorrarBusqueda.addActionListener(this);
-		
-		//boton de expandir
-		btnExpandir = new JButton(new ImageIcon(this.getClass().getResource(IMG_EXPANDIR_16)));
+
+		// boton de expandir
+		btnExpandir = new JButton(new ImageIcon(this.getClass().getResource(
+				IMG_EXPANDIR_16)));
 		btnExpandir.setToolTipText("Expandir arbol");
-		btnExpandir.setPreferredSize(new Dimension(20,20));
+		btnExpandir.setPreferredSize(new Dimension(20, 20));
 		btnExpandir.addActionListener(this);
-		
-		//iniciar panel
+
+		// iniciar panel
 		pnlBusqueda = new JPanel();
 		pnlBusqueda.setLayout(new BoxLayout(pnlBusqueda, BoxLayout.LINE_AXIS));
 		pnlBusqueda.add(Box.createHorizontalGlue());
-		pnlBusqueda.setPreferredSize(new Dimension(100,25));
-		
+		pnlBusqueda.setPreferredSize(new Dimension(100, 25));
+
 		pnlBusqueda.add(txtBuscar);
 		pnlBusqueda.add(btnBorrarBusqueda);
 		pnlBusqueda.add(btnExpandir);
@@ -273,10 +279,16 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if (e.getClickCount() == 2){
-			ultimoNodoSeleccionado = (DefaultMutableTreeNode) arbolPrincipal.getLastSelectedPathComponent();
-			if(ultimoNodoSeleccionado != null && ultimoNodoSeleccionado.isLeaf())
-				listaRepro.aniadirMedio((Archivo)ultimoNodoSeleccionado.getUserObject());
+		if (e.getClickCount() == 2) {
+			dobleClic = true;
+			ultimoNodoSeleccionado = (DefaultMutableTreeNode) arbolPrincipal
+					.getLastSelectedPathComponent();
+			if (ultimoNodoSeleccionado != null
+					&& ultimoNodoSeleccionado.isLeaf()) {
+				listaRepro.aniadirMedio((Archivo) ultimoNodoSeleccionado
+						.getUserObject());
+				dobleClic = false;
+			}
 		}
 	}
 
@@ -338,9 +350,12 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 				canciones = raizArbol.getChildAt(i).getChildAt(j)
 						.getChildCount();
 				for (int k = 0; k < canciones; k++) {
-					nodoArtista = (DefaultMutableTreeNode) raizArbol.getChildAt(i);
-					nodoAlbum = (DefaultMutableTreeNode) nodoArtista.getChildAt(j);
-					nodoCancion = (DefaultMutableTreeNode) nodoAlbum.getChildAt(k);
+					nodoArtista = (DefaultMutableTreeNode) raizArbol
+							.getChildAt(i);
+					nodoAlbum = (DefaultMutableTreeNode) nodoArtista
+							.getChildAt(j);
+					nodoCancion = (DefaultMutableTreeNode) nodoAlbum
+							.getChildAt(k);
 					Archivo ar = (Archivo) nodoCancion.getUserObject();
 					if (filtrar)// si se esta filtrando... busque las que no
 						// tengan coincidencias
@@ -355,20 +370,26 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 						 * Copiar nodos de un arbol a otro
 						 */
 
-						nodoArtistaClon = (DefaultMutableTreeNode) nodoArtista.clone();
-						nodoAlbumClon = (DefaultMutableTreeNode) nodoAlbum.clone();
-						nodoCancionClon = (DefaultMutableTreeNode) nodoCancion.clone();
+						nodoArtistaClon = (DefaultMutableTreeNode) nodoArtista
+								.clone();
+						nodoAlbumClon = (DefaultMutableTreeNode) nodoAlbum
+								.clone();
+						nodoCancionClon = (DefaultMutableTreeNode) nodoCancion
+								.clone();
 
-						nodoArtistaClon = obtenerNodo(raizNegativa, nodoArtistaClon
-								.toString());
+						nodoArtistaClon = obtenerNodo(raizNegativa,
+								nodoArtistaClon.toString());
 						if (nodoArtistaClon == null) {
-							nodoArtistaClon = (DefaultMutableTreeNode) nodoArtista.clone();
+							nodoArtistaClon = (DefaultMutableTreeNode) nodoArtista
+									.clone();
 							raizNegativa.add(nodoArtistaClon);
 						}
 
-						nodoAlbumClon = obtenerNodo(nodoArtistaClon, nodoAlbumClon.toString());
+						nodoAlbumClon = obtenerNodo(nodoArtistaClon,
+								nodoAlbumClon.toString());
 						if (nodoAlbumClon == null) {
-							nodoAlbumClon = (DefaultMutableTreeNode) nodoAlbum.clone();
+							nodoAlbumClon = (DefaultMutableTreeNode) nodoAlbum
+									.clone();
 							nodoArtistaClon.add(nodoAlbumClon);
 						}
 
@@ -478,20 +499,54 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == btnBorrarBusqueda){
+		if (e.getSource() == btnBorrarBusqueda) {
 			txtBuscar.setText("");
 			filtrarMedio(txtBuscar.getText(), raizNegativa, raizArbol, false);
 			modeloArbol.reload();
 		}
-		if(e.getSource() == btnExpandir){
+		if (e.getSource() == btnExpandir) {
 			expandido = !expandido;
-			if(!expandido)
-				btnExpandir.setIcon(new ImageIcon(this.getClass().getResource(IMG_EXPANDIR_16)));
+			if (!expandido)
+				btnExpandir.setIcon(new ImageIcon(this.getClass().getResource(
+						IMG_EXPANDIR_16)));
 			else
-				btnExpandir.setIcon(new ImageIcon(this.getClass().getResource(IMG_COLAPSAR_16)));
+				btnExpandir.setIcon(new ImageIcon(this.getClass().getResource(
+						IMG_COLAPSAR_16)));
 			expandirTodo(arbolPrincipal, expandido);
-			if(!expandido)modeloArbol.reload();
+			if (!expandido)
+				modeloArbol.reload();
 		}
 	}
 
+	/**
+	 * Metodos implementados de la interfaz {@link TreeWillExpandListener}
+	 */
+	@Override
+	public void treeWillCollapse(TreeExpansionEvent evt)
+			throws ExpandVetoException {
+		ultimoNodoSeleccionado = (DefaultMutableTreeNode) arbolPrincipal
+				.getLastSelectedPathComponent();
+		// si es un album, es decir, si el primer hijo es una hoja y no otro
+		// padre...
+		if (ultimoNodoSeleccionado.getChildAt(0).isLeaf() && dobleClic) {
+			dobleClic = false;
+			throw new ExpandVetoException(evt);
+		}
+	}
+
+	@Override
+	public void treeWillExpand(TreeExpansionEvent evt)
+			throws ExpandVetoException {
+		ultimoNodoSeleccionado = (DefaultMutableTreeNode) arbolPrincipal
+				.getLastSelectedPathComponent();
+		// si es un album, es decir, si el primer hijo es una hoja y no otro
+		// padre...
+		if (ultimoNodoSeleccionado.getChildAt(0).isLeaf() && dobleClic) {
+			dobleClic = false;
+			for (int i = 0; i < ultimoNodoSeleccionado.getChildCount(); i++)
+				listaRepro.aniadirMedio((Archivo)((DefaultMutableTreeNode)ultimoNodoSeleccionado.getChildAt(i)).getUserObject());
+			throw new ExpandVetoException(evt);
+		}
+
+	}
 }
