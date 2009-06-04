@@ -273,8 +273,11 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if (e.getClickCount() == 2)
-			System.out.println("Doble clic en arbol");
+		if (e.getClickCount() == 2){
+			ultimoNodoSeleccionado = (DefaultMutableTreeNode) arbolPrincipal.getLastSelectedPathComponent();
+			if(ultimoNodoSeleccionado != null && ultimoNodoSeleccionado.isLeaf())
+				listaRepro.aniadirMedio((Archivo)ultimoNodoSeleccionado.getUserObject());
+		}
 	}
 
 	/**

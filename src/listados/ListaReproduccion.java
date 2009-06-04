@@ -14,12 +14,16 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import main.Constantes;
+import medios.Archivo;
 
 public class ListaReproduccion extends JPanel implements Constantes {
 	private static final long serialVersionUID = -8338766233305367920L;
 	private JTable listado;
-	private Object[] satan = { "Satan my master", "Dimmu Borgir", "In sorte diaboli",
-			"6:66", "Death Metal", "/home/hell/music", "satan-my-master.mp3", new Integer(5)};
+	private MiModeloTabla modeloTabla;
+	// private Object[] satan = { "Satan my master", "Dimmu Borgir",
+	// "In sorte diaboli",
+	// "6:66", "Death Metal", "/home/hell/music", "satan-my-master.mp3", new
+	// Integer(5)};
 	private Vector<Object[]> datos;
 
 	public ListaReproduccion() {
@@ -29,13 +33,16 @@ public class ListaReproduccion extends JPanel implements Constantes {
 
 	private void crearListado() {
 		datos = new Vector<Object[]>();
-		datos.add(satan);
+		// datos.add(satan);
 		
-		listado = new JTable((TableModel) new MiModeloTabla(datos));
+		modeloTabla = new MiModeloTabla(datos);
+
+		listado = new JTable(modeloTabla);
 		listado.setPreferredScrollableViewportSize(new Dimension(500, 70));
 		listado.setFillsViewportHeight(true);
 		listado.setAutoCreateRowSorter(true);
-		initColumnSizes(listado);
+		if (datos.size() > 0)
+			iniciarLongitudColumnas(listado);
 
 		// Create the scroll pane and add the table to it.
 		JScrollPane scrollPane = new JScrollPane(listado);
@@ -48,9 +55,10 @@ public class ListaReproduccion extends JPanel implements Constantes {
 		private static final long serialVersionUID = 4728231179048500607L;
 		private String[] nombreColumnas = { "T\u00edtulo", "Artista",
 				"\u00c1lbum", "Longitud", "G\u00e9nero", "Ubicaci\u00f3n",
-				"Nombre archivo", "Contador" };
+				"Contador" };
 		private boolean[] columnasActivas = new boolean[nombreColumnas.length];
 		private Vector<Object[]> datos;
+
 		public MiModeloTabla(Vector<Object[]> datos) {
 			this.datos = datos;
 		}
@@ -88,9 +96,10 @@ public class ListaReproduccion extends JPanel implements Constantes {
 			return false;
 		}
 
-		private void columnasVisibles(){
-			//columnasActivas[fila];
+		private void columnasVisibles() {
+			// columnasActivas[fila];
 		}
+
 		/*
 		 * Don't need to implement this method unless your table's data can
 		 * change.
@@ -123,49 +132,43 @@ public class ListaReproduccion extends JPanel implements Constantes {
 			}
 			System.out.println("--------------------------");
 		}
-		public void cosas(){
-			
+
+		public void cosas() {
+
 		}
 	}
-	private void initColumnSizes(JTable table) {
-		MiModeloTabla model = (MiModeloTabla)table.getModel();
-        TableColumn column = null;
-        Component comp = null;
-        int headerWidth = 0;
-        int cellWidth = 0;
-        Object[] longValues = model.datos.get(0);
-        TableCellRenderer headerRenderer =
-            table.getTableHeader().getDefaultRenderer();
 
-        for (int i = 0; i < 5; i++) {
-            column = table.getColumnModel().getColumn(i);
+	private void iniciarLongitudColumnas(JTable table) {
+		MiModeloTabla model = (MiModeloTabla) table.getModel();
+		TableColumn column = null;
+		Component comp = null;
+		int headerWidth = 0;
+		int cellWidth = 0;
+		Object[] longValues = model.datos.get(0);
+		TableCellRenderer headerRenderer = table.getTableHeader()
+				.getDefaultRenderer();
 
-            comp = headerRenderer.getTableCellRendererComponent(
-                                 null, column.getHeaderValue(),
-                                 false, false, 0, 0);
-            headerWidth = comp.getPreferredSize().width;
+		for (int i = 0; i < 5; i++) {
+			column = table.getColumnModel().getColumn(i);
 
-            comp = table.getDefaultRenderer(model.getColumnClass(i)).
-                             getTableCellRendererComponent(
-                                 table, longValues[i],
-                                 false, false, 0, i);
-            cellWidth = comp.getPreferredSize().width;
+			comp = headerRenderer.getTableCellRendererComponent(null, column
+					.getHeaderValue(), false, false, 0, 0);
+			headerWidth = comp.getPreferredSize().width;
 
-            if (false) {
-                System.out.println("Initializing width of column "
-                                   + i + ". "
-                                   + "headerWidth = " + headerWidth
-                                   + "; cellWidth = " + cellWidth);
-            }
+			comp = table.getDefaultRenderer(model.getColumnClass(i))
+					.getTableCellRendererComponent(table, longValues[i], false,
+							false, 0, i);
+			cellWidth = comp.getPreferredSize().width;
 
-            column.setPreferredWidth(Math.max(headerWidth, cellWidth));
-        }
-    }
-	public void aniadirMedio(){
-		Object[] satan = { "Satan mo master", "Dimmu Borgir", "In sorte diaboli",
-				"6:66", "Death Metal", "/home/hell/music", "satan-my-master.mp3", new Integer(5)};
-		datos.add(satan);
-		//TODO aniadir datos a la tabla.
-		//listado.getRowCount();
+			column.setPreferredWidth(Math.max(headerWidth, cellWidth));
+		}
+	}
+
+	public void aniadirMedio(Archivo ar) {
+		Object[] informacionMedio = { ar.getNombreCortoArchivo(),
+				ar.getArtista(), ar.getAlbumDisco(), ar.getLongitud(),
+				ar.getGenero(), ar.getNombreArchivo(), ar.getContador() };
+		datos.add(informacionMedio);
+		modeloTabla.fireTableDataChanged();
 	}
 }
