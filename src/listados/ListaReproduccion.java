@@ -3,7 +3,6 @@ package listados;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -13,7 +12,6 @@ import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -22,17 +20,16 @@ import javax.swing.JToolBar;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import reproductor.ReproducirArchivoAudio;
+import reproductor.Reproductor;
 
 import main.Constantes;
 import main.ObservadorReproduccionPestania;
 import medios.Archivo;
 
 public class ListaReproduccion extends JPanel implements Constantes,
-		MouseListener, ActionListener {
+		MouseListener, ActionListener, Reproductor {
 	private static final long serialVersionUID = -8338766233305367920L;
 	private JTable listado;
 	private MiModeloTabla modeloTabla;
@@ -76,7 +73,7 @@ public class ListaReproduccion extends JPanel implements Constantes,
 		hiloReproduccion = new ReproducirArchivoAudio();
 	}
 
-	class MiModeloTabla extends AbstractTableModel {
+	public class MiModeloTabla extends AbstractTableModel {
 		private static final long serialVersionUID = 4728231179048500607L;
 		private String[] nombreColumnas = { "T\u00edtulo", "Artista",
 				"\u00c1lbum", "Longitud", "G\u00e9nero", "Ubicaci\u00f3n",
@@ -404,11 +401,15 @@ public class ListaReproduccion extends JPanel implements Constantes,
 			btnReproducir.setIcon(new ImageIcon(this.getClass().getResource(
 					IMG_PAUSAR_30)));
 			btnReproducir.setToolTipText("Pausar");
+			
 		} else {
 			btnReproducir.setIcon(new ImageIcon(this.getClass().getResource(
 					IMG_REPRODUCIR_30)));
 			btnReproducir.setToolTipText("Reproducir");
+			
 		}
+		if(observador != null)
+			observador.cambioReproduccion(reproduciendo);
 	}
 
 	/**
@@ -453,31 +454,32 @@ public class ListaReproduccion extends JPanel implements Constantes,
 		return volumen;
 	}
 	private void actualizarEstadoControles() {
-		boolean habilitado = true;
+		boolean hayArchivosPorReproducir = true;
 		if(listado.getRowCount() == 0)
-			habilitado = false;
-		btnAnterior.setEnabled(habilitado);
-		btnSiguiente.setEnabled(habilitado);
-		btnDetener.setEnabled(habilitado);
-		btnReproducir.setEnabled(habilitado);
-		btnSubirVolumen.setEnabled(habilitado);
-		btnBajarVolumen.setEnabled(habilitado);
-		btnMute.setEnabled(habilitado);
-		btnRandom.setEnabled(habilitado);
+			hayArchivosPorReproducir = false;
+		btnAnterior.setEnabled(hayArchivosPorReproducir);
+		btnSiguiente.setEnabled(hayArchivosPorReproducir);
+		btnDetener.setEnabled(hayArchivosPorReproducir);
+		btnReproducir.setEnabled(hayArchivosPorReproducir);
+		btnSubirVolumen.setEnabled(hayArchivosPorReproducir);
+		btnBajarVolumen.setEnabled(hayArchivosPorReproducir);
+		btnMute.setEnabled(hayArchivosPorReproducir);
+		btnRandom.setEnabled(hayArchivosPorReproducir);
 		if(observador != null){
-			observador.cambioReproduccion(habilitado, true);
-			observador.cambioAnterior(habilitado);
-			observador.cambioSiguiente(habilitado);
-		}else
-		System.out.println("es nulo :(");
+			if(hayArchivosPorReproducir){
+				observador.cambioReproduccion(reproduciendo);
+				observador.cambioReproduccion(hayArchivosPorReproducir, true);
+			}
+			else
+				observador.cambioReproduccion(hayArchivosPorReproducir, true);
+			observador.cambioAnterior(hayArchivosPorReproducir);
+			observador.cambioSiguiente(hayArchivosPorReproducir);
+		}
 	}
 
-	public ObservadorReproduccionPestania getObservador() {
-		return observador;
-	}
-
-	public void setObservador(ObservadorReproduccionPestania observador) {
-		this.observador = observador;
+	@Override
+	public void registrarObservador(ObservadorReproduccionPestania obs) {
+		this.observador = obs;
 		actualizarEstadoControles();
 	}
 

@@ -1,47 +1,57 @@
 package medios;
 
-public class ConstructorArchivoImagen extends ConstructorArchivoMultimedia {
+import java.io.File;
+import java.util.GregorianCalendar;
+
+import javax.swing.ImageIcon;
+
+import main.Constantes;
+
+public class ConstructorArchivoImagen extends ConstructorArchivoMultimedia
+		implements Constantes {
+	// Referencia directa al archivo
+	private File archivoTrabajo;
 
 	@Override
 	public void buildAlbumDisco() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void buildArtista() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void buildCodec() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void buildDimensiones() {
-		// TODO Auto-generated method stub
-		
+		ImageIcon imagen = new ImageIcon(archivo.getNombreArchivo());
+		archivo.setAncho(imagen.getIconWidth());
+		archivo.setAlto(imagen.getIconHeight());
 	}
 
 	@Override
 	public void buildGenero() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void buildLongitud() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void iniciarCargaMetadatos() {
-		// TODO Auto-generated method stub
-		
+		// Obtener datos
+		try {
+			archivoTrabajo = new File(archivo.getNombreArchivo());
+			archivo.setTamanioKB(archivoTrabajo.length());
+		} catch (Exception e) {
+			System.err.println("Error mientras se procesaba el archivo "
+					+ archivo.getNombreArchivo());
+			if (DEBUG)
+				e.printStackTrace();
+		} finally {
+			archivo.setFechaAdicion(new GregorianCalendar());
+		}
 	}
-
 }

@@ -309,6 +309,19 @@ public class Archivo implements Constantes{
 		nombre =  nombre.substring(nombre.lastIndexOf('/')+1, nombre.lastIndexOf('.'));
 		return nombre.substring(nombre.lastIndexOf('/')+1);
 	}
+	
+	public TipoArchivo getTipo(){
+		String extension = getNombreArchivo().substring(getNombreArchivo().lastIndexOf('.')+1);
+		if(EXTENSIONES_AUDIO.indexOf(extension.toLowerCase())>=0)
+			return new TipoArchivo(IMG_SONIDO_16);
+		else if(EXTENSIONES_IMAGEN.indexOf(extension.toLowerCase())>=0)
+			return new TipoArchivo(IMG_IMAGEN_16);
+		else if(EXTENSIONES_VIDEO.indexOf(extension.toLowerCase())>=0)
+			return new TipoArchivo(IMG_VIDEO_16);
+		else
+			return new TipoArchivo(IMG_MEDIO_16);
+	}
+	
 	public String toString(){
 		return getNombreCortoArchivo().equals("") ? "Desconocido" : getNombreCortoArchivo();
 	}

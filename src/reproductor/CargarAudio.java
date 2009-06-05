@@ -48,27 +48,24 @@ public class CargarAudio extends JPanel implements Reproductor, Constantes {
 
 	@Override
 	public void anterior() {
-		// TODO Auto-generated method stub
-
+		listaReproduccion.anterior();
 	}
 
 	@Override
 	public void reproducirMedio() {
-		// TODO Auto-generated method stub
-
+		listaReproduccion.reproducirMedio();
 	}
 
 	@Override
 	public void siguiente() {
-		// TODO Auto-generated method stub
+		listaReproduccion.siguiente();
 
 	}
 
 	@Override
 	public void registrarObservador(ObservadorReproduccionPestania obs) {
-		System.out.println(obs);
 		this.observador = obs;
-		this.listaReproduccion.setObservador(this.observador);
+		this.listaReproduccion.registrarObservador(this.observador);
 	}
 
 }

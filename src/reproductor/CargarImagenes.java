@@ -13,12 +13,18 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
+import almacenamiento.AlmacenarInfoBibliotecaRefinado;
+import almacenamiento.Biblioteca;
+import almacenamiento.TransaccionesSQLite;
+
 import main.Constantes;
 import main.ObservadorReproduccionPestania;
 import main.Ventana;
+import medios.Archivo;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Vector;
 
 public class CargarImagenes extends JPanel implements ActionListener,
 		Reproductor, Constantes {
@@ -36,6 +42,9 @@ public class CargarImagenes extends JPanel implements ActionListener,
 	private PanelImagen panelImagen;
 	private String[] rutas;
 	private int imagenActual = 0;
+	private Biblioteca biblio;
+	private TransaccionesSQLite sqlite;
+	private Vector<Archivo> archivos;
 
 	private Timer temporizador;
 	private ObservadorReproduccionPestania observador;
@@ -47,20 +56,18 @@ public class CargarImagenes extends JPanel implements ActionListener,
 	}
 
 	public CargarImagenes(Ventana padre) {
+		sqlite = new TransaccionesSQLite();
+		biblio = new AlmacenarInfoBibliotecaRefinado(sqlite);
 		setRutas();
 		construirGUI(padre);
 	}
 
 	private void setRutas() {
-		rutas = new String[6];
-		rutas[0] = "ejemplo/chiva.jpg";
-		rutas[1] = "ejemplo/black-sheep.png";
-		rutas[2] = "ejemplo/baby-sheep.jpg";
-		rutas[3] = "ejemplo/sheep-family.jpg";
-		rutas[4] = "ejemplo/sheep-sleep.jpg";
-		rutas[5] = "ejemplo/sheep-suspicious.jpg";
-
-		// rutas = new String[0];
+		archivos = biblio.getTodosArchivos(EXTENSIONES_IMAGEN);
+		rutas = new String[archivos.size()];
+		for (int i = 0; i < rutas.length; i++) {
+			rutas[i] = archivos.get(i).getNombreArchivo();
+		}
 	}
 
 	public String[] getRutas() {

@@ -121,6 +121,9 @@ public class TransaccionesSQLite implements ImplementadorMetodosAlmacenamiento,
 	public void aniadirArchivo(Archivo archivo) {
 		if (noEsta(archivo.getNombreArchivo(), BD_ARCHIVO)) {
 			try {
+				String album = null;
+				if(archivo.getAlbumDisco() !=null)
+					album = archivo.getAlbumDisco().replaceAll("\"", COMILLAS_DOBLES); 
 				// Construir la consulta para insertar un nuevo archivo
 				consultaTemp = "INSERT INTO archivo (nombre,"
 						+ "fechaAdicion, tamanioKB,"
@@ -147,11 +150,13 @@ public class TransaccionesSQLite implements ImplementadorMetodosAlmacenamiento,
 						+ archivo.getGenero()
 						+ "\","
 						+ "\""
-						+ archivo.getAlbumDisco().replaceAll("\"", COMILLAS_DOBLES)
+						+ album
 						+ "\","
 						+ "\""
 						+ (archivo.esSoportado() ? "" : "no") + "\", 0);";
 				instruccion.execute(consultaTemp);
+				if(DEBUG)
+					System.out.println("Sentencia SQL: "+consultaTemp);
 			} catch (SQLException e) {
 				System.err.println("Error SQL: " + consultaTemp);
 				if (DEBUG)
@@ -252,7 +257,11 @@ public class TransaccionesSQLite implements ImplementadorMetodosAlmacenamiento,
 
 	@Override
 	public Vector<Archivo> getTodosArchivos(String tipo) {
-		String consulta = "SELECT * FROM archivo ORDER BY artista ASC;";
+		String consulta = "SELECT * FROM archivo ";
+		if(tipo.equals(EXTENSIONES_AUDIO))
+			consulta += "ORDER BY artista ASC";
+		if(tipo.equals(EXTENSIONES_IMAGEN))
+			consulta += "ORDER BY nombre ASC";
 		Vector<Archivo> archivos = new Vector<Archivo>();
 		Archivo temp = null;
 		int contador = 0;

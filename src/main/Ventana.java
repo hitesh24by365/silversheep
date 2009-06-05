@@ -36,7 +36,8 @@ public class Ventana extends JFrame implements ActionListener, Constantes {
 	// Permiten posicionar la ventana en la mitad ;)
 	private GraphicsEnvironment entornoGrafico = GraphicsEnvironment
 			.getLocalGraphicsEnvironment();
-	private GraphicsDevice[] dispositivoGrafico = entornoGrafico.getScreenDevices();
+	private GraphicsDevice[] dispositivoGrafico = entornoGrafico
+			.getScreenDevices();
 	private DisplayMode modoPantalla = dispositivoGrafico[0].getDisplayMode();
 	// Pestanias de reproducciones
 	private JTabbedPane pestaniasReproductores;
@@ -71,7 +72,7 @@ public class Ventana extends JFrame implements ActionListener, Constantes {
 		setVisible(true);
 	}
 
-	private void aniadirReproductorPestania(String titulo, Reproductor rep,
+	private void aniadirPanelAPestania(String titulo, Reproductor rep,
 			String icono) {
 
 		pestaniasReproductores.addTab(titulo, new ImageIcon(icono),
@@ -79,6 +80,15 @@ public class Ventana extends JFrame implements ActionListener, Constantes {
 		pestaniasReproductores.setTabComponentAt(pestaniasReproductores
 				.getTabCount() - 1, new Pestania(pestaniasReproductores, rep,
 				icono, true));
+		pestaniasReproductores.setSelectedIndex(pestaniasReproductores
+				.getTabCount() - 1);
+	}
+
+	private void aniadirPanelAPestania(String titulo, JPanel rep, String icono) {
+
+		pestaniasReproductores.addTab(titulo, new ImageIcon(icono), rep);
+		pestaniasReproductores.setTabComponentAt(pestaniasReproductores
+				.getTabCount() - 1, new Pestania(pestaniasReproductores, icono, true));
 		pestaniasReproductores.setSelectedIndex(pestaniasReproductores
 				.getTabCount() - 1);
 	}
@@ -93,11 +103,12 @@ public class Ventana extends JFrame implements ActionListener, Constantes {
 
 		itmSalir = new JMenuItem("Salir");
 		itmSalir.setMnemonic('S');
-		itmSalir.setIcon(new ImageIcon(this.getClass().getResource(
-				IMG_SALIR_16)));
+		itmSalir.setIcon(new ImageIcon(this.getClass()
+				.getResource(IMG_SALIR_16)));
 		itmSalir.addActionListener(this);
 
-		itmAniadirArchivo = new JMenuItem("A\u00f1adir archivo a la lista de reproducci\u00f3n");
+		itmAniadirArchivo = new JMenuItem(
+				"A\u00f1adir archivo a la lista de reproducci\u00f3n");
 		itmAniadirArchivo.setIcon(new ImageIcon(this.getClass().getResource(
 				IMG_ANIADIR_16)));
 		itmAniadirArchivo.setMnemonic('A');
@@ -116,7 +127,6 @@ public class Ventana extends JFrame implements ActionListener, Constantes {
 		itmEscanear.setIcon(new ImageIcon(this.getClass().getResource(
 				IMG_REFRESCAR_16)));
 		itmEscanear.addActionListener(this);
-
 
 		menuHerramientas.add(itmEscanear);
 
@@ -172,17 +182,22 @@ public class Ventana extends JFrame implements ActionListener, Constantes {
 	 */
 	public void aniadirReproductor(String tipo) {
 		String icono = "";
-		if (tipo.equals(TAB_IMAGEN)) {
-			fabricaReproductores = new FabricaImagenes();
-			icono = IMG_IMAGEN_16;
-		} else if (tipo.equals(TAB_AUDIO)) {
-			fabricaReproductores = new FabricaAudio();
-			icono = IMG_SONIDO_16;
-		} else if (tipo.equals(TAB_VIDEO)) {
-			fabricaReproductores = new FabricaVideo();
-			icono = IMG_VIDEO_16;
+		if (tipo.endsWith(TAB_BIBLIO)) {// aniadir biblioteca
+			icono = IMG_BIBLIO_16;
+			aniadirPanelAPestania(tipo, new PanelBiblioteca(), icono);
+		} else {
+			if (tipo.equals(TAB_IMAGEN)) {
+				fabricaReproductores = new FabricaImagenes();
+				icono = IMG_IMAGEN_16;
+			} else if (tipo.equals(TAB_AUDIO)) {
+				fabricaReproductores = new FabricaAudio();
+				icono = IMG_SONIDO_16;
+			} else if (tipo.equals(TAB_VIDEO)) {
+				fabricaReproductores = new FabricaVideo();
+				icono = IMG_VIDEO_16;
+			}
+			aniadirPanelAPestania(tipo, fabricaReproductores
+					.crearReproductor(this), icono);
 		}
-		aniadirReproductorPestania(tipo, fabricaReproductores
-				.crearReproductor(this), icono);
 	}
 }

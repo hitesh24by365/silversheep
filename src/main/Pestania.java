@@ -58,7 +58,6 @@ public class Pestania extends JPanel implements ObservadorReproduccionPestania,
 
 		this.reproductor = reproductor;
 		this.reproductor.registrarObservador(this);
-
 	}
 
 	/**

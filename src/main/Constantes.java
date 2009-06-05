@@ -37,6 +37,8 @@ public interface Constantes {
 	public static final String IMG_CERRAR_PRESS_16 = "/img/16x16/cerrar_pressed.png";
 	public static final String IMG_SONIDO_16 = "/img/16x16/sonido.png";
 	public static final String IMG_IMAGEN_16 = "/img/16x16/imagen.png";
+	public static final String IMG_MEDIO_16 = "/img/16x16/medio.png";
+	public static final String IMG_BIBLIO_16 = "/img/16x16/biblioteca.png";
 	public static final String IMG_VIDEO_16 = "/img/16x16/video.png";
 	public static final String IMG_OVEJA_16 = "/img/16x16/sheep.png";
 	public static final String IMG_ANIADIR_16 = "/img/16x16/aniadir.png";
@@ -53,10 +55,12 @@ public interface Constantes {
 	public static final String IMG_IMAGEN = "/img/misc/imagen.png";
 	public static final String IMG_VIDEO = "/img/misc/video.png";
 	public static final String IMG_LOGO = "/img/misc/logo.jpg";
+	public static final String IMG_BIBLIO = "/img/misc/biblioteca.png";
 	// formatos soportados
 	public static final String EXTENSIONES_AUDIO = "mp3-wav-";
 	public static final String EXTENSIONES_VIDEO = "mpg-mpeg-avi-wmv-";
 	public static final String EXTENSIONES_IMAGEN = "jpg-gif-png-";
+	public static final String EXTENSIONES_TODAS = EXTENSIONES_AUDIO+EXTENSIONES_VIDEO+EXTENSIONES_IMAGEN;
 	public static final int NUMERO_EXTENSIONES_SOPORTADAS = EXTENSIONES_AUDIO
 			.length()
 			+ EXTENSIONES_VIDEO.length() + EXTENSIONES_IMAGEN.length();
@@ -65,12 +69,13 @@ public interface Constantes {
 	public static final String BD_ARCHIVO = "archivo";
 	public static final String BD_ETIQUETA = "etiqueta";
 	// otras cosas
-	public static boolean DEBUG = false;
+	public static boolean DEBUG = true;
 	public static final String VERSION = "0.1";
 	// titulos pestanias
 	public static final String TAB_IMAGEN = "Gestor de imágenes";
 	public static final String TAB_AUDIO = "Gestor de m\u00fasica";
 	public static final String TAB_VIDEO = "Gestor de videos";
+	public static final String TAB_BIBLIO = "Gestor de la biblioteca";
 	// Variables para la conexión a la base de datos SQLite
 	public static final String BD_RUTA_CONTROLADOR_JDBC = "org.sqlite.JDBC";
 	public static final String DB_NOMBRE_BASE_DATOS = "jdbc:sqlite:silversheep.db";

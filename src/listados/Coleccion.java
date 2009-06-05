@@ -75,8 +75,6 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 		sqlite = new TransaccionesSQLite();
 		biblio = new AlmacenarInfoBibliotecaRefinado(sqlite);
 
-		// cargarMedios();
-
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				crearInterfazGrafica();
