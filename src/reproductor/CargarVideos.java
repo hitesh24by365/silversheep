@@ -40,4 +40,10 @@ public class CargarVideos extends JPanel implements Reproductor{
 		
 	}
 
+	@Override
+	public void detener() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

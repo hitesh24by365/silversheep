@@ -112,7 +112,7 @@ public class ReproducirArchivoAudio implements Runnable, Constantes {
 			if (dataLine.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
 				volumen = (FloatControl) dataLine
 						.getControl(FloatControl.Type.MASTER_GAIN);
-				volumen.setValue(lista.getVolumen());
+				volumen.setValue(volumen.getMaximum());
 			}
 
 			// Iniciar el flujo de datos
@@ -302,11 +302,13 @@ public class ReproducirArchivoAudio implements Runnable, Constantes {
 	}
 
 	public void cambiarVolumen(int vol) {
-		float maximo = 100F;
-		if (volumen != null) {
-			maximo = volumen.getMaximum();
-			volumen.setValue(maximo * vol / 100);
-		}
+		float total = volumen.getMaximum() - volumen.getMinimum()/2;
+		float equivalente = total*vol/100;
+		volumen.setValue((volumen.getMinimum()/2 + equivalente)-0.1F);
+		System.out.println("Minimo "+volumen.getMinimum()/2+"" +
+				"\nMaximo "+volumen.getMaximum()+"\ntotal "+total+"\nactual "+volumen.getValue()+"\n-------------------------\n");
 	}
-
+	public float minimoVolumen(){
+		return volumen.getMinimum();
+	}
 }

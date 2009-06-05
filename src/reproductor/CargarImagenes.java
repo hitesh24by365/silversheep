@@ -240,4 +240,10 @@ public class CargarImagenes extends JPanel implements ActionListener,
 	public void registrarObservador(ObservadorReproduccionPestania obs) {
 		this.observador = obs;
 	}
+
+	@Override
+	public void detener() {
+		// TODO Auto-generated method stub
+		
+	}
 }

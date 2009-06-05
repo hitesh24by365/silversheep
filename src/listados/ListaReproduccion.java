@@ -14,9 +14,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -38,9 +42,11 @@ public class ListaReproduccion extends JPanel implements Constantes,
 	private Vector<Object[]> datos;
 	private boolean reproduciendo = false, mute = false, aleatorio = false;
 	private JButton btnSiguiente, btnAnterior, btnReproducir, btnDetener,
-			btnSubirVolumen, btnBajarVolumen, btnMute;
+			btnMute;
 	private JToggleButton btnRandom;
-	private int filaSeleccionada, volumen = 100;
+	private JSlider deslizador;
+	private int filaSeleccionada;
+	int porcentajeVolumen;
 	private ObservadorReproduccionPestania observador;
 
 	public ListaReproduccion() {
@@ -257,16 +263,6 @@ public class ListaReproduccion extends JPanel implements Constantes,
 		btnDetener.addActionListener(this);
 		btnDetener.setToolTipText("Detener");
 
-		btnSubirVolumen = new JButton(new ImageIcon(this.getClass()
-				.getResource(IMG_SUBIR_VOLUMEN_30)));
-		btnSubirVolumen.addActionListener(this);
-		btnSubirVolumen.setToolTipText("Subir volumen");
-
-		btnBajarVolumen = new JButton(new ImageIcon(this.getClass()
-				.getResource(IMG_BAJAR_VOLUMEN_30)));
-		btnBajarVolumen.addActionListener(this);
-		btnBajarVolumen.setToolTipText("Bajar Volumen");
-
 		btnMute = new JButton(new ImageIcon(this.getClass().getResource(
 				IMG_VOLUMEN_ALTO_30)));
 		btnMute.setText("100");
@@ -279,18 +275,40 @@ public class ListaReproduccion extends JPanel implements Constantes,
 		btnRandom.setToolTipText("Reproducci\u00f3n aleatoria");
 		btnRandom.addActionListener(this);
 
+		deslizador = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 1);
+		deslizador.setMajorTickSpacing(1);
+		deslizador.setValue(deslizador.getMaximum());
+		deslizador.setMaximumSize(new Dimension(80, deslizador
+				.getPreferredSize().height));
+		deslizador.setMinimumSize(new Dimension(100, deslizador
+				.getPreferredSize().height));
+		// registrar componente de escucha de eventos de JSlider
+		deslizador.addChangeListener(new ChangeListener() { // clase interna
+															// anónima
+					// manejar cambio en el valor del control deslizable
+					public void stateChanged(ChangeEvent e) {
+						establecerVolumen();
+					}
+				} // fin de la clase interna anónima
+				); // fin de la llamada a addChangeListener
+
 		barraHerramientas = new JToolBar();
 		barraHerramientas.add(btnAnterior);
 		barraHerramientas.add(btnReproducir);
 		barraHerramientas.add(btnDetener);
 		barraHerramientas.add(btnSiguiente);
 		barraHerramientas.addSeparator();
-		barraHerramientas.add(btnBajarVolumen);
+		barraHerramientas.add(deslizador);
 		barraHerramientas.add(btnMute);
-		barraHerramientas.add(btnSubirVolumen);
 		barraHerramientas.addSeparator();
 		barraHerramientas.add(btnRandom);
 		return barraHerramientas;
+	}
+
+	public void establecerVolumen() {
+		porcentajeVolumen = deslizador.getValue();
+		hiloReproduccion.cambiarVolumen(porcentajeVolumen);
+		actualizarLabelVolumen();
 	}
 
 	@Override
@@ -308,23 +326,11 @@ public class ListaReproduccion extends JPanel implements Constantes,
 				aleatorio = true;
 			else
 				aleatorio = false;
-		} else if (e.getSource() == btnSubirVolumen) {
-			volumen += 5;
-			if (volumen > 100)
-				volumen = 100;
-			actualizarLabelVolumen();
-			hiloReproduccion.cambiarVolumen(volumen);
-		} else if (e.getSource() == btnBajarVolumen) {
-			volumen -= 5;
-			if (volumen < 0)
-				volumen = 0;
-			actualizarLabelVolumen();
-			hiloReproduccion.cambiarVolumen(volumen);
-		} else if (e.getSource() == btnMute) {
+		}
+		if (e.getSource() == btnMute) {
 			mute = !mute;
 			if (!mute) {
-				hiloReproduccion.cambiarVolumen(volumen);
-				actualizarLabelVolumen();
+				establecerVolumen();
 			} else {
 				btnMute.setIcon(new ImageIcon(this.getClass().getResource(
 						IMG_VOLUMEN_MUTE_30)));
@@ -338,19 +344,20 @@ public class ListaReproduccion extends JPanel implements Constantes,
 	 * Actualizar el icono del label de volumen
 	 */
 	private void actualizarLabelVolumen() {
-		if (volumen == 0)
+		if (porcentajeVolumen == hiloReproduccion.minimoVolumen())
 			btnMute.setIcon(new ImageIcon(this.getClass().getResource(
 					IMG_VOLUMEN_CERO_30)));
-		if (volumen > 66)
+		if (porcentajeVolumen > 66)
 			btnMute.setIcon(new ImageIcon(this.getClass().getResource(
 					IMG_VOLUMEN_ALTO_30)));
-		if (volumen > 0 && volumen < 33)
+		if (porcentajeVolumen > hiloReproduccion.minimoVolumen()
+				&& porcentajeVolumen < 33)
 			btnMute.setIcon(new ImageIcon(this.getClass().getResource(
 					IMG_VOLUMEN_BAJO_30)));
-		if (volumen >= 33 && volumen <= 66)
+		if (porcentajeVolumen >= 33 && porcentajeVolumen <= 66)
 			btnMute.setIcon(new ImageIcon(this.getClass().getResource(
 					IMG_VOLUMEN_MEDIO_30)));
-		btnMute.setText("" + volumen);
+		btnMute.setText("" + porcentajeVolumen);
 	}
 
 	/**
@@ -401,14 +408,14 @@ public class ListaReproduccion extends JPanel implements Constantes,
 			btnReproducir.setIcon(new ImageIcon(this.getClass().getResource(
 					IMG_PAUSAR_30)));
 			btnReproducir.setToolTipText("Pausar");
-			
+
 		} else {
 			btnReproducir.setIcon(new ImageIcon(this.getClass().getResource(
 					IMG_REPRODUCIR_30)));
 			btnReproducir.setToolTipText("Reproducir");
-			
+
 		}
-		if(observador != null)
+		if (observador != null)
 			observador.cambioReproduccion(reproduciendo);
 	}
 
@@ -418,7 +425,7 @@ public class ListaReproduccion extends JPanel implements Constantes,
 	 */
 	public void seleccionarSiguientePista() {
 		int filas = listado.getRowCount();
-		if(aleatorio)
+		if (aleatorio)
 			filaSeleccionada = Math.abs(new Random().nextInt() % filas);
 		else
 			filaSeleccionada++;
@@ -433,7 +440,7 @@ public class ListaReproduccion extends JPanel implements Constantes,
 	 */
 	public void seleccionarAnteriorPista() {
 		int filas = listado.getRowCount();
-		if(aleatorio)
+		if (aleatorio)
 			filaSeleccionada = new Random().nextInt() % filas;
 		else
 			filaSeleccionada--;
@@ -450,27 +457,22 @@ public class ListaReproduccion extends JPanel implements Constantes,
 		this.reproduciendo = reproduciendo;
 	}
 
-	public int getVolumen() {
-		return volumen;
-	}
 	private void actualizarEstadoControles() {
 		boolean hayArchivosPorReproducir = true;
-		if(listado.getRowCount() == 0)
+		if (listado.getRowCount() == 0)
 			hayArchivosPorReproducir = false;
 		btnAnterior.setEnabled(hayArchivosPorReproducir);
 		btnSiguiente.setEnabled(hayArchivosPorReproducir);
 		btnDetener.setEnabled(hayArchivosPorReproducir);
 		btnReproducir.setEnabled(hayArchivosPorReproducir);
-		btnSubirVolumen.setEnabled(hayArchivosPorReproducir);
-		btnBajarVolumen.setEnabled(hayArchivosPorReproducir);
 		btnMute.setEnabled(hayArchivosPorReproducir);
 		btnRandom.setEnabled(hayArchivosPorReproducir);
-		if(observador != null){
-			if(hayArchivosPorReproducir){
+		deslizador.setEnabled(hayArchivosPorReproducir);
+		if (observador != null) {
+			if (hayArchivosPorReproducir) {
 				observador.cambioReproduccion(reproduciendo);
 				observador.cambioReproduccion(hayArchivosPorReproducir, true);
-			}
-			else
+			} else
 				observador.cambioReproduccion(hayArchivosPorReproducir, true);
 			observador.cambioAnterior(hayArchivosPorReproducir);
 			observador.cambioSiguiente(hayArchivosPorReproducir);
@@ -482,6 +484,5 @@ public class ListaReproduccion extends JPanel implements Constantes,
 		this.observador = obs;
 		actualizarEstadoControles();
 	}
-
 
 }

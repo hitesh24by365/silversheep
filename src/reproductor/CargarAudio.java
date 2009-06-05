@@ -68,4 +68,10 @@ public class CargarAudio extends JPanel implements Reproductor, Constantes {
 		this.listaReproduccion.registrarObservador(this.observador);
 	}
 
+	@Override
+	public void detener() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

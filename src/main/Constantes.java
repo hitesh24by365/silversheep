@@ -69,17 +69,17 @@ public interface Constantes {
 	public static final String BD_ARCHIVO = "archivo";
 	public static final String BD_ETIQUETA = "etiqueta";
 	// otras cosas
-	public static boolean DEBUG = true;
+	public static boolean DEBUG = false;
 	public static final String VERSION = "0.1";
 	// titulos pestanias
 	public static final String TAB_IMAGEN = "Gestor de imágenes";
 	public static final String TAB_AUDIO = "Gestor de m\u00fasica";
 	public static final String TAB_VIDEO = "Gestor de videos";
 	public static final String TAB_BIBLIO = "Gestor de la biblioteca";
-	// Variables para la conexión a la base de datos SQLite
+	// Variables para la conexion a la base de datos SQLite
 	public static final String BD_RUTA_CONTROLADOR_JDBC = "org.sqlite.JDBC";
 	public static final String DB_NOMBRE_BASE_DATOS = "jdbc:sqlite:silversheep.db";
-	//acciones de los botones en las pestañas
+	//acciones de los botones en las pestanias
 	public static final String ACC_BTN_PESTANIA_CERRAR = "CERRAR";
 	public static final String ACC_BTN_PESTANIA_REPRODUCIR = "REPRODUCIR";
 	public static final String ACC_BTN_PESTANIA_SIGUIENTE = "SIGUIENTE";
