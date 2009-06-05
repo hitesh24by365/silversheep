@@ -136,12 +136,12 @@ public class ReproducirArchivoAudio implements Runnable, Constantes {
 				}
 			} catch (IOException e) {
 				System.err
-						.println("Ocurrió un error con el stream que se intenta reproducir");
+						.println("Ocurrio un error con el stream que se intenta reproducir");
 				if (DEBUG)
 					e.printStackTrace();
 			} catch (InterruptedException e) {
 				System.err
-						.println("Ocurrió un error con el hilo de reproduccion");
+						.println("Ocurrio un error con el hilo de reproduccion");
 				if (DEBUG)
 					e.printStackTrace();
 			}
@@ -305,8 +305,6 @@ public class ReproducirArchivoAudio implements Runnable, Constantes {
 		float total = volumen.getMaximum() - volumen.getMinimum()/2;
 		float equivalente = total*vol/100;
 		volumen.setValue((volumen.getMinimum()/2 + equivalente)-0.1F);
-		System.out.println("Minimo "+volumen.getMinimum()/2+"" +
-				"\nMaximo "+volumen.getMaximum()+"\ntotal "+total+"\nactual "+volumen.getValue()+"\n-------------------------\n");
 	}
 	public float minimoVolumen(){
 		return volumen.getMinimum();

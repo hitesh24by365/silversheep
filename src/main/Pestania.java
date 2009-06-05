@@ -164,6 +164,7 @@ public class Pestania extends JPanel implements ObservadorReproduccionPestania,
 				int i = panelPestanias.indexOfTabComponent(Pestania.this);
 				if (i != -1) {
 					panelPestanias.remove(i);
+					reproductor.detener();
 				}
 			} else if (accion.equals(ACC_BTN_PESTANIA_ANTERIOR)) {
 				reproductor.anterior();
