@@ -1,5 +1,0 @@
-* Reproductores
-  -JMF
-* Biblioteca
-  - Prueba sqlite3 Windows
-* Splash

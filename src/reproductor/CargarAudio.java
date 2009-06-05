@@ -28,19 +28,10 @@ public class CargarAudio extends JPanel implements Reproductor, Constantes {
 	private JSplitPane panelSeparador;
 	private Coleccion arbolColeccion;
 	private ListaReproduccion listaReproduccion;
-	private Biblioteca biblio;
-	private TransaccionesSQLite sqlite;
-	private Vector<Archivo> archivos;
 
 	public CargarAudio(JFrame padre) {
 		setLayout(new BorderLayout());
-		
-		sqlite = new TransaccionesSQLite();
-		biblio = new AlmacenarInfoBibliotecaRefinado(sqlite);
-		
-		archivos = biblio.getTodosArchivos(EXTENSIONES_AUDIO);
-		
-		arbolColeccion = new Coleccion(archivos);
+		arbolColeccion = new Coleccion();
 		listaReproduccion = new ListaReproduccion();
 		
 		panelSeparador = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -75,8 +66,9 @@ public class CargarAudio extends JPanel implements Reproductor, Constantes {
 
 	@Override
 	public void registrarObservador(ObservadorReproduccionPestania obs) {
+		System.out.println(obs);
 		this.observador = obs;
-		
+		this.listaReproduccion.setObservador(this.observador);
 	}
 
 }

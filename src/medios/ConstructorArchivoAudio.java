@@ -75,8 +75,9 @@ public class ConstructorArchivoAudio extends ConstructorArchivoMultimedia implem
 			archivo.setTamanioKB(archivoTrabajo.length());
 			formatoArchivoAudio = AudioSystem
 					.getAudioFileFormat(archivoTrabajo);
-			if (formatoArchivoAudio instanceof TAudioFileFormat)
+			if (formatoArchivoAudio instanceof TAudioFileFormat){
 				propiedades = formatoArchivoAudio.properties();
+			}
 			else
 				System.err.println("ERROR LEYENDO ARCHIVO");
 		} catch (Exception e) {

@@ -305,6 +305,8 @@ public class Archivo implements Constantes{
 	}
 	public String getNombreCortoArchivo() {
 		String nombre = getNombreArchivo().replace('\\', '/');
+		//Extraer solo el nombre del archivo
+		nombre =  nombre.substring(nombre.lastIndexOf('/')+1, nombre.lastIndexOf('.'));
 		return nombre.substring(nombre.lastIndexOf('/')+1);
 	}
 	public String toString(){

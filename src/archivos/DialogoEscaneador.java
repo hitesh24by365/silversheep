@@ -122,7 +122,7 @@ public class DialogoEscaneador extends JDialog implements ActionListener,
 		listaRutas.setListData(rutas);
 
 		btnAniadirRuta = new JButton(new ImageIcon(this.getClass().getResource(
-				IMG_ANIADIR_RUTA_16)));
+				IMG_ANIADIR_16)));
 		btnAniadirRuta.setToolTipText("A\u00f1adir una nueva ruta");
 		btnAniadirRuta.addActionListener(this);
 

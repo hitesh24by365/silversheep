@@ -26,7 +26,8 @@ import reproductor.Reproductor;
  * botón de cierre, muy bonito por cierto.
  * 
  */
-public class Pestania extends JPanel implements ObservadorReproduccionPestania, Constantes {
+public class Pestania extends JPanel implements ObservadorReproduccionPestania,
+		Constantes {
 	private static final long serialVersionUID = -5875306001746540561L;
 	// Referencia al panel al que pertenece
 	private final JTabbedPane panelPestanias;
@@ -48,14 +49,16 @@ public class Pestania extends JPanel implements ObservadorReproduccionPestania, 
 	public Pestania(final JTabbedPane panelPestanias,
 			final Reproductor reproductor, String icono, boolean controles) {
 		this(panelPestanias, icono, false);
-		this.reproductor = reproductor;
-		this.reproductor.registrarObservador(this);
 
 		// Añadir panel de controles si así se desea
 		if (controles)
 			aniadirPanelControles();
 
 		aniadirBotonCerrar();
+
+		this.reproductor = reproductor;
+		this.reproductor.registrarObservador(this);
+
 	}
 
 	/**
@@ -102,9 +105,8 @@ public class Pestania extends JPanel implements ObservadorReproduccionPestania, 
 	 */
 	private void aniadirBotonCerrar() {
 		// boton cerrar pestania
-		btnCerrar = new BotonPestania(ACC_BTN_PESTANIA_CERRAR,
-				IMG_CERRAR_16, IMG_CERRAR_PRESS_16,
-				"Cerrar esta pestaña");
+		btnCerrar = new BotonPestania(ACC_BTN_PESTANIA_CERRAR, IMG_CERRAR_16,
+				IMG_CERRAR_PRESS_16, "Cerrar esta pestaña");
 		add(btnCerrar);
 		// aniadir mas espacio al boton
 		setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
@@ -116,15 +118,12 @@ public class Pestania extends JPanel implements ObservadorReproduccionPestania, 
 	 */
 	private void aniadirPanelControles() {
 		btnAnterior = new BotonPestania(ACC_BTN_PESTANIA_ANTERIOR,
-				IMG_ANTERIOR_16, IMG_ANTERIOR_PRESS_16,
-				"Anterior");
+				IMG_ANTERIOR_16, IMG_ANTERIOR_PRESS_16, "Anterior");
 		btnAnterior.setEnabled(false);
 		btnIniciar = new BotonPestania(ACC_BTN_PESTANIA_REPRODUCIR,
-				IMG_REPRODUCIR_16,
-				IMG_REPRODUCIR_PRESS_16, "Reproducir/Pausar");
+				IMG_REPRODUCIR_16, IMG_REPRODUCIR_PRESS_16, "Reproducir/Pausar");
 		btnSiguiente = new BotonPestania(ACC_BTN_PESTANIA_SIGUIENTE,
-				IMG_SIGUIENTE_16, IMG_SIGUIENTE_PRESS_16,
-				"Siguiente");
+				IMG_SIGUIENTE_16, IMG_SIGUIENTE_PRESS_16, "Siguiente");
 		add(btnAnterior);
 		add(btnIniciar);
 		add(btnSiguiente);
@@ -215,9 +214,14 @@ public class Pestania extends JPanel implements ObservadorReproduccionPestania, 
 	}
 
 	@Override
+	public void cambioReproduccion(boolean cambiar, boolean directo){
+		btnIniciar.setEnabled(cambiar);
+	}
+
+	@Override
 	public void cambioSiguiente(boolean habilitado) {
 		btnSiguiente.setEnabled(habilitado);
-		
+
 	}
 
 	@Override

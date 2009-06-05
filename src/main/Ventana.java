@@ -28,7 +28,7 @@ public class Ventana extends JFrame implements ActionListener, Constantes {
 	// La barra de menu y sus items
 	private JMenuBar barraMenu;
 	private JMenu menuArchivo, menuAyuda, menuHerramientas;
-	private JMenuItem itmAcercaDe, itmSalir, itmEscanear;
+	private JMenuItem itmAcercaDe, itmSalir, itmEscanear, itmAniadirArchivo;
 	// El contenedor de componentes de la GUI
 	private Container contenedor;
 	// Panel que contiene los componentes del intro
@@ -93,8 +93,18 @@ public class Ventana extends JFrame implements ActionListener, Constantes {
 
 		itmSalir = new JMenuItem("Salir");
 		itmSalir.setMnemonic('S');
+		itmSalir.setIcon(new ImageIcon(this.getClass().getResource(
+				IMG_SALIR_16)));
 		itmSalir.addActionListener(this);
 
+		itmAniadirArchivo = new JMenuItem("A\u00f1adir archivo a la lista de reproducci\u00f3n");
+		itmAniadirArchivo.setIcon(new ImageIcon(this.getClass().getResource(
+				IMG_ANIADIR_16)));
+		itmAniadirArchivo.setMnemonic('A');
+		itmAniadirArchivo.addActionListener(this);
+
+		menuArchivo.add(itmAniadirArchivo);
+		menuArchivo.addSeparator();
 		menuArchivo.add(itmSalir);
 
 		// menu archivo
@@ -103,7 +113,10 @@ public class Ventana extends JFrame implements ActionListener, Constantes {
 
 		itmEscanear = new JMenuItem("Escanear");
 		itmEscanear.setMnemonic('E');
+		itmEscanear.setIcon(new ImageIcon(this.getClass().getResource(
+				IMG_REFRESCAR_16)));
 		itmEscanear.addActionListener(this);
+
 
 		menuHerramientas.add(itmEscanear);
 
@@ -113,6 +126,8 @@ public class Ventana extends JFrame implements ActionListener, Constantes {
 
 		itmAcercaDe = new JMenuItem("Acerca de...");
 		itmAcercaDe.setMnemonic('c');
+		itmAcercaDe.setIcon(new ImageIcon(this.getClass().getResource(
+				IMG_AYUDA_16)));
 		itmAcercaDe.addActionListener(this);
 
 		menuAyuda.add(itmAcercaDe);

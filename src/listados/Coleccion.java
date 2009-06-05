@@ -26,6 +26,10 @@ import javax.swing.ToolTipManager;
 import javax.swing.ImageIcon;
 import javax.swing.Icon;
 
+import almacenamiento.AlmacenarInfoBibliotecaRefinado;
+import almacenamiento.Biblioteca;
+import almacenamiento.TransaccionesSQLite;
+
 import main.Constantes;
 import medios.Archivo;
 
@@ -48,15 +52,16 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 		ActionListener, TreeWillExpandListener {
 	private static final long serialVersionUID = -8359984107448140209L;
 	private JTree arbolPrincipal;
-	private Vector<Archivo> archivos;
 	private ListaReproduccion listaRepro;
 	private DefaultMutableTreeNode ultimoNodoSeleccionado;
-	private JPanel pnlBusqueda;
-	private JButton btnExpandir, btnBorrarBusqueda;
+	private JButton btnExpandir, btnBorrarBusqueda, btnActualizar, btnConfigurar;
 	private JTextField txtBuscar;
 	private boolean expandido = false, dobleClic = false;
 	private DefaultMutableTreeNode raizArbol, raizNegativa;
 	private DefaultTreeModel modeloArbol, modeloArbolNegativo;
+	private Biblioteca biblio;
+	private TransaccionesSQLite sqlite;
+	private Vector<Archivo> archivos;
 
 	/**
 	 * Constructor de la clase Coleccion... recibe un vector con los archivos
@@ -64,9 +69,14 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 	 * 
 	 * @param archivos
 	 */
-	public Coleccion(Vector<Archivo> archivos) {
+	public Coleccion() {
 		super(new GridLayout(1, 0));
-		this.archivos = archivos;
+
+		sqlite = new TransaccionesSQLite();
+		biblio = new AlmacenarInfoBibliotecaRefinado(sqlite);
+
+		// cargarMedios();
+
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				crearInterfazGrafica();
@@ -74,11 +84,22 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 		});
 	}
 
+	@SuppressWarnings("unchecked")
+	private void cargarMedios() {
+		archivos = biblio.getTodosArchivos(EXTENSIONES_AUDIO);
+		raizArbol = new DefaultMutableTreeNode("M\u00fasica");
+		crearNodos(raizArbol);
+		modeloArbol = new DefaultTreeModel(raizArbol);
+		arbolPrincipal.setModel(modeloArbol);
+	}
+
 	/**
 	 * Crea los nodos de la interfaz gráfica
 	 */
+	@SuppressWarnings("unchecked")
 	private void crearInterfazGrafica() {
 		setLayout(new BorderLayout());
+		archivos = biblio.getTodosArchivos(EXTENSIONES_AUDIO);
 		// Asigna la raiz del arbol
 		raizArbol = new DefaultMutableTreeNode("M\u00fasica");
 		// crear los nodos del arbol
@@ -107,12 +128,12 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 		else
 			System.err.println("No se encuentra el icono " + IMG_SONIDO_16);
 
-
 		// iniciar objetos de busqueda
 		crearPanelBusqueda();
 
-		add(pnlBusqueda, BorderLayout.NORTH);
+		add(crearPanelBusqueda(), BorderLayout.NORTH);
 		add(new JScrollPane(arbolPrincipal));
+		add(crearHerramientasBusqueda(), BorderLayout.SOUTH);
 
 		/**
 		 * En esta seccion se crea el arbol negativo
@@ -163,7 +184,13 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 	/**
 	 * Este metodo inicia los objetos del panel busqueda
 	 */
-	private void crearPanelBusqueda() {
+	private JPanel crearPanelBusqueda() {
+		// iniciar panel
+		JPanel pnlBusqueda = new JPanel();
+		pnlBusqueda.setLayout(new BoxLayout(pnlBusqueda, BoxLayout.LINE_AXIS));
+		pnlBusqueda.add(Box.createHorizontalGlue());
+		pnlBusqueda.setPreferredSize(new Dimension(100, 25));
+
 		// Caja de busqueda
 		txtBuscar = new JTextField();
 		txtBuscar.addKeyListener(this);
@@ -175,6 +202,22 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 		btnBorrarBusqueda.setPreferredSize(new Dimension(20, 20));
 		btnBorrarBusqueda.addActionListener(this);
 
+
+		pnlBusqueda.add(txtBuscar);
+		pnlBusqueda.add(btnBorrarBusqueda);
+		
+		return pnlBusqueda;
+	}
+
+	/**
+	 * Crear objetos de utilidades de busqueda
+	 */
+	private JPanel crearHerramientasBusqueda() {
+		JPanel pnlHerramientas = new JPanel();
+		pnlHerramientas.setLayout(new BoxLayout(pnlHerramientas, BoxLayout.LINE_AXIS));
+		pnlHerramientas.add(Box.createHorizontalGlue());
+		pnlHerramientas.setPreferredSize(new Dimension(100, 25));
+		
 		// boton de expandir
 		btnExpandir = new JButton(new ImageIcon(this.getClass().getResource(
 				IMG_EXPANDIR_16)));
@@ -182,15 +225,25 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 		btnExpandir.setPreferredSize(new Dimension(20, 20));
 		btnExpandir.addActionListener(this);
 
-		// iniciar panel
-		pnlBusqueda = new JPanel();
-		pnlBusqueda.setLayout(new BoxLayout(pnlBusqueda, BoxLayout.LINE_AXIS));
-		pnlBusqueda.add(Box.createHorizontalGlue());
-		pnlBusqueda.setPreferredSize(new Dimension(100, 25));
+		// boton de recargar
+		btnActualizar = new JButton(new ImageIcon(this.getClass().getResource(
+				IMG_REFRESCAR_16)));
+		btnActualizar.setToolTipText("Actualizar lista");
+		btnActualizar.setPreferredSize(new Dimension(20, 20));
+		btnActualizar.addActionListener(this);
 
-		pnlBusqueda.add(txtBuscar);
-		pnlBusqueda.add(btnBorrarBusqueda);
-		pnlBusqueda.add(btnExpandir);
+		// boton de configuracion de busquedas en la coleccion
+		btnConfigurar = new JButton(new ImageIcon(this.getClass().getResource(
+				IMG_HERRAMIENTAS_16)));
+		btnConfigurar.setToolTipText("Configurar modo de b\u00fasqueda");
+		btnConfigurar.setPreferredSize(new Dimension(20, 20));
+		btnConfigurar.addActionListener(this);
+
+		pnlHerramientas.add(btnExpandir);
+		pnlHerramientas.add(btnActualizar);
+		pnlHerramientas.add(btnConfigurar);
+		
+		return pnlHerramientas;
 	}
 
 	/**
@@ -443,6 +496,7 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 	 * @param padre
 	 * @param expandir
 	 */
+	@SuppressWarnings("unchecked")
 	private void expandirTodo(JTree arbol, TreePath padre, boolean expandir) {
 		// Navegar a traves de los hijos
 		TreeNode node = (TreeNode) padre.getLastPathComponent();
@@ -504,6 +558,10 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 			filtrarMedio(txtBuscar.getText(), raizNegativa, raizArbol, false);
 			modeloArbol.reload();
 		}
+		if (e.getSource() == btnActualizar) {
+			cargarMedios();
+			modeloArbol.reload();
+		}
 		if (e.getSource() == btnExpandir) {
 			expandido = !expandido;
 			if (!expandido)
@@ -528,7 +586,9 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 				.getLastSelectedPathComponent();
 		// si es un album, es decir, si el primer hijo es una hoja y no otro
 		// padre...
-		if (ultimoNodoSeleccionado.getChildAt(0).isLeaf() && dobleClic) {
+		if (ultimoNodoSeleccionado != null
+				&& ultimoNodoSeleccionado.getChildCount() > 0
+				&& ultimoNodoSeleccionado.getChildAt(0).isLeaf() && dobleClic) {
 			dobleClic = false;
 			throw new ExpandVetoException(evt);
 		}
@@ -541,10 +601,14 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 				.getLastSelectedPathComponent();
 		// si es un album, es decir, si el primer hijo es una hoja y no otro
 		// padre...
-		if (ultimoNodoSeleccionado.getChildAt(0).isLeaf() && dobleClic) {
+		if (ultimoNodoSeleccionado != null
+				&& ultimoNodoSeleccionado.getChildCount() > 0
+				&& ultimoNodoSeleccionado.getChildAt(0).isLeaf() && dobleClic) {
 			dobleClic = false;
 			for (int i = 0; i < ultimoNodoSeleccionado.getChildCount(); i++)
-				listaRepro.aniadirMedio((Archivo)((DefaultMutableTreeNode)ultimoNodoSeleccionado.getChildAt(i)).getUserObject());
+				listaRepro
+						.aniadirMedio((Archivo) ((DefaultMutableTreeNode) ultimoNodoSeleccionado
+								.getChildAt(i)).getUserObject());
 			throw new ExpandVetoException(evt);
 		}
 
