@@ -11,7 +11,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
-import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -25,27 +24,27 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.border.Border;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import javax.swing.text.TableView.TableRow;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import almacenamiento.AlmacenarInfoBibliotecaRefinado;
 import almacenamiento.Biblioteca;
 import almacenamiento.TransaccionesSQLite;
+import archivos.ExploradorRecursivoArchivos;
 
 import medios.Archivo;
+import medios.ConstructorArchivoAudio;
+import medios.ConstructorArchivoImagen;
+import medios.ConstructorArchivoVideo;
+import medios.DirectorMedios;
 import medios.TipoArchivo;
 import reproductor.ReproducirArchivoAudio;
 
 public class PanelBiblioteca extends JPanel implements Constantes,
-		ActionListener, KeyListener {
+		ActionListener, KeyListener, MouseListener {
 	private static final long serialVersionUID = -8338766233305367920L;
 	private JTable listado;
 	private MiModeloTabla modeloTabla;
@@ -56,10 +55,24 @@ public class PanelBiblioteca extends JPanel implements Constantes,
 	// Barra de herramientas y sus botones
 	private JToolBar barraHerramientas;
 	private JButton btnAniadir, btnRemover, btnBorrarBusqueda,
-			btnAjustarBusqueda;
+			btnAjustarBusqueda, btnRefrescar;
 	private JFileChooser selectorArchivo;
 	private JTextField txtBusqueda;
 	private DialogoPersonalizarBusqueda personalizarBusqueda;
+	// Objeto para explorar los directorios en busca de archivos
+	private ExploradorRecursivoArchivos explorador;
+	// Objeto para partir las cadenas de texto que contienen extensiones
+	private StringTokenizer tokens;
+	// Clase que dirige la creacion de archivos
+	private DirectorMedios directorMedios;
+	// Clase que representa un archivo de audio
+	private ConstructorArchivoAudio archivoAudio;
+	// Clase que representa un archivo de video
+	private ConstructorArchivoVideo archivoVideo;
+	// Clase que representa un archivo de imagen
+	private ConstructorArchivoImagen archivoImagen;
+	// Clase que representa un archivo general
+	private Archivo medio;
 
 	public PanelBiblioteca() {
 		super(new BorderLayout());
@@ -67,7 +80,7 @@ public class PanelBiblioteca extends JPanel implements Constantes,
 		biblio = new AlmacenarInfoBibliotecaRefinado(sqlite);
 
 		selectorArchivo = new JFileChooser();
-		selectorArchivo.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		selectorArchivo.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		selectorArchivo.setFileFilter(new FileFilter() {
 			@Override
 			public boolean accept(File f) {
@@ -86,21 +99,28 @@ public class PanelBiblioteca extends JPanel implements Constantes,
 
 		crearListado();
 		crearBarraHerramientas();
+
+		archivoAudio = new ConstructorArchivoAudio();
+		archivoVideo = new ConstructorArchivoVideo();
+		archivoImagen = new ConstructorArchivoImagen();
+		// Iniciar el director de medios
+		directorMedios = new DirectorMedios();
 	}
 
 	protected String obtenerDescricionExtensiones() {
 		StringTokenizer tokens = new StringTokenizer(EXTENSIONES_TODAS, "-");
 		String desc = "";
 		while (tokens.hasMoreTokens())
-			desc += (desc != "" ? "," : "") + " ." + tokens.nextToken();
+			desc += (desc != "" ? "," : "") + " *." + tokens.nextToken();
 		return desc;
 	}
 
-	private boolean esPermitido(String nombre) {
+	private boolean esPermitido(String nombre) {//TODO hacer que funcione este filtro
 		StringTokenizer tokens = new StringTokenizer(EXTENSIONES_TODAS, "-");
-		while (tokens.hasMoreTokens())
+		while (tokens.hasMoreTokens()){
 			if (nombre.toLowerCase().endsWith("." + tokens.nextToken()))
 				return true;
+		}
 		return false;
 	}
 
@@ -118,8 +138,14 @@ public class PanelBiblioteca extends JPanel implements Constantes,
 		btnRemover.addActionListener(this);
 		btnRemover.setToolTipText("Remover archivo de la biblioteca");
 
+		btnRefrescar = new JButton(new ImageIcon(this.getClass().getResource(
+				IMG_REFRESCAR_30)));
+		btnRefrescar.addActionListener(this);
+		btnRefrescar.setToolTipText("Actualizar lista");
+
 		barraHerramientas.add(btnAniadir);
 		barraHerramientas.add(btnRemover);
+		barraHerramientas.add(btnRefrescar);
 
 		// panel de busqueda
 		JPanel pnlBusqueda = new JPanel();
@@ -163,7 +189,8 @@ public class PanelBiblioteca extends JPanel implements Constantes,
 		listado.setFillsViewportHeight(true);
 		listado.setAutoCreateRowSorter(true);
 		listado.setDefaultRenderer(Archivo.class,
-				new RenderizadorTipoArchivo());
+						new RenderizadorTipoArchivo());
+		listado.addMouseListener(this);
 		consultarDatos();
 		if (datos.size() > 0)
 			iniciarLongitudColumnas(listado);
@@ -187,6 +214,10 @@ public class PanelBiblioteca extends JPanel implements Constantes,
 		private boolean[] columnasActivas = new boolean[nombreColumnas.length];
 		private Vector<Object[]> datos;
 
+		public void setDatos(Vector<Object[]> datos) {
+			this.datos = datos;
+		}
+
 		public MiModeloTabla(Vector<Object[]> datos) {
 			this.datos = datos;
 		}
@@ -196,7 +227,7 @@ public class PanelBiblioteca extends JPanel implements Constantes,
 		}
 
 		public int getRowCount() {
-			if(datos == null)
+			if (datos == null)
 				System.out.println("Es nulo");
 			return datos.size();
 		}
@@ -321,7 +352,8 @@ public class PanelBiblioteca extends JPanel implements Constantes,
 		public Component getTableCellRendererComponent(JTable table,
 				Object tipo, boolean isSelected, boolean hasFocus, int row,
 				int column) {
-			setIcon(new ImageIcon(this.getClass().getResource(((Archivo)tipo).getTipo())));
+			setIcon(new ImageIcon(this.getClass().getResource(
+					((Archivo) tipo).getTipo())));
 			setToolTipText("es de tipo");
 			return this;
 		}
@@ -332,20 +364,82 @@ public class PanelBiblioteca extends JPanel implements Constantes,
 		if (e.getSource() == btnAniadir) {
 			seleccionarArchivos();
 		}
-		if(e.getSource() == btnAjustarBusqueda){
+		if (e.getSource() == btnAjustarBusqueda)
 			personalizarBusqueda = new DialogoPersonalizarBusqueda();
-		}
+		if (e.getSource() == btnRefrescar)
+			actualizarTabla();
 	}
 
 	private void seleccionarArchivos() {
 		int resultado = selectorArchivo.showOpenDialog(this);
 		if (resultado == JFileChooser.CANCEL_OPTION)
 			return;
-		File[] archivos = selectorArchivo.getSelectedFiles();
-		for (int i = 0; i < archivos.length; i++) {
-			File file = archivos[i];
-			// TODO Aniadir arcgivos a la biblioteca
+		File archivo = selectorArchivo.getSelectedFile();
+		if (archivo.isDirectory())
+			explorador = new ExploradorRecursivoArchivos(EXTENSIONES_TODAS);
+		else {
+			// Si es un archivo de audio, intentar recuperar
+			// información
+			if (esDeTipo(EXTENSIONES_AUDIO, archivo.toString())) {
+				// Verificar que el archivo no se encuentre
+				// registrado
+				if (biblio.noEsta(archivo.toString(), BD_ARCHIVO)) {
+					// Escoger el tipo de archivo que se desea
+					// construir
+					directorMedios.setArchivoMultimedia(archivoAudio);
+					// Construir el archivo
+					directorMedios.buildArchivo(archivo.toString());
+					// Obtener objeto con los datos del archivo
+					medio = directorMedios.getArchivo();
+					// Enviar archivo al objeto que lo guardará
+					// persistentemente
+					biblio.aniadirArchivo(medio);
+				} else if (DEBUG)// Si el archivo ya esta
+					System.out.println("NO hago nada porque ya estas: "
+							+ archivo.toString());
+			}// imagen?
+			if (esDeTipo(EXTENSIONES_IMAGEN, archivo.getName())) {
+				// TODO capturar datos de la imagen
+				if (biblio.noEsta(archivo.getName(), BD_ARCHIVO)) {
+					directorMedios.setArchivoMultimedia(archivoImagen);
+					directorMedios.buildArchivo(archivo.getName());
+					medio = directorMedios.getArchivo();
+					biblio.aniadirArchivo(medio);
+				} else if (DEBUG)// Si el archivo ya esta
+					System.out.println("NO hago nada porque ya estas: "
+							+ archivo.getName());
+			}
 		}
+		actualizarTabla();
+	}
+	
+	private void actualizarTabla(){
+		datos = null;
+		datos = new Vector<Object[]>();
+		consultarDatos();
+		modeloTabla.setDatos(datos);
+		System.out.println(((Archivo)datos.get(datos.size()-1)[0]).getNombreArchivo());
+		if (datos.size() > 0)
+			iniciarLongitudColumnas(listado);
+		modeloTabla.fireTableDataChanged();
+	}
+
+	/**
+	 * Verificar de si un archivo es de un tipo en especial. Esto se logra
+	 * comparando su extensión con la lista de extensiones de la variable
+	 * EXTENSIONES_***
+	 * 
+	 * @param extensiones
+	 * @param archivo
+	 * @return
+	 */
+	private boolean esDeTipo(String extensiones, String archivo) {
+		tokens = new StringTokenizer(extensiones, "-");
+		while (tokens.hasMoreTokens()) {
+			if (archivo.endsWith(tokens.nextToken()))
+				return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -403,12 +497,38 @@ public class PanelBiblioteca extends JPanel implements Constantes,
 
 				vectorDestino.add(clonObjeto);
 
-				//Borrar los nodos copiados
+				// Borrar los nodos copiados
 				vectorOrigen.remove(k);
 				k--;
 			}
 		}
 		// esto es necesario para actualizar la estructura del arbol
 		modeloTabla.fireTableDataChanged();
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if (e.getClickCount() == 2) {
+			Archivo arc = (Archivo) modeloTabla.getValueAt(listado
+					.getSelectedRow(), 0);
+			if (arc.getTipo().equals(IMG_SONIDO_16))
+				System.out.println("TODO: Reproducir en pestania");
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
 	}
 }

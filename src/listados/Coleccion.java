@@ -391,7 +391,6 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 	 */
 	private void filtrarMedio(String texto, DefaultMutableTreeNode raizArbol,
 			DefaultMutableTreeNode raizNegativa, boolean filtrar) {
-		System.out.println("Estoy buscando "+texto+" y filtrar es "+filtrar);
 		int artista, albumes, canciones;
 		artista = albumes = canciones = 0;
 		DefaultMutableTreeNode nodoArtista, nodoAlbum, nodoCancion;

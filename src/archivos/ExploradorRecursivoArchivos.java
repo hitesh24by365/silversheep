@@ -129,7 +129,8 @@ public class ExploradorRecursivoArchivos implements Constantes {
 										.setArchivoMultimedia(archivoImagen);
 								directorMedios
 										.buildArchivo((ruta.endsWith("/") ? ruta
-												: ruta + "/").replace('\\', '/')
+												: ruta + "/")
+												.replace('\\', '/')
 												+ listado[i]);
 								medio = directorMedios.getArchivo();
 								biblio.aniadirArchivo(medio);
