@@ -389,7 +389,6 @@ public class PanelBiblioteca extends JPanel implements Constantes,
 		boolean filtrando = false;
 		Object clonObjeto[];
 		for (int k = 0; k < vectorOrigen.size(); k++) {
-			System.out.println("Procesando "+vectorOrigen.get(k)[0].toString());
 			Archivo ar = (Archivo) vectorOrigen.get(k)[0];
 			String[] opciones = biblio.opcionesPorNombre("criterio-busqueda");
 			if (filtrar) {// si se esta filtrando... busque las que no
@@ -408,8 +407,6 @@ public class PanelBiblioteca extends JPanel implements Constantes,
 				vectorOrigen.remove(k);
 				k--;
 			}
-			else
-				System.out.println("Se salva "+ar.toString());
 		}
 		// esto es necesario para actualizar la estructura del arbol
 		modeloTabla.fireTableDataChanged();

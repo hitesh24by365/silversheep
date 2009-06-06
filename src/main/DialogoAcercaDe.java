@@ -88,12 +88,12 @@ public class DialogoAcercaDe extends JDialog implements ActionListener,
 						+ "Luis Fernando Arango <luispaisita@gmail.com>\n"
 						+ "Cristian Castiblanco <cristian@elhacker.net>\n\n"
 						+ "Iconos e im\u00e1genes:"
-						+ "Iconos Comix <bla@bla.com> by bbbbbb\n"
-						+ "El logo de SilverSheep fue diseniado por Ferney Toledo <blabla>\n\n"
+						+ "Iconos Gartoon Redux por Tweenk\n"
+						+ "El logo de SilverSheep fue diseniado por Ferney Toledo <ferneytoledo@gmail.com>\n\n"
 						+ "Librer\u00edas externas:\n"
-						+ "Se uso el API de MPR bla de Javazoom\n"
-						+ "Se uso el conector JSqlite blabla\n"
-						+ "Se uso el conector JSqlite blabla\n" + "");
+						+ "API de para decodificar archivos MP3 de JavaZoom [JavaLayer www.javazoom.net/javalayer/javalayer.html]\n"
+						+ "Conector JSQlite [www.ch-werner.de/javasqlite/]\n"
+						+ "API de Tritonus para extracción de tags ID3 [www.tritonus.org]");
 
 		// Aniadir objetos
 		panelPestanias.addTab("Info", new JScrollPane(info));
