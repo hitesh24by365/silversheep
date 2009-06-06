@@ -5,14 +5,18 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.util.Random;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -20,6 +24,7 @@ import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -33,7 +38,8 @@ import medios.Archivo;
 import medios.TipoArchivo;
 import reproductor.ReproducirArchivoAudio;
 
-public class PanelBiblioteca extends JPanel implements Constantes {
+public class PanelBiblioteca extends JPanel implements Constantes,
+		ActionListener {
 	private static final long serialVersionUID = -8338766233305367920L;
 	private JTable listado;
 	private MiModeloTabla modeloTabla;
@@ -43,13 +49,70 @@ public class PanelBiblioteca extends JPanel implements Constantes {
 	private Vector<Archivo> archivos;
 	// Barra de herramientas y sus botones
 	private JToolBar barraHerramientas;
-	private JButton btnSiguiente, btnAnterior, btnReproducir;
+	private JButton btnAniadir, btnRemover;
+	private JFileChooser selectorArchivo;
 
 	public PanelBiblioteca() {
 		super(new BorderLayout());
 		sqlite = new TransaccionesSQLite();
 		biblio = new AlmacenarInfoBibliotecaRefinado(sqlite);
+
+		selectorArchivo = new JFileChooser();
+		selectorArchivo.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		selectorArchivo.setFileFilter(new FileFilter() {
+			@Override
+			public boolean accept(File f) {
+				if (f.isDirectory())
+					return true;
+				String nombre = f.getName();
+				if (esPermitido(nombre))
+					return true;
+				return false;
+			}
+
+			public String getDescription() {
+				return obtenerDescricionExtensiones();
+			}
+		});
+
 		crearListado();
+		crearBarraHerramientas();
+	}
+
+	protected String obtenerDescricionExtensiones() {
+		StringTokenizer tokens = new StringTokenizer(EXTENSIONES_TODAS, "-");
+		String desc = "";
+		while (tokens.hasMoreTokens())
+			desc += (desc != "" ? ",": "")+" ." + tokens.nextToken();
+		return desc;
+	}
+
+	private boolean esPermitido(String nombre) {
+		StringTokenizer tokens = new StringTokenizer(EXTENSIONES_TODAS, "-");
+		while (tokens.hasMoreTokens())
+			if (nombre.toLowerCase().endsWith("." + tokens.nextToken()))
+				return true;
+		return false;
+	}
+
+	private void crearBarraHerramientas() {
+		barraHerramientas = new JToolBar();
+
+		// iniciar botones
+		btnAniadir = new JButton(new ImageIcon(this.getClass().getResource(
+				IMG_SUBIR_VOLUMEN_30)));
+		btnAniadir.addActionListener(this);
+		btnAniadir.setToolTipText("A\u00f1adir archivo a la biblioteca");
+
+		btnRemover = new JButton(new ImageIcon(this.getClass().getResource(
+				IMG_BAJAR_VOLUMEN_30)));
+		btnRemover.addActionListener(this);
+		btnRemover.setToolTipText("Remover archivo de la biblioteca");
+
+		barraHerramientas.add(btnAniadir);
+		barraHerramientas.add(btnRemover);
+
+		add(barraHerramientas, BorderLayout.NORTH);
 	}
 
 	private void crearListado() {
@@ -61,7 +124,8 @@ public class PanelBiblioteca extends JPanel implements Constantes {
 		listado.setPreferredScrollableViewportSize(new Dimension(500, 70));
 		listado.setFillsViewportHeight(true);
 		listado.setAutoCreateRowSorter(true);
-		listado.setDefaultRenderer(TipoArchivo.class, new RenderizadorTipoArchivo());
+		listado.setDefaultRenderer(TipoArchivo.class,
+				new RenderizadorTipoArchivo());
 		consultarDatos();
 		if (datos.size() > 0)
 			iniciarLongitudColumnas(listado);
@@ -186,7 +250,7 @@ public class PanelBiblioteca extends JPanel implements Constantes {
 			cellWidth = comp.getPreferredSize().width;
 
 			column.setPreferredWidth(Math.max(headerWidth, cellWidth));
-			if(i == 0){
+			if (i == 0) {
 				column.setMaxWidth(20);
 			}
 		}
@@ -202,10 +266,14 @@ public class PanelBiblioteca extends JPanel implements Constantes {
 	private String bytesAKB(long bytes) {
 		long kb = bytes / 1000;
 		float kbs = kb / 1000;
-		return kbs + " KB";
+		if(kbs != 0)
+			return kbs + " KBs";
+		kbs = bytes / 1000;
+		return kbs + " Bs";
 	}
 
-	private class RenderizadorTipoArchivo extends JLabel implements TableCellRenderer {
+	private class RenderizadorTipoArchivo extends JLabel implements
+			TableCellRenderer {
 		private static final long serialVersionUID = -4621477965387182269L;
 		boolean isBordered = true;
 
@@ -215,6 +283,24 @@ public class PanelBiblioteca extends JPanel implements Constantes {
 			setIcon(new ImageIcon(this.getClass().getResource(tipo.toString())));
 			setToolTipText("es de tipo");
 			return this;
+		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btnAniadir) {
+			seleccionarArchivos();
+		}
+	}
+
+	private void seleccionarArchivos() {
+		int resultado = selectorArchivo.showOpenDialog(this);
+		if (resultado == JFileChooser.CANCEL_OPTION)
+			return;
+		File[] archivos = selectorArchivo.getSelectedFiles();
+		for (int i = 0; i < archivos.length; i++) {
+			File file = archivos[i];
+			//TODO Aniadir arcgivos a la biblioteca
 		}
 	}
 

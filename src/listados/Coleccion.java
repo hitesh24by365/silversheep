@@ -31,6 +31,7 @@ import almacenamiento.Biblioteca;
 import almacenamiento.TransaccionesSQLite;
 
 import main.Constantes;
+import main.DialogoPersonalizarBusqueda;
 import medios.Archivo;
 
 import java.net.URL;
@@ -62,6 +63,7 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 	private Biblioteca biblio;
 	private TransaccionesSQLite sqlite;
 	private Vector<Archivo> archivos;
+	private DialogoPersonalizarBusqueda personalizarBusqueda;
 
 	/**
 	 * Constructor de la clase Coleccion... recibe un vector con los archivos
@@ -571,6 +573,9 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 			expandirTodo(arbolPrincipal, expandido);
 			if (!expandido)
 				modeloArbol.reload();
+		}
+		if(e.getSource() == btnConfigurar){
+			personalizarBusqueda = new DialogoPersonalizarBusqueda();
 		}
 	}
 

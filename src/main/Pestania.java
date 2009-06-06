@@ -164,7 +164,8 @@ public class Pestania extends JPanel implements ObservadorReproduccionPestania,
 				int i = panelPestanias.indexOfTabComponent(Pestania.this);
 				if (i != -1) {
 					panelPestanias.remove(i);
-					reproductor.detener();
+					if (reproductor != null)
+						reproductor.detener();
 				}
 			} else if (accion.equals(ACC_BTN_PESTANIA_ANTERIOR)) {
 				reproductor.anterior();
@@ -214,7 +215,7 @@ public class Pestania extends JPanel implements ObservadorReproduccionPestania,
 	}
 
 	@Override
-	public void cambioReproduccion(boolean cambiar, boolean directo){
+	public void cambioReproduccion(boolean cambiar, boolean directo) {
 		btnIniciar.setEnabled(cambiar);
 	}
 

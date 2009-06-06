@@ -112,7 +112,7 @@ public class ReproducirArchivoAudio implements Runnable, Constantes {
 			if (dataLine.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
 				volumen = (FloatControl) dataLine
 						.getControl(FloatControl.Type.MASTER_GAIN);
-				volumen.setValue(volumen.getMaximum());
+				cambiarVolumen(lista.getPorcentajeVolumen());
 			}
 
 			// Iniciar el flujo de datos

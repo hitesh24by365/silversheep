@@ -56,6 +56,7 @@ public interface Constantes {
 	public static final String IMG_VIDEO = "/img/misc/video.png";
 	public static final String IMG_LOGO = "/img/misc/logo.jpg";
 	public static final String IMG_BIBLIO = "/img/misc/biblioteca.png";
+	public static final String IMG_OVEJA_MUERTA = "/img/misc/oveja-muerta.png";
 	// formatos soportados
 	public static final String EXTENSIONES_AUDIO = "mp3-wav-";
 	public static final String EXTENSIONES_VIDEO = "mpg-mpeg-avi-wmv-";

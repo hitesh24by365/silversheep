@@ -8,6 +8,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.swing.Box;
@@ -21,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
+import javax.swing.filechooser.FileFilter;
 
 import almacenamiento.AlmacenarInfoBibliotecaRefinado;
 import almacenamiento.Biblioteca;
@@ -109,7 +112,7 @@ public class DialogoEscaneador extends JDialog implements ActionListener,
 		
 		setVisible(true);
 	}
-
+	
 	/**
 	 * Iniciar el panel de las rutas en donde se va a buscar
 	 */
@@ -229,7 +232,7 @@ public class DialogoEscaneador extends JDialog implements ActionListener,
 		else btnEscanear.setEnabled(true);
 	}
 	/**
-	 * Este metodo carga las preferencias de la GUI
+	 * Este metodo carga las preferencias del dialogo escanedor
 	 */
 	private void cargarPreferencias(){
 		String[] opciones = biblio.opcionesPorNombre("tipo-archivo");

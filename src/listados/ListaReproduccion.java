@@ -47,6 +47,7 @@ public class ListaReproduccion extends JPanel implements Constantes,
 	private JSlider deslizador;
 	private int filaSeleccionada;
 	int porcentajeVolumen;
+
 	private ObservadorReproduccionPestania observador;
 
 	public ListaReproduccion() {
@@ -284,14 +285,15 @@ public class ListaReproduccion extends JPanel implements Constantes,
 				.getPreferredSize().height));
 		// registrar componente de escucha de eventos de JSlider
 		deslizador.addChangeListener(new ChangeListener() { // clase interna
-															// anónima
+															// anonima
 					// manejar cambio en el valor del control deslizable
 					public void stateChanged(ChangeEvent e) {
 						establecerVolumen();
 					}
-				} // fin de la clase interna anónima
+				} // fin de la clase interna anonima
 				); // fin de la llamada a addChangeListener
-
+		porcentajeVolumen = deslizador.getValue();
+		
 		barraHerramientas = new JToolBar();
 		barraHerramientas.add(btnAnterior);
 		barraHerramientas.add(btnReproducir);
@@ -483,6 +485,9 @@ public class ListaReproduccion extends JPanel implements Constantes,
 	public void registrarObservador(ObservadorReproduccionPestania obs) {
 		this.observador = obs;
 		actualizarEstadoControles();
+	}
+	public int getPorcentajeVolumen() {
+		return porcentajeVolumen;
 	}
 
 }
