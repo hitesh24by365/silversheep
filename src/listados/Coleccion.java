@@ -354,6 +354,7 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		//TODO corregir el bug de borrar con suprimir ;)
 		if (e.getKeyCode() == 8) {// si está borrando cosas
 			filtrarMedio(txtBuscar.getText(), raizNegativa, raizArbol, false);
 		} else
@@ -390,6 +391,7 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 	 */
 	private void filtrarMedio(String texto, DefaultMutableTreeNode raizArbol,
 			DefaultMutableTreeNode raizNegativa, boolean filtrar) {
+		System.out.println("Estoy buscando "+texto+" y filtrar es "+filtrar);
 		int artista, albumes, canciones;
 		artista = albumes = canciones = 0;
 		DefaultMutableTreeNode nodoArtista, nodoAlbum, nodoCancion;
@@ -410,19 +412,23 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 					nodoCancion = (DefaultMutableTreeNode) nodoAlbum
 							.getChildAt(k);
 					Archivo ar = (Archivo) nodoCancion.getUserObject();
-					if (filtrar)// si se esta filtrando... busque las que no
+					String[] opciones = biblio.opcionesPorNombre("criterio-busqueda");
+					if (filtrar){// si se esta filtrando... busque las que no
 						// tengan coincidencias
-						filtrando = (ar.getNombreCortoArchivo().toLowerCase()
-								.indexOf(texto.toLowerCase()) < 0);
-					if (!filtrar)// si se esta quitando el filtro... busque las
+						//filtrando = (ar.getNombreCortoArchivo().toLowerCase()
+						//		.indexOf(texto.toLowerCase()) < 0);
+						filtrando = (ar.tieneEstosDatos(texto, opciones, filtrar));
+					}
+					else{// si se esta quitando el filtro... busque las
 						// que tengan coincidencias
 						filtrando = (ar.getNombreCortoArchivo().toLowerCase()
 								.indexOf(texto.toLowerCase()) >= 0);
+						filtrando = (ar.tieneEstosDatos(texto, opciones, filtrar));
+					}
 					if (filtrando) {
 						/**
 						 * Copiar nodos de un arbol a otro
 						 */
-
 						nodoArtistaClon = (DefaultMutableTreeNode) nodoArtista
 								.clone();
 						nodoAlbumClon = (DefaultMutableTreeNode) nodoAlbum
@@ -614,6 +620,5 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 								.getChildAt(i)).getUserObject());
 			throw new ExpandVetoException(evt);
 		}
-
 	}
 }

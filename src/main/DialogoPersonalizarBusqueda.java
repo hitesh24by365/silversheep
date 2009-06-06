@@ -1,6 +1,5 @@
 package main;
 
-import java.awt.BorderLayout;
 import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -28,7 +27,6 @@ public class DialogoPersonalizarBusqueda extends JDialog implements
 	private static final long serialVersionUID = 2982524173720241542L;
 	private JCheckBox chkNombre, chkArtista, chkAlbum, chkGenero;
 	private JButton btnOK, btnCanelar;
-	private JRadioButton btnExacta, btnFlexible;
 	// Objeto biblioteca para almacenar los datos
 	private Biblioteca biblio;
 	// Objeto para almacenar los datos en una base de datos
@@ -47,7 +45,6 @@ public class DialogoPersonalizarBusqueda extends JDialog implements
 		setTitle("Configurar criterios de b\u00fasqueda");
 		//Aniadir los paneles
 		add(crearPanelCheckBox());
-		add(crearPanelModoBusqueda());
 		add(crearPanelBotones());
 		// iniciar interfaz de transacciones usando
 		// el patron de disenio Bridge
@@ -88,27 +85,6 @@ public class DialogoPersonalizarBusqueda extends JDialog implements
 		panelChk.add(chkGenero);
 
 		return panelChk;
-	}
-
-	private JPanel crearPanelModoBusqueda() {
-		JPanel panelRadio = new JPanel();
-		panelRadio.setLayout(new GridLayout(2, 2));
-		
-		ButtonGroup grupo = new ButtonGroup();
-		
-		btnExacta = new JRadioButton("Exacta");
-		
-		btnFlexible = new JRadioButton("Flexible");
-		
-		grupo.add(btnExacta);
-		grupo.add(btnFlexible);
-		
-		panelRadio.add(new JLabel("Modo de b\u00fasqueda:"));
-		panelRadio.add(new JLabel());
-		panelRadio.add(btnExacta);
-		panelRadio.add(btnFlexible);
-
-		return panelRadio;
 	}
 
 	private JPanel crearPanelBotones() {
@@ -168,10 +144,6 @@ public class DialogoPersonalizarBusqueda extends JDialog implements
 				chkAlbum.setSelected(true);
 			if(opciones[i].equals("genero"))
 				chkGenero.setSelected(true);
-			if(opciones[i].equals("exacta"))
-				btnExacta.setSelected(true);
-			else
-				btnFlexible.setSelected(true);
 		}
 	}
 	/**
@@ -182,16 +154,12 @@ public class DialogoPersonalizarBusqueda extends JDialog implements
 		biblio.quitarOpcionesPorNombre("criterio-busqueda");
 		//guardar las rutas de la lista
 		if(chkNombre.isSelected())//aniadir seleccion nombre
-			biblio.aniadirOpcion("criterio-busqueda", "img");
+			biblio.aniadirOpcion("criterio-busqueda", "nombre");
 		if(chkArtista.isSelected())//aniadir seleccion artista
-			biblio.aniadirOpcion("criterio-busqueda", "img");
+			biblio.aniadirOpcion("criterio-busqueda", "artista");
 		if(chkAlbum.isSelected())//aniadir seleccion album
-			biblio.aniadirOpcion("criterio-busqueda", "video");
+			biblio.aniadirOpcion("criterio-busqueda", "album");
 		if(chkGenero.isSelected())//aniadir seleccion genero
-			biblio.aniadirOpcion("criterio-busqueda", "musica");
-		if(btnExacta.isSelected())
-			biblio.aniadirOpcion("criterio-busqueda", "exacta");
-		else
-			biblio.aniadirOpcion("criterio-busqueda", "flexible");
+			biblio.aniadirOpcion("criterio-busqueda", "genero");
 	}
 }

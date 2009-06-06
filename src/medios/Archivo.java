@@ -15,15 +15,14 @@ import medios.Etiqueta;
  * Builder, usado para abstraer los diferentes tipos de archivos de medio.
  * 
  */
-public class Archivo implements Constantes{
+public class Archivo implements Constantes {
 	// define el ID en la base de datos, el alto y ancho si es imagen o video, y
 	// la longitud si es video o audio
 	private int id, alto, ancho, longitud;
 	// define el tamanio del archivo
 	private long tamanio;
 	// define los datos que son cadenas de texto del archivo
-	private String nombreArchivo, codec, artista, genero,
-			albumDisco;
+	private String nombreArchivo, codec, artista, genero, albumDisco;
 	// Un flag que permite saber si se posee o no el codec para reproducir un
 	// medio específico
 	private boolean esSoportado = true;
@@ -31,49 +30,55 @@ public class Archivo implements Constantes{
 	private Etiqueta[] etiquetas;
 	// este objeto nos permite determinar la fecha actual
 	private GregorianCalendar fechaAdicion;
-	//este es el contador de reproducciones
+	// este es el contador de reproducciones
 	private int contador;
 
-	public Archivo(){
-		
+	public Archivo() {
+
 	}
+
 	public Archivo(ResultSet resultados) {
 		try {
-			Integer temp = (Integer)resultados.getObject(1); 
-			setId(temp==null ? 0 : temp.intValue());
-			setNombreArchivo((String)resultados.getObject(2));
-			String formatoFecha = (String)resultados.getObject(3);
-			String[] a = formatoFecha.split("-");;
-			setFechaAdicion(new GregorianCalendar(Integer.valueOf(a[0]).intValue(), Integer
-					.valueOf(a[1]).intValue() - 1, Integer.valueOf(a[2]).intValue()));
-			temp = (Integer)resultados.getObject(4);
-			setTamanioKB(temp==null ? 0 : temp.intValue());
-			temp = (Integer)resultados.getObject(5);
-			setAlto(temp==null ? 0 : temp.intValue());
-			temp = (Integer)resultados.getObject(6);
-			setAncho(temp==null ? 0 : temp.intValue());
-			temp = (Integer)resultados.getObject(7);
-			setLongitud(temp==null ? 0 : temp.intValue());
-			setCodec((String)resultados.getObject(8));
-			setArtista((String)resultados.getObject(9));
-			setGenero((String)resultados.getObject(10));
-			setAlbumDisco((String)resultados.getObject(11));
-			//es soportado es el indice 12
+			Integer temp = (Integer) resultados.getObject(1);
+			setId(temp == null ? 0 : temp.intValue());
+			setNombreArchivo((String) resultados.getObject(2));
+			String formatoFecha = (String) resultados.getObject(3);
+			String[] a = formatoFecha.split("-");
+			;
+			setFechaAdicion(new GregorianCalendar(Integer.valueOf(a[0])
+					.intValue(), Integer.valueOf(a[1]).intValue() - 1, Integer
+					.valueOf(a[2]).intValue()));
+			temp = (Integer) resultados.getObject(4);
+			setTamanioKB(temp == null ? 0 : temp.intValue());
+			temp = (Integer) resultados.getObject(5);
+			setAlto(temp == null ? 0 : temp.intValue());
+			temp = (Integer) resultados.getObject(6);
+			setAncho(temp == null ? 0 : temp.intValue());
+			temp = (Integer) resultados.getObject(7);
+			setLongitud(temp == null ? 0 : temp.intValue());
+			setCodec((String) resultados.getObject(8));
+			setArtista((String) resultados.getObject(9));
+			setGenero((String) resultados.getObject(10));
+			setAlbumDisco((String) resultados.getObject(11));
+			// es soportado es el indice 12
 			setSoportado(true);
-			temp = (Integer)resultados.getObject(13);
-			setContador(temp==null ? 0 : temp.intValue());
+			temp = (Integer) resultados.getObject(13);
+			setContador(temp == null ? 0 : temp.intValue());
 		} catch (NumberFormatException e) {
-			System.err.println("Error al convertir número desde la base de datos.");
-			if(DEBUG)
+			System.err
+					.println("Error al convertir número desde la base de datos.");
+			if (DEBUG)
 				e.printStackTrace();
 		} catch (SQLException e) {
 			System.err.println("Error con la base de datos.");
-			if(DEBUG)
+			if (DEBUG)
 				e.printStackTrace();
 		}
 	}
+
 	/**
 	 * Devuelve el género de la canción
+	 * 
 	 * @return
 	 */
 	public String getGenero() {
@@ -82,6 +87,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Asigna un género a la canción
+	 * 
 	 * @param genero
 	 */
 	public void setGenero(String genero) {
@@ -90,6 +96,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Devuelve el álbum del disco
+	 * 
 	 * @return
 	 */
 	public String getAlbumDisco() {
@@ -98,6 +105,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Asigna el álbum del disco
+	 * 
 	 * @param albumDisco
 	 */
 	public void setAlbumDisco(String albumDisco) {
@@ -106,6 +114,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Devuelve el ID del archivo de la BD
+	 * 
 	 * @return
 	 */
 	public int getId() {
@@ -114,6 +123,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Asigna el ID del archivo de la BD
+	 * 
 	 * @param id
 	 */
 	public void setId(int id) {
@@ -122,6 +132,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Devuelve el tamanio del archivo
+	 * 
 	 * @return
 	 */
 	public long getTamanio() {
@@ -130,14 +141,16 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Devuelve el alto del video o imagen
+	 * 
 	 * @return
 	 */
 	public int getAlto() {
 		return alto;
 	}
-	
+
 	/**
-	 * 	Asigna el alto del video o imagen
+	 * Asigna el alto del video o imagen
+	 * 
 	 * @param alto
 	 */
 	public void setAlto(int alto) {
@@ -146,6 +159,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Devuelve el ancho del video o imagen
+	 * 
 	 * @return
 	 */
 	public int getAncho() {
@@ -154,6 +168,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Asigna el ancho del video o imagen
+	 * 
 	 * @param ancho
 	 */
 	public void setAncho(int ancho) {
@@ -162,6 +177,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Devuelve la longitud del video o audio
+	 * 
 	 * @return
 	 */
 	public int getLongitud() {
@@ -170,6 +186,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Asigna la longitud del video o audio
+	 * 
 	 * @param longitud
 	 */
 	public void setLongitud(int longitud) {
@@ -178,6 +195,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Devuelve el codec del archivo multimedia
+	 * 
 	 * @return
 	 */
 	public String getCodec() {
@@ -186,6 +204,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Asigna el codec al archivo multimedia
+	 * 
 	 * @param codec
 	 */
 	public void setCodec(String codec) {
@@ -194,6 +213,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Deveulve el artista del audio
+	 * 
 	 * @return
 	 */
 	public String getArtista() {
@@ -202,6 +222,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Asigna el artista del audio
+	 * 
 	 * @param artista
 	 */
 	public void setArtista(String artista) {
@@ -210,6 +231,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Asigna el tamanio del archivo
+	 * 
 	 * @param tamanio
 	 */
 	public void setTamanioKB(long tamanio) {
@@ -218,6 +240,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Devuelve el nombre del archivo
+	 * 
 	 * @return
 	 */
 	public String getNombreArchivo() {
@@ -226,6 +249,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Asigna el nombre del archivo
+	 * 
 	 * @param nombreArchivo
 	 */
 	public void setNombreArchivo(String nombreArchivo) {
@@ -234,6 +258,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Devuelve las etiquetas de un archivo
+	 * 
 	 * @return
 	 */
 	public Etiqueta[] getEtiquetas() {
@@ -242,6 +267,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Asigna las etiquetas a un archivo
+	 * 
 	 * @param etiquetas
 	 */
 	public void setEtiquetas(Etiqueta[] etiquetas) {
@@ -250,6 +276,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Devuelve la fecha en que fue creado el archivo
+	 * 
 	 * @return
 	 */
 	public GregorianCalendar getFechaAdicion() {
@@ -258,6 +285,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Asigna la fecha en que fue creado el archivo
+	 * 
 	 * @param fechaAdicion
 	 */
 	public void setFechaAdicion(GregorianCalendar fechaAdicion) {
@@ -266,6 +294,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Asigna el flag que permite saber si se soporta o no el archivo
+	 * 
 	 * @param esSoportado
 	 */
 	public void setSoportado(boolean esSoportado) {
@@ -274,6 +303,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Devuelve el flag que permite saber si se soporta o no el archivo
+	 * 
 	 * @return
 	 */
 	public boolean esSoportado() {
@@ -282,6 +312,7 @@ public class Archivo implements Constantes{
 
 	/**
 	 * Devuelve la fecha de adición en formato AAAA-MM-DD
+	 * 
 	 * @return
 	 */
 	public String getFechaAdicionSQL() {
@@ -291,38 +322,111 @@ public class Archivo implements Constantes{
 
 	public boolean esTipo(String tipo) {
 		StringTokenizer tokens = new StringTokenizer(tipo, "-");
-		while(tokens.hasMoreTokens()){
-			if(getNombreArchivo().toLowerCase().endsWith("."+tokens.nextToken().toLowerCase()))
+		while (tokens.hasMoreTokens()) {
+			if (getNombreArchivo().toLowerCase().endsWith(
+					"." + tokens.nextToken().toLowerCase()))
 				return true;
 		}
 		return false;
 	}
+
 	public void setContador(int contador) {
 		this.contador = contador;
 	}
+
 	public int getContador() {
 		return contador;
 	}
+
 	public String getNombreCortoArchivo() {
 		String nombre = getNombreArchivo().replace('\\', '/');
-		//Extraer solo el nombre del archivo
-		nombre =  nombre.substring(nombre.lastIndexOf('/')+1, nombre.lastIndexOf('.'));
-		return nombre.substring(nombre.lastIndexOf('/')+1);
+		// Extraer solo el nombre del archivo
+		nombre = nombre.substring(nombre.lastIndexOf('/') + 1, nombre
+				.lastIndexOf('.'));
+		return nombre.substring(nombre.lastIndexOf('/') + 1);
 	}
-	
-	public TipoArchivo getTipo(){
-		String extension = getNombreArchivo().substring(getNombreArchivo().lastIndexOf('.')+1);
-		if(EXTENSIONES_AUDIO.indexOf(extension.toLowerCase())>=0)
-			return new TipoArchivo(IMG_SONIDO_16);
-		else if(EXTENSIONES_IMAGEN.indexOf(extension.toLowerCase())>=0)
-			return new TipoArchivo(IMG_IMAGEN_16);
-		else if(EXTENSIONES_VIDEO.indexOf(extension.toLowerCase())>=0)
-			return new TipoArchivo(IMG_VIDEO_16);
+
+	public String getTipo() {
+		String extension = getNombreArchivo().substring(
+				getNombreArchivo().lastIndexOf('.') + 1);
+		if (EXTENSIONES_AUDIO.indexOf(extension.toLowerCase()) >= 0)
+			return IMG_SONIDO_16;
+		else if (EXTENSIONES_IMAGEN.indexOf(extension.toLowerCase()) >= 0)
+			return IMG_IMAGEN_16;
+		else if (EXTENSIONES_VIDEO.indexOf(extension.toLowerCase()) >= 0)
+			return IMG_VIDEO_16;
 		else
-			return new TipoArchivo(IMG_MEDIO_16);
+			return IMG_MEDIO_16;
 	}
-	
-	public String toString(){
-		return getNombreCortoArchivo().equals("") ? "Desconocido" : getNombreCortoArchivo();
+
+	public String toString() {
+		return getNombreCortoArchivo().equals("") ? "Desconocido"
+				: getNombreCortoArchivo();
+	}
+
+	/**
+	 * Filtra el contenido especificado de un medio. El parametro 'texto' define
+	 * el texto a buscar, 'opciones' el criterio de busqueda, y 'filtrar' los
+	 * casos en que se aplica el criterio.
+	 * 
+	 * @param texto
+	 * @param opciones
+	 * @param filtrar
+	 * @return
+	 */
+	public boolean tieneEstosDatos(String texto, String[] opciones,
+			boolean filtrar) {
+		boolean nombre = false;
+		boolean artista = false;
+		boolean album = false;
+		boolean genero = false;
+		boolean total = true;
+		for (int i = 0; i < opciones.length; i++) {
+			if (opciones[i].equals("nombre"))
+				nombre = true;
+			if (opciones[i].equals("artista"))
+				artista = true;
+			if (opciones[i].equals("album"))
+				album = true;
+			if (opciones[i].equals("genero"))
+				genero = true;
+		}
+		if (filtrar) {
+			if (nombre)
+				total = total
+						&& getNombreArchivo().toLowerCase().indexOf(
+								texto.toLowerCase()) < 0;
+			if (artista)
+				total = total
+						&& getArtista().toLowerCase().indexOf(
+								texto.toLowerCase()) < 0;
+			if (album)
+				total = total
+						&& getAlbumDisco().toLowerCase().indexOf(
+								texto.toLowerCase()) < 0;
+			if (genero)
+				total = total
+						&& getGenero().toLowerCase().indexOf(
+								texto.toLowerCase()) < 0;
+			return total;
+		} else {
+			if (nombre)
+				total = total
+						|| getNombreArchivo().toLowerCase().indexOf(
+								texto.toLowerCase()) >= 0;
+			if (artista)
+				total = total
+						|| getArtista().toLowerCase().indexOf(
+								texto.toLowerCase()) >= 0;
+			if (album)
+				total = total
+						|| getAlbumDisco().toLowerCase().indexOf(
+								texto.toLowerCase()) >= 0;
+			if (genero)
+				total = total
+						|| getGenero().toLowerCase().indexOf(
+								texto.toLowerCase()) >= 0;
+			return total;
+		}
 	}
 }

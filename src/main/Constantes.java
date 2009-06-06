@@ -23,6 +23,8 @@ public interface Constantes {
 	public static final String IMG_SUBIR_VOLUMEN_30 = "/img/30x30/subir-volumen.png";
 	public static final String IMG_BAJAR_VOLUMEN_30 = "/img/30x30/bajar-volumen.png";
 	public static final String IMG_RANDOM_30 = "/img/30x30/random.png";
+	public static final String IMG_LIMPIAR_30 = "/img/30x30/limpiar.png";
+	public static final String IMG_HERRAMIENTAS_30 = "/img/30x30/herramientas.png";
 	// imagenes 16x16
 	public static final String IMG_REPRODUCIR_16 = "/img/16x16/reproducir.png";
 	public static final String IMG_PAUSAR_16 = "/img/16x16/pausar.png";
