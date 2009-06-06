@@ -83,9 +83,9 @@ public class DialogoAcercaDe extends JDialog implements ActionListener,
 		creditos.setEditable(false);
 		creditos
 				.setText("SilverSheep fue desarrollado por el equipo MinoTauro.\n\n"
-						+ "Ferney Toledo <bla@bla.com>\n"
-						+ "Marcela Guiza <bla@bla.com>\n"
-						+ "Luis Arango <bla@bla.com>\n"
+						+ "Ferney Toledo <ferneytoledo@gmail.com>\n"
+						+ "Marcela Guiza <marcelaguiza@gmail.com>\n"
+						+ "Luis Fernando Arango <luispaisita@gmail.com>\n"
 						+ "Cristian Castiblanco <cristian@elhacker.net>\n\n"
 						+ "Iconos e im\u00e1genes:"
 						+ "Iconos Comix <bla@bla.com> by bbbbbb\n"
