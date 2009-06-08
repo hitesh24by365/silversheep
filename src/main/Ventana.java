@@ -153,7 +153,7 @@ public class Ventana extends JFrame implements ActionListener, Constantes {
 	/**
 	 * Abrir dialogo que escanea directorios
 	 */
-	private void abrirDialogoEscaneador() {
+	public void abrirDialogoEscaneador() {
 		new DialogoEscaneador(this);
 	}
 

@@ -2,14 +2,21 @@ package main;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
 
+import medios.Archivo;
+import almacenamiento.AlmacenarInfoBibliotecaRefinado;
+import almacenamiento.Biblioteca;
+import almacenamiento.TransaccionesSQLite;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
+import java.util.Vector;
 
 /**
  * Panel de bienvenida a SilverSheep
@@ -24,6 +31,9 @@ public class PanelIntroduccion extends JPanel implements ActionListener,
 	private JPanel panelBotones;
 	// Referencia a la ventana principal
 	private Ventana ventanaPrincipal;
+	private Biblioteca biblio;
+	private TransaccionesSQLite sqlite;
+	private Vector<Archivo> archivos;
 
 	/**
 	 * Constructor que recibe referencia a la ventana padre
@@ -33,6 +43,9 @@ public class PanelIntroduccion extends JPanel implements ActionListener,
 	public PanelIntroduccion(Ventana padre) {
 		// Asignar layout
 		setLayout(new BorderLayout());
+
+		sqlite = new TransaccionesSQLite();
+		biblio = new AlmacenarInfoBibliotecaRefinado(sqlite);
 
 		ventanaPrincipal = padre;
 
@@ -100,8 +113,18 @@ public class PanelIntroduccion extends JPanel implements ActionListener,
 			// Si se presiono el boton video, aniadir panel video
 			ventanaPrincipal.aniadirReproductor(TAB_VIDEO);
 		} else if (evt.getSource() == btnBiblio) {
-			// Si se presiono el boton biblioteca, aniadir panel biblioteca
-			ventanaPrincipal.aniadirReproductor(TAB_BIBLIO);
+			archivos = biblio.getTodosArchivos(EXTENSIONES_TODAS);
+			if (archivos.size() > 0)
+				// Si se presiono el boton biblioteca, aniadir panel biblioteca
+				ventanaPrincipal.aniadirReproductor(TAB_BIBLIO);
+			else {
+				JOptionPane
+						.showMessageDialog(
+								null,
+								"Parece ser que es la primera vez que ejecuta SilverSheep.\n\u00bf"
+										+ "Qu\u00e9 tal si escaneas tu PC en busca de nuevos medios?");
+				ventanaPrincipal.abrirDialogoEscaneador();
+			}
 		}
 	}
 }

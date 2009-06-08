@@ -21,6 +21,8 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.ToolTipManager;
 import javax.swing.ImageIcon;
@@ -45,6 +47,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -55,7 +58,8 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 	private JTree arbolPrincipal;
 	private ListaReproduccion listaRepro;
 	private DefaultMutableTreeNode ultimoNodoSeleccionado;
-	private JButton btnExpandir, btnBorrarBusqueda, btnActualizar, btnConfigurar;
+	private JButton btnExpandir, btnBorrarBusqueda, btnActualizar,
+			btnConfigurar;
 	private JTextField txtBuscar;
 	private boolean expandido = false, dobleClic = false;
 	private DefaultMutableTreeNode raizArbol, raizNegativa;
@@ -64,6 +68,8 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 	private TransaccionesSQLite sqlite;
 	private Vector<Archivo> archivos;
 	private DialogoPersonalizarBusqueda personalizarBusqueda;
+	private JPopupMenu menuContextual;
+	private JMenuItem itmAgregar;
 
 	/**
 	 * Constructor de la clase Coleccion... recibe un vector con los archivos
@@ -76,6 +82,14 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 
 		sqlite = new TransaccionesSQLite();
 		biblio = new AlmacenarInfoBibliotecaRefinado(sqlite);
+
+		itmAgregar = new JMenuItem("Agregar");
+		itmAgregar.setMnemonic('A');
+		itmAgregar.setToolTipText("Agregar archivo a la lista de reproducción");
+		itmAgregar.addActionListener(this);
+		
+		menuContextual = new JPopupMenu();
+		menuContextual.add(itmAgregar);
 
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -114,6 +128,30 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 		arbolPrincipal.setRootVisible(false);
 		// Escuchar cambios en la seleccion
 		arbolPrincipal.addMouseListener(this);
+		arbolPrincipal.addMouseListener(
+
+		new MouseAdapter() { // clase interna anonima
+
+					// manejar evento de oprimir botón del ratón
+					public void mousePressed(MouseEvent evento) {
+						checkForTriggerEvent(evento);
+					}
+
+					// manejar evento de soltar el botón del ratón
+					public void mouseReleased(MouseEvent evento) {
+						checkForTriggerEvent(evento);
+					}
+
+					// determinar si evento debe desencadenar el menú contextual
+					private void checkForTriggerEvent(MouseEvent evento) {
+						if (evento.isPopupTrigger())
+							menuContextual.show(evento.getComponent(), evento
+									.getX(), evento.getY());
+					}
+
+				} // fin de la clase interna anónima
+
+				); // fin de la llamada a addMouseListener
 		arbolPrincipal.addTreeSelectionListener(this);
 		arbolPrincipal.addTreeWillExpandListener(this);
 		modeloArbol.addTreeModelListener(this);
@@ -202,10 +240,9 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 		btnBorrarBusqueda.setPreferredSize(new Dimension(20, 20));
 		btnBorrarBusqueda.addActionListener(this);
 
-
 		pnlBusqueda.add(txtBuscar);
 		pnlBusqueda.add(btnBorrarBusqueda);
-		
+
 		return pnlBusqueda;
 	}
 
@@ -214,10 +251,11 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 	 */
 	private JPanel crearHerramientasBusqueda() {
 		JPanel pnlHerramientas = new JPanel();
-		pnlHerramientas.setLayout(new BoxLayout(pnlHerramientas, BoxLayout.LINE_AXIS));
+		pnlHerramientas.setLayout(new BoxLayout(pnlHerramientas,
+				BoxLayout.LINE_AXIS));
 		pnlHerramientas.add(Box.createHorizontalGlue());
 		pnlHerramientas.setPreferredSize(new Dimension(100, 25));
-		
+
 		// boton de expandir
 		btnExpandir = new JButton(new ImageIcon(this.getClass().getResource(
 				IMG_EXPANDIR_16)));
@@ -242,7 +280,7 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 		pnlHerramientas.add(btnExpandir);
 		pnlHerramientas.add(btnActualizar);
 		pnlHerramientas.add(btnConfigurar);
-		
+
 		return pnlHerramientas;
 	}
 
@@ -354,7 +392,7 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		//TODO corregir el bug de borrar con suprimir ;)
+		// TODO corregir el bug de borrar con suprimir ;)
 		if (e.getKeyCode() == 8) {// si está borrando cosas
 			filtrarMedio(txtBuscar.getText(), raizNegativa, raizArbol, false);
 		} else
@@ -411,18 +449,20 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 					nodoCancion = (DefaultMutableTreeNode) nodoAlbum
 							.getChildAt(k);
 					Archivo ar = (Archivo) nodoCancion.getUserObject();
-					String[] opciones = biblio.opcionesPorNombre("criterio-busqueda");
-					if (filtrar){// si se esta filtrando... busque las que no
+					String[] opciones = biblio
+							.opcionesPorNombre("criterio-busqueda");
+					if (filtrar) {// si se esta filtrando... busque las que no
 						// tengan coincidencias
-						//filtrando = (ar.getNombreCortoArchivo().toLowerCase()
-						//		.indexOf(texto.toLowerCase()) < 0);
-						filtrando = (ar.tieneEstosDatos(texto, opciones, filtrar));
-					}
-					else{// si se esta quitando el filtro... busque las
+						// filtrando = (ar.getNombreCortoArchivo().toLowerCase()
+						// .indexOf(texto.toLowerCase()) < 0);
+						filtrando = (ar.tieneEstosDatos(texto, opciones,
+								filtrar));
+					} else {// si se esta quitando el filtro... busque las
 						// que tengan coincidencias
 						filtrando = (ar.getNombreCortoArchivo().toLowerCase()
 								.indexOf(texto.toLowerCase()) >= 0);
-						filtrando = (ar.tieneEstosDatos(texto, opciones, filtrar));
+						filtrando = (ar.tieneEstosDatos(texto, opciones,
+								filtrar));
 					}
 					if (filtrando) {
 						/**
@@ -579,9 +619,10 @@ public class Coleccion extends JPanel implements TreeSelectionListener,
 			if (!expandido)
 				modeloArbol.reload();
 		}
-		if(e.getSource() == btnConfigurar){
+		if (e.getSource() == btnConfigurar)
 			personalizarBusqueda = new DialogoPersonalizarBusqueda();
-		}
+		if (e.getSource() == itmAgregar)
+			;
 	}
 
 	/**

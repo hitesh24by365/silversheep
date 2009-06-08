@@ -1,7 +1,6 @@
 package main;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -361,13 +360,18 @@ public class PanelBiblioteca extends JPanel implements Constantes,
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == btnAniadir) {
+		if (e.getSource() == btnAniadir)
 			seleccionarArchivos();
-		}
 		if (e.getSource() == btnAjustarBusqueda)
 			personalizarBusqueda = new DialogoPersonalizarBusqueda();
 		if (e.getSource() == btnRefrescar)
 			actualizarTabla();
+		if (e.getSource() == btnRemover)
+			removerArchivo();
+	}
+
+	private void removerArchivo() {
+		System.out.println(listado.getSelectedRow());
 	}
 
 	private void seleccionarArchivos() {

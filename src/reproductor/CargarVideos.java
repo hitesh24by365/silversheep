@@ -21,7 +21,7 @@ public class CargarVideos extends JPanel implements Reproductor, Constantes{
 	public CargarVideos(JFrame padre) {
 		setLayout(new BorderLayout());
 		JLabel oveja = new JLabel(new ImageIcon(this.getClass().getResource(IMG_OVEJA_MUERTA)));
-		oveja.setText("A\u00fan en desarrollo ;)");
+		oveja.setText("<html><center><i>A\u00fan en desarrollo ;)</i><br/><strong>No quisimos usar JMF :P</strong></center></html>");
 		oveja.setHorizontalTextPosition(SwingConstants.CENTER);
 		oveja.setVerticalTextPosition(SwingConstants.BOTTOM);
 		oveja.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 40));
