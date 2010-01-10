@@ -11,7 +11,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -24,11 +23,9 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.filechooser.FileFilter;
-
 import almacenamiento.AlmacenarInfoBibliotecaRefinado;
 import almacenamiento.Biblioteca;
 import almacenamiento.TransaccionesSQLite;
-
 import main.Constantes;
 import medios.DirectorMedios;
 
