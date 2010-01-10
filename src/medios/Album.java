@@ -1,5 +1,3 @@
 package medios;
 
-public class Album {
-
-}
+public class Album {}
