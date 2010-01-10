@@ -4,8 +4,7 @@ public class ConstructorArchivoVideo extends ConstructorArchivoMultimedia {
 
 	@Override
 	public void buildAlbumDisco() {
-		// TODO Auto-generated method stub
-		
+		// TODO
 	}
 
 	@Override
