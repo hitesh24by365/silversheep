@@ -4,7 +4,7 @@ import javax.swing.JFrame;
 
 /**
  * Clase principal del proyecto SilverSheep. Sí, ya se que no hace mucho, pero
- * es la principal y la respetas!
+ * es la principal y la respetas! (Ahora estamos en GitHub!)
  * 
  */
 public class SilverSheep {
