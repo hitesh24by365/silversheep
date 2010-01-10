@@ -3,18 +3,14 @@ package medios;
 import java.io.File;
 import java.util.GregorianCalendar;
 import java.util.Map;
-
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioSystem;
-
 import main.Constantes;
-
 import org.tritonus.share.sampled.file.TAudioFileFormat;
 
 /**
  * Esta clase proporciona los métodos necesarios para obtener metadatos de los
  * diferentes tipos de archivos de audio
- * 
  */
 public class ConstructorArchivoAudio extends ConstructorArchivoMultimedia implements Constantes {
 	// Objeto para obtener el formato del archivo

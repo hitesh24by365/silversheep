@@ -1,5 +1,3 @@
 package medios;
 
-public class Etiqueta {
-
-}
+public class Etiqueta {}
